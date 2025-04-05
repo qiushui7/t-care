@@ -1,0 +1,9 @@
+node_modules
+
+packages/*/dist
+packages/*/node_modules
+
+.idea
+.vscode
+
+/node_modules/
