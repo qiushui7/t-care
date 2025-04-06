@@ -1,5 +1,11 @@
 # @care/utils
 
+## 1.1.2
+
+### Patch Changes
+
+- fix file
+
 ## 1.1.1
 
 ### Patch Changes

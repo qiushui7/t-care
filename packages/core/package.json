@@ -1,6 +1,6 @@
 {
   "name": "@t-care/core",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "代码检查的核心功能模块",
   "type": "module",
   "main": "dist/index.js",
@@ -23,5 +23,11 @@
   "devDependencies": {
     "@types/node": "^20.11.30",
     "typescript": "^5.8.3"
-  }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md",
+    "package.json"
+  ]
 }

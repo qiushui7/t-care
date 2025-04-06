@@ -1,5 +1,14 @@
 # @care/core
 
+## 1.1.2
+
+### Patch Changes
+
+- fix file
+- Updated dependencies
+  - @t-care/mastra@1.1.2
+  - @t-care/utils@1.1.2
+
 ## 1.1.1
 
 ### Patch Changes
