@@ -1,10 +1,15 @@
 {
   "name": "@t-care/utils",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "description": "工具函数库，提供获取本地代码等功能",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/qiushui7/t-care.git",
+    "directory": "packages/utils"
+  },
   "publishConfig": {
     "access": "public"
   },

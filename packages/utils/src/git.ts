@@ -1,22 +1,26 @@
 import simpleGit, { SimpleGit as GitType } from 'simple-git';
 import fs from 'fs-extra';
 import path from 'path';
-import { FileChange, SimpleGit } from './types';
+import { FileChange, SimpleGit, Language } from './types';
+import { getLocalization } from './i18n';
 
 /**
  * Git工具类，用于获取本地未提交的代码
  */
-class GitUtils implements SimpleGit {
+export class GitUtils implements SimpleGit {
   private git: GitType;
   private rootDir: string;
+  private language: Language;
 
   /**
    * 构造函数
    * @param rootDir Git仓库根目录，默认为当前目录
+   * @param language 语言设置，默认为中文
    */
-  constructor(rootDir: string = process.cwd()) {
+  constructor(rootDir: string = process.cwd(), language: Language = 'zh') {
     this.rootDir = rootDir;
     this.git = simpleGit(rootDir);
+    this.language = language;
   }
 
   /**
@@ -97,6 +101,7 @@ class GitUtils implements SimpleGit {
   async getUncommittedChanges(): Promise<FileChange[]> {
     const files = await this.getUncommittedFiles();
     const changes: FileChange[] = [];
+    const texts = getLocalization(this.language);
 
     for (const file of files) {
       try {
@@ -108,7 +113,7 @@ class GitUtils implements SimpleGit {
           // 检查是否是二进制文件
           const isBinary = await this.isBinaryFile(filePath);
           if (isBinary) {
-            content = '[二进制文件]';
+            content = '[Binary File]';
           } else {
             content = await fs.readFile(filePath, 'utf-8');
           }
@@ -117,7 +122,7 @@ class GitUtils implements SimpleGit {
           try {
             content = await this.git.show([`HEAD:${file}`]);
           } catch (err) {
-            content = '[文件已删除或无法获取内容]';
+            content = '[File deleted or content not available]';
           }
         }
 
@@ -126,7 +131,7 @@ class GitUtils implements SimpleGit {
           content,
         });
       } catch (error) {
-        console.error(`获取文件 ${file} 内容时出错:`, error);
+        console.error(`${texts.git.readFileError} ${file}:`, error);
       }
     }
 
@@ -300,5 +305,3 @@ class GitUtils implements SimpleGit {
     }
   }
 }
-
-export default GitUtils;

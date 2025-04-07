@@ -1,5 +1,11 @@
 # @care/utils
 
+## 1.2.0
+
+### Minor Changes
+
+- add en language
+
 ## 1.1.2
 
 ### Patch Changes

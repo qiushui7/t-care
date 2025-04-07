@@ -5,23 +5,46 @@
  */
 
 import { Command } from 'commander';
+import figlet from 'figlet';
+import chalk from 'chalk';
 import { checkCommand, inspectCommand, configCommand } from './commands/index.js';
-import { readConfig } from './utils.js';
+import { readConfig, getLocalizedText } from './utils.js';
+import { Language } from '@t-care/utils';
+// 导入包信息获取版本号
+import { fileURLToPath } from 'url';
+import { dirname, resolve } from 'path';
+import fs from 'fs';
+
+// 获取包版本号
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const packageJsonPath = resolve(__dirname, '../package.json');
+const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+
+// 读取配置获取默认语言
+const config = await readConfig();
+const language = config.language || 'zh';
+const texts = getLocalizedText(language as Language);
 
 const program = new Command();
 
 // 设置CLI基本信息
-program.name('care').description('代码审查工具').version('1.0.0');
+program.name('care').version(packageJson.version);
+
+// 自定义帮助文本
+program.helpOption('-h, --help', texts.helpOption);
+program.helpCommand('help [command]', texts.helpCommand);
 
 // 添加检查未提交文件命令
 program
   .command('check')
-  .description('检查未提交的代码文件')
-  .option('-d, --detailed', '显示详细审查结果', false)
-  .option('-f, --format <format>', '输出格式 (text|json)', 'text')
-  .option('-m, --model <model>', '使用的模型', '')
-  .option('--focus <focus>', '审查重点 (性能|安全|可读性|最佳实践)', '')
-  .option('--exclude-extensions <extensions>', '排除的文件扩展名 (例如: .json,.md)', '.json')
+  .description(texts.checkCommand)
+  .option('-d, --detailed', texts.detailedOption, false)
+  .option('-f, --format <format>', texts.formatOption, 'text')
+  .option('-m, --model <model>', texts.modelOption, '')
+  .option('--focus <focus>', texts.focusOption, '')
+  .option('--exclude-extensions <extensions>', texts.excludeOption, '.json')
+  .option('-l, --language <language>', texts.languageOption, '')
   .action(async (options) => {
     // 读取配置
     const config = await readConfig();
@@ -39,19 +62,21 @@ program
       verbose: false,
       structured: options.format === 'json',
       excludeExtensions,
+      language: options.language || config.language,
     });
   });
 
 // 添加检查指定文件命令
 program
   .command('inspect')
-  .description('检查指定的代码文件')
-  .argument('<files...>', '文件路径列表')
-  .option('-d, --detailed', '显示详细审查结果', false)
-  .option('-f, --format <format>', '输出格式 (text|json)', 'text')
-  .option('-m, --model <model>', '使用的模型', '')
-  .option('--focus <focus>', '审查重点 (性能|安全|可读性|最佳实践)', '')
-  .option('--exclude-extensions <extensions>', '排除的文件扩展名 (例如: .json,.md)', '.json')
+  .description(texts.inspectCommand)
+  .argument('<files...>', texts.filesList)
+  .option('-d, --detailed', texts.detailedOption, false)
+  .option('-f, --format <format>', texts.formatOption, 'text')
+  .option('-m, --model <model>', texts.modelOption, '')
+  .option('--focus <focus>', texts.focusOption, '')
+  .option('--exclude-extensions <extensions>', texts.excludeOption, '.json')
+  .option('-l, --language <language>', texts.languageOption, '')
   .action(async (files, options) => {
     // 读取配置
     const config = await readConfig();
@@ -70,23 +95,51 @@ program
       verbose: false,
       structured: options.format === 'json',
       excludeExtensions,
+      language: options.language || config.language,
     });
   });
 
 // 添加配置管理命令
 program
   .command('config')
-  .description('管理配置')
-  .option('--init [location]', '初始化配置文件 (local|global)', 'local')
-  .option('--show', '显示当前配置')
+  .description(texts.configCommand)
+  .option('--init [location]', texts.initOption, 'local')
+  .option('--show', texts.showOption)
+  .option('-l, --language <language>', texts.languageOption, '')
   .action(async (options) => {
-    const result = await configCommand(options);
+    // 读取配置
+    const config = await readConfig();
+    const language = options.language || config.language;
+
+    const result = await configCommand({
+      ...options,
+      language,
+    });
 
     // 如果需要显示帮助，则找到config命令并显示帮助
     if (result.showHelp) {
       program.commands.find((cmd) => cmd.name() === 'config')?.help();
     }
   });
+
+// 解析命令行参数前打印标语
+const title = figlet.textSync('CARE', { font: 'Slant', horizontalLayout: 'fitted' });
+const titleLines = title.split('\n');
+const byAuthor = 'by qiushui7';
+
+if (titleLines.length > 0) {
+  const lastLineIndex = titleLines.length - 1;
+  for (let i = lastLineIndex; i >= 0; i--) {
+    if (titleLines[i].trim().length > 0) {
+      const padding = ' '.repeat(Math.max(2, 50 - titleLines[i].length));
+      titleLines[i] = titleLines[i] + padding + chalk.cyan.dim(byAuthor);
+      break;
+    }
+  }
+}
+
+console.log(chalk.cyan(titleLines.join('\n')));
+console.log(chalk.yellow(texts.programDescription + '\n'));
 
 // 解析命令行参数
 program.parse();

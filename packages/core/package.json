@@ -1,10 +1,15 @@
 {
   "name": "@t-care/core",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "description": "代码检查的核心功能模块",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/qiushui7/t-care.git",
+    "directory": "packages/core"
+  },
   "publishConfig": {
     "access": "public"
   },

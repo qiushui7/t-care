@@ -17,7 +17,6 @@ export const reviewCode = createTool({
   }),
   execute: async ({ context }) => {
     const { code, language, fileName, focus } = context;
-    console.log(`执行代码审查: ${fileName || '匿名代码'}, 语言: ${language}, 重点: ${focus}`);
 
     // 这里只是收集信息传递给Agent，实际审查逻辑由LLM完成
     return {

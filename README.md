@@ -1,5 +1,7 @@
 # Care 代码审查工具
 
+[中文](README.md) | [English](README_EN.md)
+
 这是一个基于AI的代码审查工具，可以自动检查代码质量、性能、安全性等问题，并提供改进建议。
 
 ## 功能
@@ -12,18 +14,10 @@
 
 ## 安装
 
-首先克隆仓库并安装依赖：
-
 ```bash
-pnpm install
-pnpm run build
-```
-
-然后链接全局命令：
-
-```bash
-cd packages/cli
-npm link  # 或使用 pnpm link --global
+npm i @t-care/cli -g //全局安装
+//或
+npm i @t-care/cli //局部安装通过npm调用
 ```
 
 ## 使用方法
@@ -69,6 +63,34 @@ care config --init global
 ```bash
 care config --show
 ```
+
+## 配置
+
+可以通过以下方式配置工具：
+
+1. 命令行参数：
+   ```
+   care check --language en  # 使用英文输出
+   care inspect file.js --language zh  # 使用中文输出
+   ```
+
+2. 配置文件：
+   在项目根目录或用户主目录创建 `.carerc.json` 文件：
+   ```json
+   {
+     "openaiKey": "your_openai_api_key_here",
+     "model": "gpt-4o-mini",
+     "detailed": false,
+     "focus": "all",
+     "excludeExtensions": [".json", ".md"],
+     "language": "zh"  // 设置为 "zh" (中文) 或 "en" (英文)
+   }
+   ```
+
+3. 创建默认配置：
+   ```
+   care config --init
+   ```
 
 ## 配置文件
 

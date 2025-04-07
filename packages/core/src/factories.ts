@@ -12,7 +12,7 @@ export function createGitCodeReviewService(
     detailed: true,
   }
 ) {
-  const { model, detailed = true, focus, excludeExtensions } = options;
+  const { model, detailed = true, focus, excludeExtensions, language } = options;
 
   return new GitCodeReviewService(
     {
@@ -20,6 +20,7 @@ export function createGitCodeReviewService(
       detailed,
       focus,
       includeCodeSnippets: true,
+      language,
     },
     excludeExtensions
   );

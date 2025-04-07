@@ -3,11 +3,20 @@
  */
 
 import { createGitCodeReviewService } from '@t-care/core';
-import { printError, printSuccess, printInfo, formatReviewResult, createSpinner, toJson, readConfig } from '../utils';
+import {
+  printError,
+  printSuccess,
+  printInfo,
+  formatReviewResult,
+  createSpinner,
+  toJson,
+  readConfig,
+  getLocalizedText,
+} from '../utils';
 import { CommandOptions, CommandResult } from '../types';
+import { Language } from '@t-care/utils';
 import fs from 'fs/promises';
 import path from 'path';
-import chalk from 'chalk';
 
 /**
  * 检查文件是否存在
@@ -30,15 +39,6 @@ async function fileExists(filePath: string): Promise<boolean> {
  */
 export async function inspectCommand(options: CommandOptions): Promise<CommandResult> {
   try {
-    // 验证文件参数
-    if (!options.files || options.files.length === 0) {
-      printError('请指定至少一个文件路径');
-      return { success: false, error: '未指定文件路径' };
-    }
-
-    const spinner = createSpinner('正在加载配置...');
-    spinner.start();
-
     // 读取配置文件
     const config = await readConfig();
 
@@ -46,15 +46,27 @@ export async function inspectCommand(options: CommandOptions): Promise<CommandRe
     const model = options.model || config.model;
     const detailed = options.detailed !== undefined ? options.detailed : config.detailed;
     const focus = options.focus || config.focus;
-    // 命令行选项优先于配置文件
+    const language = options.language || config.language;
     const excludeExtensions = options.excludeExtensions || config.excludeExtensions;
+
+    // 获取本地化文本
+    const texts = getLocalizedText(language as Language);
+
+    // 验证文件参数
+    if (!options.files || options.files.length === 0) {
+      printError(texts.noOperationSpecified, language as Language);
+      return { success: false, error: '未指定文件路径' };
+    }
+
+    const spinner = createSpinner(texts.loadingConfig);
+    spinner.start();
 
     // 设置环境变量
     if (config.openaiKey && !process.env.OPENAI_API_KEY) {
       process.env.OPENAI_API_KEY = config.openaiKey;
     }
 
-    spinner.text = `正在检查 ${options.files.length} 个文件...`;
+    spinner.text = texts.checkingSpecificFiles(options.files.length);
 
     // 验证文件存在
     const validFiles: string[] = [];
@@ -63,13 +75,13 @@ export async function inspectCommand(options: CommandOptions): Promise<CommandRe
       if (await fileExists(filePath)) {
         validFiles.push(filePath);
       } else {
-        spinner.warn(`文件不存在: ${file}`);
+        spinner.warn(texts.fileNotExist(file));
       }
     }
 
     if (validFiles.length === 0) {
-      spinner.fail('没有找到有效的文件');
-      return { success: false, error: '所有指定的文件都不存在' };
+      spinner.fail(texts.noValidFiles);
+      return { success: false, error: texts.allFilesNotExist };
     }
 
     // 创建代码审查服务
@@ -78,26 +90,35 @@ export async function inspectCommand(options: CommandOptions): Promise<CommandRe
       detailed,
       focus,
       excludeExtensions,
+      language,
     });
 
     // 执行检查
-    const results = await reviewService.inspectFiles(validFiles);
+    const results = await reviewService.inspectFiles(validFiles, {
+      model,
+      detailed,
+      focus,
+      language,
+    });
 
-    spinner.succeed('检查完成');
+    spinner.succeed(texts.checkCompleted);
 
     // 格式化并显示结果
     if (options.format === 'json') {
       console.log(toJson(results));
     } else {
       results.forEach((result) => {
-        console.log(formatReviewResult(result, detailed));
+        console.log(formatReviewResult(result, detailed, language as Language));
       });
     }
 
-    printSuccess(`共检查了 ${validFiles.length} 个文件`);
+    printSuccess(texts.totalChecked(validFiles.length), language as Language);
     return { success: true, data: results };
   } catch (error) {
-    printError(`检查文件失败: ${error instanceof Error ? error.message : String(error)}`);
+    const config = await readConfig();
+    const language = options.language || config.language;
+    const texts = getLocalizedText(language as Language);
+    printError(texts.inspectFailed(error instanceof Error ? error.message : String(error)), language as Language);
     return { success: false, error: String(error) };
   }
 }

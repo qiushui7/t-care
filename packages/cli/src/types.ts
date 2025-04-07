@@ -2,7 +2,7 @@
  * CLI类型定义
  */
 
-import { CLIOptions, FileChange } from '@t-care/utils';
+import { CLIOptions, Language } from '@t-care/utils';
 
 /**
  * 命令行选项，扩展自基础CLIOptions
@@ -24,6 +24,8 @@ export interface CommandOptions extends CLIOptions {
   init?: string | boolean;
   /** 显示配置 */
   show?: boolean;
+  /** 返回结果的语言 */
+  language?: Language;
 }
 
 /**

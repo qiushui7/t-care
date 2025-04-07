@@ -10,6 +10,7 @@ import fs from 'fs/promises';
 import os from 'os';
 import path from 'path';
 import { CodeReviewResult } from '@t-care/core';
+import { getLocalization, Language } from '@t-care/utils';
 
 /**
  * 默认配置
@@ -20,7 +21,17 @@ export const DEFAULT_CONFIG = {
   detailed: false,
   focus: 'all',
   excludeExtensions: ['.json'], // 默认排除JSON文件
+  language: 'zh', // 输出语言，支持zh(中文)或en(英文)
 };
+
+/**
+ * 获取本地化文本的简便方法
+ * 这是一个包装函数，统一使用cli子键下的本地化文本
+ * @param lang 语言代码
+ */
+export function getLocalizedText(lang: Language = 'zh') {
+  return getLocalization(lang).cli;
+}
 
 /**
  * 配置文件位置
@@ -82,48 +93,63 @@ export async function createDefaultConfig(configPath: string): Promise<void> {
           focus: 'all',
           /** 排除的文件扩展名 */
           excludeExtensions: ['.json'],
+          /** 输出语言 (zh: 中文, en: 英文) */
+          language: 'zh',
         },
         null,
         2
       )
     );
 
-    printSuccess(`已在 ${configPath} 创建默认配置文件`);
+    const config = await readConfig();
+    const texts = getLocalizedText(config.language as Language);
+    printSuccess(texts.configCreated(configPath), config.language as Language);
   } catch (error) {
-    printError(`无法创建配置文件: ${error instanceof Error ? error.message : String(error)}`);
+    const config = await readConfig();
+    const texts = getLocalizedText(config.language as Language);
+    printError(
+      texts.cannotCreateConfig(error instanceof Error ? error.message : String(error)),
+      config.language as Language
+    );
   }
 }
 
 /**
  * 打印错误信息
  * @param message 错误信息
+ * @param language 语言
  */
-export function printError(message: string): void {
-  console.error(`${chalk.red(figures.cross)} ${chalk.red('错误:')} ${message}`);
+export function printError(message: string, language: Language = 'zh'): void {
+  const texts = getLocalizedText(language);
+  console.error(`${chalk.red(figures.cross)} ${chalk.red(texts.error)} ${message}`);
 }
 
 /**
  * 打印成功信息
  * @param message 成功信息
+ * @param language 语言
  */
-export function printSuccess(message: string): void {
+export function printSuccess(message: string, language: Language = 'zh'): void {
   console.log(`${chalk.green(figures.tick)} ${message}`);
 }
 
 /**
  * 打印信息
  * @param message 信息内容
+ * @param language 语言
  */
-export function printInfo(message: string): void {
+export function printInfo(message: string, language: Language = 'zh'): void {
   console.log(`${chalk.blue(figures.info)} ${message}`);
 }
 
 /**
  * 打印警告信息
  * @param message 警告信息
+ * @param language 语言
  */
-export function printWarning(message: string): void {
-  console.warn(`${chalk.yellow(figures.warning)} ${chalk.yellow('警告:')} ${message}`);
+export function printWarning(message: string, language: Language = 'zh'): void {
+  const texts = getLocalizedText(language);
+  console.warn(`${chalk.yellow(figures.warning)} ${chalk.yellow(texts.warning)} ${message}`);
 }
 
 /**
@@ -143,32 +169,38 @@ export function createSpinner(text: string): ReturnType<typeof ora> {
  * 格式化审查结果
  * @param result 审查结果
  * @param detailed 是否显示详细信息
+ * @param language 语言
  * @returns 格式化后的文本
  */
-export function formatReviewResult(result: CodeReviewResult, detailed: boolean = false): string {
+export function formatReviewResult(
+  result: CodeReviewResult,
+  detailed: boolean = false,
+  language: Language = 'zh'
+): string {
   let output = '';
+  const texts = getLocalization(language).review;
 
   // 显示文件名
   if (result.fileName) {
-    output += chalk.bold.blue(`\n文件: ${result.fileName}`) + '\n';
+    output += chalk.bold.blue(`\n${texts.file}: ${result.fileName}`) + '\n';
   }
 
   if (result.issues && result.issues.length > 0) {
-    output += chalk.bold('\n问题:') + '\n';
+    output += chalk.bold(`\n${texts.issues}:`) + '\n';
     result.issues.forEach((issue, index) => {
       output += `${chalk.red(figures.pointer)} ${issue}\n`;
     });
   }
 
   if (result.suggestions && result.suggestions.length > 0) {
-    output += chalk.bold('\n建议:') + '\n';
+    output += chalk.bold(`\n${texts.suggestions}:`) + '\n';
     result.suggestions.forEach((suggestion, index) => {
       output += `${chalk.green(figures.pointer)} ${suggestion}\n`;
     });
   }
 
   if (result.summary) {
-    output += chalk.bold('\n总结:') + '\n';
+    output += chalk.bold(`\n${texts.summary}:`) + '\n';
     output += `${result.summary}\n`;
   }
 

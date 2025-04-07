@@ -9,6 +9,11 @@ export interface FileChange {
 }
 
 /**
+ * 支持的语言类型
+ */
+export type Language = 'zh' | 'en';
+
+/**
  * CLI选项
  */
 export interface CLIOptions {
@@ -18,6 +23,8 @@ export interface CLIOptions {
   structured: boolean;
   /** 审查重点 */
   focus: 'all' | 'performance' | 'security' | 'maintainability' | 'readability' | 'bestPractices';
+  /** 语言设置 */
+  language?: Language;
 }
 
 /**

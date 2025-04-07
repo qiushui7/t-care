@@ -33,6 +33,8 @@ export interface CodeReviewConfig {
   detailed?: boolean;
   model?: string;
   excludeExtensions?: string[];
+  /** 返回结果的语言 */
+  language?: string;
 }
 
 /**
@@ -80,6 +82,8 @@ export interface CodeInspectionOptions {
   focus?: string;
   maxSuggestions?: number;
   excludeExtensions?: string[];
+  /** 返回结果的语言 */
+  language?: string;
 }
 
 /**

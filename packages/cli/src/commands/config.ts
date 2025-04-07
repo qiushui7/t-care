@@ -2,8 +2,9 @@
  * 配置管理命令模块
  */
 
-import { printError, printSuccess, toJson, readConfig, createDefaultConfig } from '../utils';
+import { printError, printSuccess, toJson, readConfig, createDefaultConfig, getLocalizedText } from '../utils';
 import { CommandOptions, CommandResult } from '../types';
+import { Language } from '@t-care/utils';
 import path from 'path';
 import os from 'os';
 
@@ -14,29 +15,38 @@ import os from 'os';
  */
 export async function configCommand(options: CommandOptions): Promise<CommandResult> {
   try {
+    // 读取配置文件获取语言设置
+    const config = await readConfig();
+    const language = options.language || config.language;
+    const texts = getLocalizedText(language as Language);
+
     if (options.init) {
       const configPath =
         options.init === 'global' ? path.join(os.homedir(), '.carerc.json') : path.join(process.cwd(), '.carerc.json');
 
       await createDefaultConfig(configPath);
-      return { success: true, message: `配置文件已创建: ${configPath}` };
+      return { success: true, message: texts.configCreated(configPath) };
     }
 
     if (options.show) {
-      const config = await readConfig();
       console.log(toJson(config));
-      printSuccess('当前配置');
+      printSuccess(texts.currentConfig, language as Language);
       return { success: true, data: config };
     }
 
     // 如果没有指定选项，返回一个错误
     return {
       success: false,
-      error: '未指定操作，请使用 --init 或 --show 选项',
+      error: texts.noOperationSpecified,
       showHelp: true,
     };
   } catch (error) {
-    printError(`配置操作失败: ${error instanceof Error ? error.message : String(error)}`);
+    // 读取配置文件获取语言设置
+    const config = await readConfig();
+    const language = options.language || config.language;
+    const texts = getLocalizedText(language as Language);
+
+    printError(texts.configFailed(error instanceof Error ? error.message : String(error)), language as Language);
     return { success: false, error: String(error) };
   }
 }

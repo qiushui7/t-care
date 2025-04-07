@@ -1,4 +1,4 @@
-import { getUncommittedChanges } from '@t-care/utils';
+import { getUncommittedChanges, getLocalization, Language } from '@t-care/utils';
 import { createMastra, Mastra } from '@t-care/mastra';
 import {
   CodeInspectionOptions,
@@ -42,6 +42,8 @@ export class GitCodeReviewService implements CodeInspectionService {
    */
   async inspectCode(code: string, options?: Partial<CodeInspectionOptions>): Promise<CodeInspectionResult> {
     const mergedOptions = { ...this.defaultOptions, ...options };
+    const language = (mergedOptions.language || 'zh') as Language;
+    const texts = getLocalization(language);
 
     try {
       // 使用mastra的代码审查agent
@@ -65,9 +67,9 @@ ${code}
         timestamp: new Date().toISOString(),
       };
     } catch (error) {
-      console.error('代码审查失败:', error);
+      console.error(texts.review.errorReviewing, error);
       return {
-        suggestions: ['代码审查过程中出现错误'],
+        suggestions: [texts.review.errorReviewing],
         model: mergedOptions.model,
         timestamp: new Date().toISOString(),
         error: error instanceof Error ? error.message : String(error),
@@ -76,23 +78,46 @@ ${code}
   }
 
   /**
-   * 审查本地未提交的变更
+   * 审查未提交的本地变更
    * @param options 审查配置
    * @returns 审查结果数组
    */
   async inspectLocalChanges(options?: Partial<CodeReviewConfig>): Promise<CodeReviewResult[]> {
     try {
-      // 获取未提交的变更
-      const changes = await getUncommittedChanges();
-      return await this.reviewChanges(changes, options);
+      // 获取语言设置
+      const language = (options?.language || this.defaultOptions.language || 'zh') as Language;
+      const texts = getLocalization(language);
+
+      // 从工作目录获取未提交的变更
+      const changes = await getUncommittedChanges(undefined, language);
+
+      // 如果没有变更，返回一条消息
+      if (!changes.length) {
+        return [
+          {
+            issues: [],
+            suggestions: [],
+            summary: texts.git.noChanges,
+            fileName: '',
+          },
+        ];
+      }
+
+      // 将变更传递给reviewChanges方法进行审查
+      return this.reviewChanges(changes, options);
     } catch (error) {
-      console.error('审查本地变更失败:', error);
+      const language = (options?.language || this.defaultOptions.language || 'zh') as Language;
+      const texts = getLocalization(language);
+
+      console.error(texts.git.errorGetChanges, error);
+
+      // 返回错误结果
       return [
         {
-          issues: [`获取未提交变更时出错: ${error instanceof Error ? error.message : String(error)}`],
-          suggestions: ['请确保当前目录是一个Git仓库，并且有可审查的变更。'],
-          summary: '审查过程中出现错误',
-          fileName: '本地变更',
+          issues: [`${texts.git.errorGetChanges}: ${error instanceof Error ? error.message : String(error)}`],
+          suggestions: [texts.review.installGit],
+          summary: texts.review.errorReviewing,
+          fileName: '',
         },
       ];
     }
@@ -105,13 +130,16 @@ ${code}
    * @returns 审查结果数组
    */
   async inspectFiles(files: string[], options?: Partial<CodeReviewConfig>): Promise<CodeReviewResult[]> {
+    const language = (options?.language || this.defaultOptions.language || 'zh') as Language;
+    const texts = getLocalization(language);
+
     if (!files.length) {
       return [
         {
-          issues: ['未提供文件路径'],
-          suggestions: ['请提供至少一个文件路径进行审查'],
-          summary: '无可审查内容',
-          fileName: '无文件',
+          issues: [texts.review.noProvidedFiles],
+          suggestions: [texts.review.provideFiles],
+          summary: texts.review.noContent,
+          fileName: texts.review.noFile,
         },
       ];
     }
@@ -142,21 +170,21 @@ ${code}
         });
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : String(error);
-        console.error(`读取文件 ${filePath} 失败:`, error);
+        console.error(`${texts.git.readFileError} ${filePath}:`, error);
 
         // 添加错误结果
         if (errorMessage.includes('ENOENT')) {
           results.push({
-            issues: [`文件 ${filePath} 不存在`],
-            suggestions: ['请确认文件路径是否正确'],
-            summary: '文件不存在',
+            issues: [`${texts.review.fileNotExist}: ${filePath}`],
+            suggestions: [texts.review.verifyPath],
+            summary: texts.review.fileNotExist,
             fileName: filePath,
           });
         } else {
           results.push({
-            issues: [`读取文件 ${filePath} 时出错: ${errorMessage}`],
-            suggestions: ['请检查文件是否可读取，格式是否正确'],
-            summary: '读取文件过程中出现错误',
+            issues: [`${texts.git.readFileError} ${filePath}: ${errorMessage}`],
+            suggestions: [texts.review.checkReadable],
+            summary: texts.review.errorReadingFile,
             fileName: filePath,
           });
         }
@@ -174,8 +202,8 @@ ${code}
       results.push({
         issues: [],
         suggestions: [],
-        summary: `以下${excludedFiles.length}个文件被排除审查（JSON文件）: ${excludedFiles.join(', ')}`,
-        fileName: '被排除文件',
+        summary: `${texts.review.excludedFiles}: ${excludedFiles.length} ${texts.review.filesExcluded}: ${excludedFiles.join(', ')}`,
+        fileName: texts.review.excludedFiles,
       });
     }
 
@@ -199,16 +227,20 @@ ${code}
    * @returns 审查结果数组
    */
   private async reviewChanges(changes: FileChange[], options?: Partial<CodeReviewConfig>): Promise<CodeReviewResult[]> {
+    // 获取语言设置，优先使用选项中的设置，其次使用默认设置
+    const language = (options?.language || this.defaultOptions.language || 'zh') as Language;
+    const texts = getLocalization(language);
+
     // 过滤掉不需要审查的文件（如JSON文件）
     const filteredChanges = changes.filter((change) => !this.shouldExcludeFile(change.file));
 
     if (!filteredChanges.length) {
       return [
         {
-          issues: ['没有找到需要审查的变更'],
-          suggestions: ['请确保有未提交的变更，且不是被排除的文件类型（如JSON文件）。'],
-          summary: '无可审查内容',
-          fileName: '无文件',
+          issues: [texts.review.noProvidedFiles],
+          suggestions: [texts.review.provideFiles],
+          summary: texts.review.noContent,
+          fileName: texts.review.noFile,
         },
       ];
     }
@@ -218,12 +250,16 @@ ${code}
 
     for (const change of filteredChanges) {
       try {
-        // 不需要检查删除状态，依赖utils模块提供的变更
+        console.log('\n------------------------------------------');
+        console.log(`${texts.review.reviewingCode}: ${change.file}`);
+        if (options?.focus) {
+          console.log(`${texts.review.focus}: ${options.focus}`);
+        }
 
         const result = await agent.generate([
           {
             role: 'user',
-            content: `请审查以下${options?.detailed ? '（需要详细分析）' : ''}代码文件 ${change.file}：
+            content: `请审查以下代码：
               
 \`\`\`
 ${change.content}
@@ -236,7 +272,8 @@ ${options?.focus ? `请特别关注: ${options.focus}` : ''}
 2. 改进建议
 3. 优点和良好实践
 4. 简要总结
-`,
+
+请使用${language === 'en' ? '英文' : '中文'}回复。`,
           },
         ]);
 
@@ -250,18 +287,35 @@ ${options?.focus ? `请特别关注: ${options.focus}` : ''}
 
         let currentSection = '';
         for (const line of lines) {
-          if (line.includes('问题') || line.includes('缺陷')) {
-            currentSection = 'issues';
-            continue;
-          } else if (line.includes('建议') || line.includes('改进')) {
-            currentSection = 'suggestions';
-            continue;
-          } else if (line.includes('总结') || line.includes('总体')) {
-            currentSection = 'summary';
-            continue;
-          } else if (line.includes('优点') || line.includes('良好实践')) {
-            currentSection = 'strengths';
-            continue;
+          // 根据语言识别不同的分节标题
+          if (language === 'en') {
+            if (line.includes('Issue') || line.includes('Problem') || line.includes('Defect')) {
+              currentSection = 'issues';
+              continue;
+            } else if (line.includes('Suggestion') || line.includes('Improvement')) {
+              currentSection = 'suggestions';
+              continue;
+            } else if (line.includes('Summary') || line.includes('Overall')) {
+              currentSection = 'summary';
+              continue;
+            } else if (line.includes('Strength') || line.includes('Good Practice') || line.includes('Advantage')) {
+              currentSection = 'strengths';
+              continue;
+            }
+          } else {
+            if (line.includes('问题') || line.includes('缺陷')) {
+              currentSection = 'issues';
+              continue;
+            } else if (line.includes('建议') || line.includes('改进')) {
+              currentSection = 'suggestions';
+              continue;
+            } else if (line.includes('总结') || line.includes('总体')) {
+              currentSection = 'summary';
+              continue;
+            } else if (line.includes('优点') || line.includes('良好实践')) {
+              currentSection = 'strengths';
+              continue;
+            }
           }
 
           if (currentSection === 'issues') {
@@ -274,17 +328,19 @@ ${options?.focus ? `请特别关注: ${options.focus}` : ''}
         }
 
         results.push({
-          issues: issues.length ? issues : ['未发现明显问题'],
-          suggestions: suggestions.length ? suggestions : ['无具体改进建议'],
-          summary: summary || '代码质量良好',
+          issues: issues.length ? issues : [texts.review.noIssues],
+          suggestions: suggestions.length ? suggestions : [texts.review.noSuggestions],
+          summary: summary || texts.review.goodQuality,
           fileName: change.file,
         });
       } catch (error) {
-        console.error(`审查文件 ${change.file} 失败:`, error);
+        const errorMsg = `${texts.review.errorReviewing} ${change.file}: ${error instanceof Error ? error.message : String(error)}`;
+
+        console.error(errorMsg);
         results.push({
-          issues: [`审查文件 ${change.file} 时出错: ${error instanceof Error ? error.message : String(error)}`],
-          suggestions: ['请尝试单独审查此文件。'],
-          summary: '审查过程中出现错误',
+          issues: [errorMsg],
+          suggestions: [texts.review.reviewSeparately],
+          summary: texts.review.errorReviewing,
           fileName: change.file,
         });
       }

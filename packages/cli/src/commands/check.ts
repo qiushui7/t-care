@@ -3,8 +3,18 @@
  */
 
 import { createGitCodeReviewService } from '@t-care/core';
-import { printError, printSuccess, printInfo, formatReviewResult, createSpinner, toJson, readConfig } from '../utils';
+import {
+  printError,
+  printSuccess,
+  printInfo,
+  formatReviewResult,
+  createSpinner,
+  toJson,
+  readConfig,
+  getLocalizedText,
+} from '../utils';
 import { CommandOptions, CommandResult } from '../types';
+import { Language } from '@t-care/utils';
 
 /**
  * 检查未提交文件
@@ -13,9 +23,6 @@ import { CommandOptions, CommandResult } from '../types';
  */
 export async function checkCommand(options: CommandOptions): Promise<CommandResult> {
   try {
-    const spinner = createSpinner('正在加载配置...');
-    spinner.start();
-
     // 读取配置文件
     const config = await readConfig();
 
@@ -23,15 +30,21 @@ export async function checkCommand(options: CommandOptions): Promise<CommandResu
     const model = options.model || config.model;
     const detailed = options.detailed !== undefined ? options.detailed : config.detailed;
     const focus = options.focus || config.focus;
-    // 命令行选项优先于配置文件
+    const language = options.language || config.language;
     const excludeExtensions = options.excludeExtensions || config.excludeExtensions;
+
+    // 获取本地化文本
+    const texts = getLocalizedText(language as Language);
+
+    const spinner = createSpinner(texts.loadingConfig);
+    spinner.start();
 
     // 设置环境变量
     if (config.openaiKey && !process.env.OPENAI_API_KEY) {
       process.env.OPENAI_API_KEY = config.openaiKey;
     }
 
-    spinner.text = '正在检查未提交的文件...';
+    spinner.text = texts.checkingFiles;
 
     // 创建代码审查服务
     const reviewService = createGitCodeReviewService({
@@ -39,15 +52,21 @@ export async function checkCommand(options: CommandOptions): Promise<CommandResu
       detailed,
       focus,
       excludeExtensions,
+      language,
     });
 
     // 执行检查
-    const results = await reviewService.inspectLocalChanges();
+    const results = await reviewService.inspectLocalChanges({
+      model,
+      detailed,
+      focus,
+      language,
+    });
 
-    spinner.succeed('检查完成');
+    spinner.succeed(texts.checkCompleted);
 
     if (results.length === 0) {
-      printInfo('没有找到需要检查的未提交文件');
+      printInfo(texts.noUncommittedFiles, language as Language);
       return { success: true, data: [] };
     }
 
@@ -56,14 +75,17 @@ export async function checkCommand(options: CommandOptions): Promise<CommandResu
       console.log(toJson(results));
     } else {
       results.forEach((result) => {
-        console.log(formatReviewResult(result, detailed));
+        console.log(formatReviewResult(result, detailed, language as Language));
       });
     }
 
-    printSuccess(`共检查了 ${results.length} 个文件`);
+    printSuccess(texts.totalChecked(results.length), language as Language);
     return { success: true, data: results };
   } catch (error) {
-    printError(`检查未提交文件失败: ${error instanceof Error ? error.message : String(error)}`);
+    const config = await readConfig();
+    const language = options.language || config.language;
+    const texts = getLocalizedText(language as Language);
+    printError(texts.checkFailed(error instanceof Error ? error.message : String(error)), language as Language);
     return { success: false, error: String(error) };
   }
 }
