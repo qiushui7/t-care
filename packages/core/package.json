@@ -23,7 +23,8 @@
   "packageManager": "pnpm@10.7.0",
   "dependencies": {
     "@t-care/utils": "workspace:*",
-    "@t-care/mastra": "workspace:*"
+    "@t-care/mastra": "workspace:*",
+    "@t-care/deps-analysis": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^20.11.30",

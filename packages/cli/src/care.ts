@@ -7,7 +7,7 @@
 import { Command } from 'commander';
 import figlet from 'figlet';
 import chalk from 'chalk';
-import { checkCommand, inspectCommand, configCommand } from './commands/index.js';
+import { checkCommand, inspectCommand, configCommand, depsAnalysisCommand } from './commands/index.js';
 import { readConfig, getLocalizedText } from './utils.js';
 import { Language } from '@t-care/utils';
 // 导入包信息获取版本号
@@ -122,6 +122,14 @@ program
     }
   });
 
+// 添加依赖分析命令
+program
+  .command('deps-analysis')
+  .description(texts.depsAnalysisCommand)
+  .action(async () => {
+    await depsAnalysisCommand();
+  });
+
 // 解析命令行参数前打印标语
 const title = figlet.textSync('CARE', { font: 'Slant', horizontalLayout: 'fitted' });
 const titleLines = title.split('\n');
@@ -147,4 +155,4 @@ program.parse();
 /**
  * 主要导出，用于直接在JS/TS代码中使用CLI功能
  */
-export { checkCommand, inspectCommand, configCommand };
+export { checkCommand, inspectCommand, configCommand, depsAnalysisCommand };

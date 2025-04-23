@@ -66,6 +66,7 @@ export const en = {
     checkCommand: 'Check uncommitted code files',
     inspectCommand: 'Inspect specified code files',
     configCommand: 'Manage configuration',
+    depsAnalysisCommand: 'Dependency analysis',
     filesList: 'List of file paths',
     // Option descriptions
     detailedOption: 'Show detailed review results',

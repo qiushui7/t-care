@@ -13,7 +13,7 @@
     "care": "./packages/cli/dist/care.js"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "pnpm run build --watch",
     "commit": "cz",
     "changeset": "changeset",
     "version": "changeset version",

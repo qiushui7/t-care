@@ -66,6 +66,7 @@ export const zh = {
     checkCommand: '检查未提交的代码文件',
     inspectCommand: '检查指定的代码文件',
     configCommand: '管理配置',
+    depsAnalysisCommand: '依赖分析',
     filesList: '文件路径列表',
     // 选项描述
     detailedOption: '显示详细审查结果',

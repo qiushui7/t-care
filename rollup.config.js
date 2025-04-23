@@ -17,7 +17,7 @@ const __dirname = path.dirname(__filename);
  * @returns {string[]} 包名列表
  */
 const getPackages = () => {
-  return ['utils', 'core', 'mastra', 'cli'];
+  return ['utils', 'core', 'mastra', 'cli', 'deps-analysis'];
 };
 
 /**

@@ -5,3 +5,4 @@
 export * from './check';
 export * from './inspect';
 export * from './config';
+export * from './deps-analysis';

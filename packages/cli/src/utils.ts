@@ -22,8 +22,14 @@ export const DEFAULT_CONFIG = {
   focus: 'all',
   excludeExtensions: ['.json'], // 默认排除JSON文件
   language: 'zh', // 输出语言，支持zh(中文)或en(英文)
+  depsAnalysis: {
+    scanSource: [],
+    analysisTarget: [],
+    blackList: [],
+    browserApis: [],
+    isScanVue: false,
+  },
 };
-
 /**
  * 获取本地化文本的简便方法
  * 这是一个包装函数，统一使用cli子键下的本地化文本
@@ -95,6 +101,19 @@ export async function createDefaultConfig(configPath: string): Promise<void> {
           excludeExtensions: ['.json'],
           /** 输出语言 (zh: 中文, en: 英文) */
           language: 'zh',
+          /** 依赖分析配置 */
+          depsAnalysis: {
+            /** 扫描源 */
+            scanSource: [],
+            /** 分析目标 */
+            analysisTarget: [],
+            /** 黑名单 */
+            blackList: [],
+            /** 浏览器API */
+            browserApis: [],
+            /** 是否扫描Vue */
+            isScanVue: false,
+          },
         },
         null,
         2

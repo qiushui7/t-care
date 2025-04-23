@@ -22,9 +22,10 @@
   "license": "ISC",
   "packageManager": "pnpm@10.7.0",
   "dependencies": {
-    "simple-git": "^3.23.0",
+    "@vue/compiler-dom": "^3.5.13",
     "fs-extra": "^11.2.0",
-    "chalk": "^4.1.2"
+    "glob": "^11.0.1",
+    "simple-git": "^3.23.0"
   },
   "files": [
     "dist",
