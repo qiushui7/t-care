@@ -1,5 +1,3 @@
-import * as ts from 'typescript';
-
 /**
  * 创建或更新调用记录
  *

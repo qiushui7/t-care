@@ -103,7 +103,7 @@ program
 program
   .command('config')
   .description(texts.configCommand)
-  .option('--init [location]', texts.initOption, 'local')
+  .option('--init [location]', texts.initOption)
   .option('--show', texts.showOption)
   .option('-l, --language <language>', texts.languageOption, '')
   .action(async (options) => {

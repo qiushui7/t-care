@@ -43,11 +43,46 @@ export function getLocalizedText(lang: Language = 'zh') {
  * 配置文件位置
  */
 export const CONFIG_PATHS = [
-  path.join(process.cwd(), '.carerc.json'),
-  path.join(process.cwd(), '.care', 'config.json'),
-  path.join(os.homedir(), '.carerc.json'),
-  path.join(os.homedir(), '.care', 'config.json'),
+  path.join(process.cwd(), '.carerc.js'),
+  path.join(process.cwd(), '.care', 'config.js'),
+  path.join(os.homedir(), '.carerc.js'),
+  path.join(os.homedir(), '.care', 'config.js'),
 ];
+
+/**
+ * 导入JavaScript配置文件
+ * @param configPath 配置文件路径
+ * @returns 配置对象
+ */
+export async function importJsConfig(configPath: string): Promise<any> {
+  try {
+    // 检查文件是否存在
+    try {
+      await fs.access(configPath);
+    } catch {
+      throw new Error(`配置文件不存在: ${configPath}`);
+    }
+
+    // 确保是JavaScript文件
+    if (!configPath.endsWith('.js')) {
+      throw new Error(`不支持的配置文件格式: ${configPath}，只支持JavaScript格式(.js)`);
+    }
+
+    // 使用ESM动态导入JavaScript文件
+    try {
+      // 将路径转换为URL格式以支持ESM导入
+      const fileUrl = `file://${configPath}`;
+      const module = await import(fileUrl);
+      return module.default || module;
+    } catch (importError) {
+      throw new Error(
+        `导入JS配置文件失败: ${importError instanceof Error ? importError.message : String(importError)}`
+      );
+    }
+  } catch (error) {
+    throw new Error(`导入JS配置文件失败: ${error instanceof Error ? error.message : String(error)}`);
+  }
+}
 
 /**
  * 读取配置文件
@@ -64,9 +99,7 @@ export async function readConfig(): Promise<typeof DEFAULT_CONFIG> {
   // 按顺序检查配置文件是否存在
   for (const configPath of CONFIG_PATHS) {
     try {
-      const fileContent = await fs.readFile(configPath, 'utf-8');
-      const fileConfig = JSON.parse(fileContent);
-
+      const fileConfig = await importJsConfig(configPath);
       config = { ...config, ...fileConfig };
       break;
     } catch (error) {
@@ -88,41 +121,74 @@ export async function createDefaultConfig(configPath: string): Promise<void> {
     const dir = path.dirname(configPath);
     await fs.mkdir(dir, { recursive: true });
 
-    // 写入默认配置
-    await fs.writeFile(
-      configPath,
-      JSON.stringify(
-        {
-          openaiKey: 'your_openai_api_key_here',
-          model: 'gpt-4o-mini',
-          detailed: false,
-          focus: 'all',
-          /** 排除的文件扩展名 */
-          excludeExtensions: ['.json'],
-          /** 输出语言 (zh: 中文, en: 英文) */
-          language: 'zh',
-          /** 依赖分析配置 */
-          depsAnalysis: {
-            /** 扫描源 */
-            scanSource: [],
-            /** 分析目标 */
-            analysisTarget: [],
-            /** 黑名单 */
-            blackList: [],
-            /** 浏览器API */
-            browserApis: [],
-            /** 是否扫描Vue */
-            isScanVue: false,
-          },
-        },
-        null,
-        2
-      )
+    // 获取模板文件路径
+    const templatePath = path.resolve(
+      path.dirname(new URL(import.meta.url).pathname),
+      '../templates/carerc.js.template'
     );
 
-    const config = await readConfig();
-    const texts = getLocalizedText(config.language as Language);
-    printSuccess(texts.configCreated(configPath), config.language as Language);
+    try {
+      // 读取模板文件内容
+      const templateContent = await fs.readFile(templatePath, 'utf-8');
+
+      // 写入配置文件
+      await fs.writeFile(configPath, templateContent);
+
+      const config = await readConfig();
+      const texts = getLocalizedText(config.language as Language);
+      printSuccess(texts.configCreated(configPath), config.language as Language);
+    } catch (templateError) {
+      // 如果无法读取模板文件，使用默认内容
+      printWarning(
+        `无法读取模板文件: ${templateError instanceof Error ? templateError.message : String(templateError)}`
+      );
+
+      const defaultJsContent = `
+/**
+ * Care Configuration File
+ */
+module.exports = {
+  openaiKey: 'your_openai_api_key_here',
+  model: 'gpt-4o-mini',
+  detailed: false,
+  focus: 'all',
+  // Excluded file extensions
+  excludeExtensions: ['.json'],
+  // Output language (zh: Chinese, en: English)
+  language: 'zh',
+  // Dependency analysis configuration
+  depsAnalysis: {
+    // Scan sources
+    scanSource: [
+      {
+        name: 'Default Project',
+        include: ['src'],
+        exclude: ['**/node_modules/**'],
+        httpRepo: '',
+        format: (str) => {
+          return str.replace('Default Project', 'Your Project Name');
+        },
+        packageJsonPath: './package.json',
+        tsConfigPath: './tsconfig.json',
+      }
+    ],
+    // Analysis targets
+    analysisTarget: [],
+    // Blacklist
+    blackList: [],
+    // Browser APIs
+    browserApis: [],
+    // Whether to scan Vue files
+    isScanVue: false,
+  },
+};
+`;
+      await fs.writeFile(configPath, defaultJsContent);
+
+      const config = await readConfig();
+      const texts = getLocalizedText(config.language as Language);
+      printSuccess(texts.configCreated(configPath), config.language as Language);
+    }
   } catch (error) {
     const config = await readConfig();
     const texts = getLocalizedText(config.language as Language);

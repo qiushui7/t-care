@@ -75,7 +75,7 @@ export const zh = {
     focusOption: '审查重点 (性能|安全|可读性|最佳实践)',
     excludeOption: '排除的文件扩展名 (例如: .json,.md)',
     languageOption: '输出语言，支持中文(zh)或英文(en)，也可在配置文件中设置',
-    initOption: '初始化配置文件 (local|global)',
+    initOption: '初始化配置文件 (local|global) - 仅支持JavaScript格式',
     showOption: '显示当前配置',
   },
 };

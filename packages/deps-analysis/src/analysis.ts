@@ -1,29 +1,12 @@
 import * as ts from 'typescript';
 import { scanFileVue, scanFileTs, parseVue, parseTs, parseTsConfig, parsePackageJson } from '@t-care/utils';
 import { CODEFILETYPE } from './constant';
-import {
-  ScanSource,
-  AnalysisConfig,
-  AnalysisPlugin,
-  AnalysisPluginCreator,
-  DepsAnalysisOptions,
-  DiagnosisInfo,
-} from './types';
+import { ScanSource, AnalysisPlugin, AnalysisPluginCreator, DepsAnalysisOptions, DiagnosisInfo } from './types';
 import { methodPlugin } from './plugins/methodPlugin';
 import { typePlugin } from './plugins/typePlugin';
 import { defaultPlugin } from './plugins/defaultPlugin';
 import { browserPlugin } from './plugins/browserPlugin';
 import path from 'path';
-
-export const DEFAULT_CONFIG: AnalysisConfig = {
-  projectPath: process.cwd(),
-  outputDir: './analysis-output',
-  excludePatterns: ['node_modules', 'dist', '.git'],
-  includePrivate: false,
-  maxDepth: 3,
-  reportTitle: 'Dependencies Analysis Report',
-  language: 'zh',
-};
 
 // EntryObject接口定义
 interface EntryObject {
@@ -131,13 +114,16 @@ export class DepsAnalysis {
   // 目标依赖安装版本收集
   _targetVersionCollect(scanSource: ScanSource[]) {
     scanSource.forEach((item) => {
-      if (item.packageFile && item.packageFile != '') {
+      if (item.packageJsonPath && item.packageJsonPath != '') {
         try {
-          const lockInfo = parsePackageJson(item.packageFile);
-          // console.log(lockInfo);
+          const lockInfo = parsePackageJson(item.packageJsonPath);
+          console.log(lockInfo);
           const temp = Object.keys(lockInfo.dependencies).concat(Object.keys(lockInfo.devDependencies));
           if (temp.length > 0) {
             temp.forEach((element) => {
+              if (!this.versionMap[item.name]) {
+                this.versionMap[item.name] = {};
+              }
               this.versionMap[item.name][element] = lockInfo.dependencies[element];
             });
           }
@@ -157,7 +143,15 @@ export class DepsAnalysis {
         const mapName = item.mapName;
         Object.keys(this[mapName]).forEach((depName) => {
           Object.keys(this[mapName][depName]).forEach((apiName) => {
-            if (this._blackList.length > 0 && this._blackList.includes(apiName)) {
+            let trueApiName = apiName;
+            const originInfo = this[mapName][depName][apiName];
+            if (originInfo.callOrigin) {
+              // 只有在存在callOrigin时才进行处理
+              const [firstPart, ...restParts] = apiName.split('.');
+              // 使用callOrigin替换第一部分，保持其余部分不变
+              trueApiName = [originInfo.callOrigin, ...restParts].join('.');
+            }
+            if (this._blackList.length > 0 && this._blackList.includes(trueApiName)) {
               // 标记黑名单
               this[mapName][depName][apiName].isBlack = true;
             }
@@ -172,6 +166,7 @@ export class DepsAnalysis {
     // console.log(entrys);
     for (const item of entrys) {
       const tsConfig = parseTsConfig(item.tsConfigPath);
+      console.log(tsConfig);
       const parseFiles = item.parse;
       if (parseFiles.length > 0) {
         for (let eIndex = 0; eIndex < parseFiles.length; eIndex++) {
@@ -240,18 +235,19 @@ export class DepsAnalysis {
         tsConfigPath,
       };
 
-      const scanPath = item.path;
+      const includePaths = item.include;
+      const excludePaths = item.exclude || [];
 
-      for (const sitem of scanPath) {
+      for (const sitem of includePaths) {
         // 根据文件类型进行扫描
         let tempEntry: string[] = [];
 
         if (type === CODEFILETYPE.VUE) {
           // 异步获取Vue文件列表
-          tempEntry = await scanFileVue(sitem);
+          tempEntry = await scanFileVue(sitem, excludePaths);
         } else if (type === CODEFILETYPE.TS) {
           // 异步获取TS文件列表
-          tempEntry = await scanFileTs(sitem);
+          tempEntry = await scanFileTs(sitem, excludePaths);
         }
 
         // 格式化路径
@@ -440,51 +436,48 @@ export class DepsAnalysis {
 
         const depName = Object.keys(importItems).find((key) => Object.keys(importItems[key]).includes(node.text)) || '';
 
-        if (!depName) return;
+        if (depName) {
+          const matchImportItem = importItems[depName][node.text];
 
-        const matchImportItem = importItems[depName][node.text];
+          if (node.pos !== matchImportItem.identifierPos && node.end !== matchImportItem.identifierEnd) {
+            // 排除importItem Node自身
 
-        if (node.pos !== matchImportItem.identifierPos && node.end !== matchImportItem.identifierEnd) {
-          // 排除importItem Node自身
+            const symbol = checker.getSymbolAtLocation(node);
 
-          const symbol = checker.getSymbolAtLocation(node);
+            if (symbol && symbol.declarations && symbol.declarations.length > 0) {
+              // 存在上下文声明
+              const nodeSymbol = symbol.declarations[0];
 
-          if (symbol && symbol.declarations && symbol.declarations.length > 0) {
-            // 存在上下文声明
-            const nodeSymbol = symbol.declarations[0];
-
-            if (matchImportItem.symbolPos === nodeSymbol.pos && matchImportItem.symbolEnd === nodeSymbol.end) {
-              // 上下文声明与import item匹配, 符合API调用
-
-              if (node.parent) {
-                const { baseNode, depth, apiName } = that._checkPropertyAccess(node);
-                that._runAnalysisPlugins(
-                  ts,
-                  baseNode,
-                  depth,
-                  depName,
-                  apiName,
-                  matchImportItem,
-                  filePath,
-                  projectName,
-                  httpRepo,
-                  line
-                );
+              if (matchImportItem.symbolPos === nodeSymbol.pos && matchImportItem.symbolEnd === nodeSymbol.end) {
+                // 上下文声明与import item匹配, 符合API调用
+                if (node.parent) {
+                  const { baseNode, depth, apiName } = that._checkPropertyAccess(node);
+                  that._runAnalysisPlugins(
+                    ts,
+                    baseNode,
+                    depth,
+                    depName,
+                    apiName,
+                    matchImportItem,
+                    filePath,
+                    projectName,
+                    httpRepo,
+                    line
+                  );
+                } else {
+                  // Identifier节点如果没有parent属性，说明AST节点语义异常，不存在分析意义
+                }
               } else {
-                // Identifier节点如果没有parent属性，说明AST节点语义异常，不存在分析意义
+                // 上下文非importItem API但与其同名的Identifier节点
               }
-            } else {
-              // 上下文非importItem API但与其同名的Identifier节点
             }
           }
         }
       }
-
       // browser analysis
       if (ts.isIdentifier(node) && node.text && that._browserApis.length > 0 && that._browserApis.includes(node.text)) {
         // 命中Browser Api Item Name
         const symbol = checker.getSymbolAtLocation(node);
-
         if (symbol && symbol.declarations) {
           if (
             symbol.declarations.length > 1 ||
@@ -493,20 +486,15 @@ export class DepsAnalysis {
             // 在AST中找不到上下文声明，证明是Bom,Dom对象
             const { baseNode, depth, apiName } = that._checkPropertyAccess(node);
 
-            if (node.parent && ts.isPropertyAccessExpression(node.parent)) {
-              // 检查是否是作为属性的场景
-              const propertyAccess = node.parent as ts.PropertyAccessExpression;
-              if (
-                !(
-                  depth > 0 &&
-                  propertyAccess.name &&
-                  propertyAccess.name.pos === node.pos &&
-                  propertyAccess.name.end === node.end
-                )
-              ) {
-                that._runBrowserPlugins(ts, baseNode, depth, apiName, filePath, projectName, httpRepo, line);
-              }
-            } else {
+            const propertyAccess = node.parent as ts.PropertyAccessExpression;
+            if (
+              !(
+                depth > 0 &&
+                propertyAccess.name &&
+                propertyAccess.name.pos === node.pos &&
+                propertyAccess.name.end === node.end
+              )
+            ) {
               that._runBrowserPlugins(ts, baseNode, depth, apiName, filePath, projectName, httpRepo, line);
             }
           }

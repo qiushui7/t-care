@@ -21,8 +21,10 @@ export async function configCommand(options: CommandOptions): Promise<CommandRes
     const texts = getLocalizedText(language as Language);
 
     if (options.init) {
-      const configPath =
-        options.init === 'global' ? path.join(os.homedir(), '.carerc.json') : path.join(process.cwd(), '.carerc.json');
+      // 只支持 JavaScript 格式
+      const isGlobal = options.init === 'global';
+      const baseDir = isGlobal ? os.homedir() : process.cwd();
+      const configPath = path.join(baseDir, '.carerc.js');
 
       await createDefaultConfig(configPath);
       return { success: true, message: texts.configCreated(configPath) };

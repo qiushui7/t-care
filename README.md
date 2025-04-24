@@ -74,44 +74,51 @@ care config --show
    care inspect file.js --language zh  # 使用中文输出
    ```
 
-2. 配置文件：
-   在项目根目录或用户主目录创建 `.carerc.json` 文件：
-   ```json
-   {
-     "openaiKey": "your_openai_api_key_here",
-     "model": "gpt-4o-mini",
-     "detailed": false,
-     "focus": "all",
-     "excludeExtensions": [".json", ".md"],
-     "language": "zh"  // 设置为 "zh" (中文) 或 "en" (英文)
-   }
-   ```
-
-3. 创建默认配置：
+2. 创建默认配置：
    ```
    care config --init
    ```
 
 ## 配置文件
 
-配置文件支持以下位置（按优先级排序）：
+配置文件采用JavaScript格式，支持以下位置（按优先级排序）：
 
-1. 项目目录下的 `.carerc.json`
-2. 项目目录下的 `.care/config.json`
-3. 用户主目录下的 `.carerc.json`
-4. 用户主目录下的 `.care/config.json`
+1. 项目目录下的 `.carerc.js` (JavaScript格式)
+2. 项目目录下的 `.care/config.js` (JavaScript格式)
+3. 用户主目录下的 `.carerc.js` (JavaScript格式)
+4. 用户主目录下的 `.care/config.js` (JavaScript格式)
 
-配置文件示例：
+### JavaScript配置文件示例 (.carerc.js)
 
-```json
-{
-  "openaiKey": "your_api_key_here",
-  "model": "gpt-4o-mini",
-  "detailed": false,
-  "focus": "all"
-}
+```javascript
+module.exports = {
+  openaiKey: 'your_api_key_here',
+  model: 'gpt-4o-mini',
+  detailed: false,
+  focus: 'all',
+  excludeExtensions: ['.json', '.md'],
+  language: 'zh',
+  depsAnalysis: {
+    scanSource: [
+      {
+        name: '默认项目',
+        include: ['src'],
+        exclude: ['**/node_modules/**'],
+        httpRepo: 'https://github.com/yourusername/yourrepo',
+        format: (str) => {
+          return str.replace('Default Project', 'Your Project Name');
+        },
+        packageJsonPath: './package.json',
+        tsConfigPath: './tsconfig.json',
+      }
+    ],
+    analysisTarget: ['lodash', 'react', 'axios'],
+    blackList: ['@types/*'],
+    browserApis: ['localStorage', 'sessionStorage', 'navigator', 'document'],
+    isScanVue: false,
+  }
+};
 ```
-
 环境变量设置（可选，优先于配置文件）：
 
 ```bash
@@ -136,15 +143,15 @@ care/
 ### 构建
 
 ```bash
-pnpm run build
+pnpm build
 ```
 
-### 测试
+### 开发
 
 ```bash
-pnpm test
+pnpm dev
 ```
 
 ## 许可证
 
-ISC 
+ISC

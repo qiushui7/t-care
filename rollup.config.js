@@ -21,28 +21,6 @@ const getPackages = () => {
 };
 
 /**
- * 读取包的依赖
- * @param {string} pkg 包名
- * @returns {{dependencies: string[], peerDependencies: string[]}} 依赖列表
- */
-const getDependencies = (pkg) => {
-  const pkgJsonPath = path.resolve(__dirname, `packages/${pkg}/package.json`);
-  let pkgJson;
-
-  try {
-    pkgJson = JSON.parse(readFileSync(pkgJsonPath, 'utf-8'));
-  } catch (e) {
-    console.error(`无法读取包 ${pkg} 的package.json:`, e);
-    return { dependencies: [], peerDependencies: [] };
-  }
-
-  return {
-    dependencies: Object.keys(pkgJson.dependencies || {}),
-    peerDependencies: Object.keys(pkgJson.peerDependencies || {}),
-  };
-};
-
-/**
  * 创建包的配置
  * @param {string} pkg 包名
  * @returns {import('rollup').RollupOptions[]} Rollup配置
