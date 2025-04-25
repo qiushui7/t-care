@@ -1,6 +1,6 @@
 {
   "name": "@t-care/utils",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "工具函数库，提供获取本地代码等功能",
   "type": "module",
   "main": "dist/index.js",
@@ -25,7 +25,8 @@
     "@vue/compiler-dom": "^3.5.13",
     "fs-extra": "^11.2.0",
     "glob": "^11.0.1",
-    "simple-git": "^3.23.0"
+    "simple-git": "^3.23.0",
+    "typescript": "^5.8.3"
   },
   "files": [
     "dist",

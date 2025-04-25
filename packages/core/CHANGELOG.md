@@ -1,5 +1,13 @@
 # @care/core
 
+## 1.3.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @t-care/deps-analysis@1.0.1
+  - @t-care/utils@1.2.2
+
 ## 1.3.0
 
 ### Minor Changes

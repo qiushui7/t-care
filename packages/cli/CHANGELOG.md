@@ -1,5 +1,22 @@
 # @care/cli
 
+## 1.3.2
+
+### Patch Changes
+
+- fix ghost denpendency
+- Updated dependencies
+  - @t-care/deps-analysis@1.0.1
+  - @t-care/deps-display@1.0.2
+  - @t-care/utils@1.2.2
+  - @t-care/core@1.3.1
+
+## 1.3.1
+
+### Patch Changes
+
+- fix not upload templates
+
 ## 1.3.0
 
 ### Minor Changes

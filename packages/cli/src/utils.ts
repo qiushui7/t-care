@@ -104,6 +104,7 @@ export async function readConfig(): Promise<typeof DEFAULT_CONFIG> {
       break;
     } catch (error) {
       // 如果文件不存在或格式不正确，继续检查下一个位置
+      console.log(error);
       continue;
     }
   }
@@ -147,7 +148,7 @@ export async function createDefaultConfig(configPath: string): Promise<void> {
 /**
  * Care Configuration File
  */
-module.exports = {
+export default {
   openaiKey: 'your_openai_api_key_here',
   model: 'gpt-4o-mini',
   detailed: false,

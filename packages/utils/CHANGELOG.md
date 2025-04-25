@@ -1,5 +1,11 @@
 # @care/utils
 
+## 1.2.2
+
+### Patch Changes
+
+- fix ghost denpendency
+
 ## 1.2.1
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@t-care/deps-analysis",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Dependencies analysis module for Care tool",
   "type": "module",
   "main": "dist/index.js",
@@ -28,7 +28,8 @@
   "author": "qiushui7",
   "license": "ISC",
   "dependencies": {
-    "@t-care/utils": "workspace:*"
+    "@t-care/utils": "workspace:*",
+    "typescript": "^5.8.3"
   },
   "devDependencies": {},
   "files": [

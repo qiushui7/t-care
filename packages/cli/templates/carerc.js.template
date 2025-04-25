@@ -2,7 +2,7 @@
  * Care Configuration File
  */
 
-module.exports = {
+export default {
   // OpenAI API Key
   openaiKey: 'your_openai_api_key_here',
   

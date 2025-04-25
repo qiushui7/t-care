@@ -8,7 +8,7 @@
 
 - 检查本地未提交的代码文件
 - 检查指定的代码文件
-- 分析前端依赖真实调用情况
+- 分析前端依赖、浏览器api真实调用情况
 - 支持多种输出格式
 - 支持配置文件管理设置
 
@@ -70,6 +70,15 @@ care config --init global
 care config --show
 ```
 
+## 示例
+
+![代码审查](image/example/codeInspect.png)
+
+![依赖分析](image/example/dependencyView.png)
+
+![浏览器api分析](image/example/browserApiView.png)
+
+
 ## 配置
 
 可以通过以下方式配置工具：
@@ -97,7 +106,7 @@ care config --show
 ### JavaScript配置文件示例 (.carerc.js)
 
 ```javascript
-module.exports = {
+export default {
   openaiKey: 'your_api_key_here',
   model: 'gpt-4o-mini',
   detailed: false,
