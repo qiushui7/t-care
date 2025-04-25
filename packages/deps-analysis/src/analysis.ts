@@ -1,5 +1,14 @@
 import * as ts from 'typescript';
-import { scanFileVue, scanFileTs, parseVue, parseTs, parseTsConfig, parsePackageJson } from '@t-care/utils';
+import {
+  scanFileVue,
+  scanFileTs,
+  parseVue,
+  parseTs,
+  parseTsConfig,
+  parsePackageJson,
+  getLocalization,
+  Language,
+} from '@t-care/utils';
 import { CODEFILETYPE } from './constant';
 import { ScanSource, AnalysisPlugin, AnalysisPluginCreator, DepsAnalysisOptions, DiagnosisInfo } from './types';
 import { methodPlugin } from './plugins/methodPlugin';
@@ -59,6 +68,7 @@ export class DepsAnalysis {
   private _browserApis: string[]; // 需要分析的BrowserApi配置
   private _isScanVue: boolean; // 是否扫描Vue配置
   private _analysisPlugins: AnalysisPluginCreator[]; // 代码分析插件配置
+  private _language: Language; // 语言设置
 
   // 公共属性
   public pluginsQueue: AnalysisPlugin[] = []; // Target分析插件队列
@@ -84,7 +94,7 @@ export class DepsAnalysis {
   public typeMap: Record<string, Record<string, any>> = {}; // 类型使用统计结果
   public browserMap?: Record<string, Record<string, any>>; // 浏览器API使用统计结果
 
-  constructor(options: DepsAnalysisOptions) {
+  constructor(options: DepsAnalysisOptions, language: Language) {
     // 私有属性
     this._scanSource = options.scanSource;
     this._analysisTarget = options.analysisTarget;
@@ -92,7 +102,7 @@ export class DepsAnalysis {
     this._browserApis = options.browserApis || [];
     this._isScanVue = options.isScanVue || false;
     this._analysisPlugins = options.analysisPlugins || [];
-
+    this._language = language;
     // 公共属性
     this.pluginsQueue = [];
     this.browserQueue = [];
@@ -113,11 +123,11 @@ export class DepsAnalysis {
   }
   // 目标依赖安装版本收集
   _targetVersionCollect(scanSource: ScanSource[]) {
+    const texts = getLocalization(this._language).depsAnalysis;
     scanSource.forEach((item) => {
       if (item.packageJsonPath && item.packageJsonPath != '') {
         try {
           const lockInfo = parsePackageJson(item.packageJsonPath);
-          console.log(lockInfo);
           const temp = Object.keys(lockInfo.dependencies).concat(Object.keys(lockInfo.devDependencies));
           if (temp.length > 0) {
             temp.forEach((element) => {
@@ -128,7 +138,7 @@ export class DepsAnalysis {
             });
           }
         } catch (e) {
-          console.error(e);
+          process.stderr.write(`\r❌ ${texts.versionError(e instanceof Error ? e.message : String(e))}\n`);
         }
       }
     });
@@ -162,11 +172,11 @@ export class DepsAnalysis {
   }
   // 扫描代码
   async _scanCode(scanSource: ScanSource[], type: string): Promise<void> {
+    const texts = getLocalization(this._language).depsAnalysis;
     const entrys = await this._scanFiles(scanSource, type);
     // console.log(entrys);
     for (const item of entrys) {
       const tsConfig = parseTsConfig(item.tsConfigPath);
-      console.log(tsConfig);
       const parseFiles = item.parse;
       if (parseFiles.length > 0) {
         for (let eIndex = 0; eIndex < parseFiles.length; eIndex++) {
@@ -185,7 +195,6 @@ export class DepsAnalysis {
                   tsConfig?.config?.compilerOptions?.paths,
                   baseLine
                 ); // 从import语句中获取导入的需要分析的目标API
-                // console.log(importItems);
                 if (Object.keys(importItems).length > 0 || this._browserApis.length > 0) {
                   this._dealAST(importItems, ast, checker, showPath, item.name, item.httpRepo, baseLine); // 递归分析AST，统计相关信息
                 }
@@ -216,7 +225,13 @@ export class DepsAnalysis {
             };
             this.addDiagnosisInfo(info);
           }
-          console.log(`\n${item.name} ${type}分析进度: ${eIndex + 1}/${parseFiles.length}`);
+          // 使用国际化文本显示进度
+          process.stdout.write(`\r${texts.analysisProgress(item.name, type, eIndex + 1, parseFiles.length)}`);
+
+          // 在分析完成时添加换行
+          if (eIndex + 1 === parseFiles.length) {
+            process.stdout.write('\n');
+          }
         }
       }
     }

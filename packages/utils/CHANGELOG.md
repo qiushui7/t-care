@@ -1,5 +1,11 @@
 # @care/utils
 
+## 1.2.1
+
+### Patch Changes
+
+- deps-analysis feature
+
 ## 1.2.0
 
 ### Minor Changes

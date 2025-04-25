@@ -6,7 +6,6 @@ import { createGitCodeReviewService } from '@t-care/core';
 import {
   printError,
   printSuccess,
-  printInfo,
   formatReviewResult,
   createSpinner,
   toJson,

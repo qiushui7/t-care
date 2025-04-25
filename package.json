@@ -18,7 +18,8 @@
     "changeset": "changeset",
     "version": "changeset version",
     "build": "rollup -c",
-    "publish": "pnpm run build && changeset publish --registry=https://registry.npmjs.com/",
+    "build:deps-display": "pnpm --filter '@t-care/deps-display' build",
+    "publish": "pnpm run build:deps-display && pnpm run build && changeset publish --registry=https://registry.npmjs.com/",
     "format": "prettier --write .",
     "prepare": "husky"
   },

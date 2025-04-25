@@ -78,4 +78,25 @@ export const zh = {
     initOption: '初始化配置文件 (local|global) - 仅支持JavaScript格式',
     showOption: '显示当前配置',
   },
+
+  // 依赖分析相关
+  depsAnalysis: {
+    title: '📊 依赖分析工具 - T-Care',
+    loadingConfig: '正在读取配置文件...',
+    configLoaded: '配置文件读取成功',
+    analyzing: '正在分析项目依赖关系...',
+    analyzeComplete: '依赖分析完成',
+    generatingReport: '正在生成分析报告...',
+    reportGenerated: '分析报告生成成功',
+    reportSaved: (path: string) => `分析结果已保存到：${path}`,
+    exportError: (error: string) => `导出分析结果时出错: ${error}`,
+    startingService: '正在启动依赖分析可视化服务...',
+    serviceStarted: '依赖分析可视化服务已启动',
+    serviceStartError: (error: string) => `启动可视化展示时出错: ${error}`,
+    analysisProgress: (projectName: string, type: string, current: number, total: number) =>
+      `${projectName} ${type}分析进度: ${current}/${total}`,
+    versionError: (error: string) => `处理依赖版本时出错: ${error}`,
+    portInfo: (port: number) => `服务将在端口 ${port} 上启动`,
+    accessUrl: (port: number) => `您可以访问 http://localhost:${port} 查看依赖关系图`,
+  },
 };

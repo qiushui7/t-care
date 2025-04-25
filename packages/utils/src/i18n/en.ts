@@ -78,4 +78,25 @@ export const en = {
     initOption: 'Initialize config file (local|global) - JavaScript format only',
     showOption: 'Show current configuration',
   },
+
+  // Dependency analysis related
+  depsAnalysis: {
+    title: '📊 Dependency Analysis Tool - T-Care',
+    loadingConfig: 'Reading configuration file...',
+    configLoaded: 'Configuration file loaded successfully',
+    analyzing: 'Analyzing project dependencies...',
+    analyzeComplete: 'Dependency analysis completed',
+    generatingReport: 'Generating analysis report...',
+    reportGenerated: 'Analysis report generated successfully',
+    reportSaved: (path: string) => `Analysis results saved to: ${path}`,
+    exportError: (error: string) => `Error exporting analysis results: ${error}`,
+    startingService: 'Starting dependency analysis visualization service...',
+    serviceStarted: 'Dependency analysis visualization service started',
+    serviceStartError: (error: string) => `Error starting visualization service: ${error}`,
+    analysisProgress: (projectName: string, type: string, current: number, total: number) =>
+      `${projectName} ${type} analysis progress: ${current}/${total}`,
+    versionError: (error: string) => `Error processing dependency versions: ${error}`,
+    portInfo: (port: number) => `Service will start on port ${port}`,
+    accessUrl: (port: number) => `You can access http://localhost:${port} to view the dependency graph`,
+  },
 };

@@ -41,7 +41,7 @@ module.exports = {
     // Analysis targets (packages or modules to focus on)
     analysisTarget: ['lodash', 'react', 'axios'],
     
-    // Blacklist (packages or modules to exclude)
+    // Blacklist (packages or modules to warn)
     blackList: ['@types/*'],
     
     // Browser APIs (browser APIs to monitor)

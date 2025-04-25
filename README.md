@@ -1,14 +1,14 @@
-# Care 代码审查工具
+# Care  Code Analysis & Review Engine
+
+![Care 代码审查工具](image/logo-svg.svg)
 
 [中文](README.md) | [English](README_EN.md)
-
-这是一个基于AI的代码审查工具，可以自动检查代码质量、性能、安全性等问题，并提供改进建议。
 
 ## 功能
 
 - 检查本地未提交的代码文件
 - 检查指定的代码文件
-- 提供详细的代码审查报告
+- 分析前端依赖真实调用情况
 - 支持多种输出格式
 - 支持配置文件管理设置
 
@@ -45,6 +45,12 @@ care inspect path/to/file1.js path/to/file2.js
 - `-f, --format <format>` - 输出格式 (text|json)
 - `-m, --model <model>` - 使用的模型
 - `--focus <focus>` - 审查重点 (性能|安全|可读性|最佳实践)
+
+### 分析依赖调用情况
+
+```bash
+care deps-analysis
+```
 
 ### 管理配置
 
@@ -97,25 +103,25 @@ module.exports = {
   detailed: false,
   focus: 'all',
   excludeExtensions: ['.json', '.md'],
-  language: 'zh',
+  language: 'zh', //命令行中使用的语言，支持中文和英文
   depsAnalysis: {
     scanSource: [
       {
-        name: '默认项目',
-        include: ['src'],
-        exclude: ['**/node_modules/**'],
-        httpRepo: 'https://github.com/yourusername/yourrepo',
+        name: 'your-project',
+        include: ['your-project/src'], //扫描路径，默认扫描ts，tsx文件
+        exclude: ['**/node_modules/**'], //排除目录，可选
+        httpRepo: 'https://github.com/yourusername/yourrepo', //项目托管仓库地址，可选，传入后在扫描结果中可跳转
         format: (str) => {
-          return str.replace('Default Project', 'Your Project Name');
-        },
+          return str.replace('your-project', '');
+        }, //format函数，用于纠正跳转路径
         packageJsonPath: './package.json',
         tsConfigPath: './tsconfig.json',
       }
     ],
-    analysisTarget: ['lodash', 'react', 'axios'],
-    blackList: ['@types/*'],
-    browserApis: ['localStorage', 'sessionStorage', 'navigator', 'document'],
-    isScanVue: false,
+    analysisTarget: ['lodash', 'react', 'axios'], //目标依赖，若不输入，默认扫描全部依赖
+    blackList: ['@types/*'], //黑名单api，扫描结果会给出警告
+    browserApis: ['localStorage', 'sessionStorage', 'navigator', 'document'], //检查浏览器api，请输入最顶层api，例如输入window，会自动扫描window.addEventListener
+    isScanVue: false, //默认分析ts、tsx文件，开启后可以支持vue文件
   }
 };
 ```
@@ -132,11 +138,13 @@ export OPENAI_API_KEY=your_api_key
 ```
 care/
 ├── packages/
-│   ├── core/        # 核心功能模块
-│   ├── utils/       # 工具函数
-│   ├── mastra/      # AI模型集成
-│   └── cli/         # 命令行工具
-├── rollup.config.js # 构建配置
+│   ├── core/           # 核心功能模块
+│   ├── utils/          # 工具函数
+│   ├── mastra/         # AI模型集成
+│   ├── deps-analysis/  # 依赖分析模块
+│   ├── deps-display/   # 依赖分析结果展示
+│   └── cli/            # 命令行工具
+├── rollup.config.js    # 构建配置
 └── package.json
 ```
 

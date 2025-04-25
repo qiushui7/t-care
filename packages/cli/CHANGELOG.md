@@ -1,5 +1,19 @@
 # @care/cli
 
+## 1.3.0
+
+### Minor Changes
+
+- deps-analysis feature
+
+### Patch Changes
+
+- Updated dependencies
+  - @t-care/deps-analysis@1.0.0
+  - @t-care/core@1.3.0
+  - @t-care/deps-display@1.0.1
+  - @t-care/utils@1.2.1
+
 ## 1.2.0
 
 ### Minor Changes

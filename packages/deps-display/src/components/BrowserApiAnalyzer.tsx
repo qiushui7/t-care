@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { CallFileInfo, DependencyJsonData } from '../types/dependencyTypes';
 import { Globe, AlertTriangle } from 'lucide-react';
 
@@ -17,6 +18,7 @@ interface BrowserApiItem {
 }
 
 const BrowserApiAnalyzer: React.FC<BrowserApiAnalyzerProps> = ({ data, loading, error }) => {
+  const { t } = useTranslation();
   const [browserApis, setBrowserApis] = useState<BrowserApiItem[]>([]);
   const [selectedApi, setSelectedApi] = useState<BrowserApiItem | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -60,10 +62,10 @@ const BrowserApiAnalyzer: React.FC<BrowserApiAnalyzerProps> = ({ data, loading, 
         setBrowserApis(sortedApis);
         setFilteredApis(sortedApis);
       } catch (err) {
-        console.error('解析浏览器API数据时出错:', err);
+        console.error(t('errorParsingBrowserApiData'), err);
       }
     }
-  }, [data]);
+  }, [data, t]);
 
   // 搜索过滤浏览器API
   useEffect(() => {
@@ -100,7 +102,7 @@ const BrowserApiAnalyzer: React.FC<BrowserApiAnalyzerProps> = ({ data, loading, 
           lineNumbers = fileInfo.lines;
         }
       } catch (err) {
-        console.error('获取行号信息时出错:', err);
+        console.error(t('errorGettingLineInfo'), err);
       }
     }
 
@@ -131,12 +133,12 @@ const BrowserApiAnalyzer: React.FC<BrowserApiAnalyzerProps> = ({ data, loading, 
   };
 
   if (loading) {
-    return <div className="flex justify-center p-8">加载中...</div>;
+    return <div className="flex justify-center p-8">{t('loading')}</div>;
   }
 
   if (error) {
     return <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 my-4">
-      错误: {error}
+      {t('error')}: {error}
     </div>;
   }
 
@@ -144,10 +146,9 @@ const BrowserApiAnalyzer: React.FC<BrowserApiAnalyzerProps> = ({ data, loading, 
     return (
       <div className="flex flex-col items-center justify-center p-12 bg-gray-50 rounded-lg">
         <Globe size={64} className="text-gray-300 mb-4" />
-        <h2 className="text-xl font-semibold text-gray-700 mb-2">未检测到浏览器API使用数据</h2>
+        <h2 className="text-xl font-semibold text-gray-700 mb-2">{t('noBrowserApiData')}</h2>
         <p className="text-gray-500 text-center max-w-md">
-          当前分析结果中没有检测到浏览器API的使用。这可能意味着项目没有直接使用浏览器原生API，
-          或者使用了但未被分析工具捕获。
+          {t('noBrowserApiExplanation')}
         </p>
       </div>
     );
@@ -158,7 +159,7 @@ const BrowserApiAnalyzer: React.FC<BrowserApiAnalyzerProps> = ({ data, loading, 
       <div className="w-full p-4 bg-gray-50 rounded-md">
         <input
           type="text"
-          placeholder="搜索浏览器API..."
+          placeholder={t('searchBrowserApi')}
           className="w-full p-2 border border-gray-300 rounded-md"
           value={searchTerm}
           onChange={handleSearchChange}
@@ -169,9 +170,9 @@ const BrowserApiAnalyzer: React.FC<BrowserApiAnalyzerProps> = ({ data, loading, 
         {/* 浏览器API列表 */}
         <div className="w-full md:w-1/3 bg-gray-50 p-4 rounded-md shadow-sm max-h-[800px] overflow-y-auto">
           <div className="p-3 bg-purple-50 rounded-md mb-4">
-            <h2 className="text-lg font-semibold text-purple-800 mb-2">浏览器API ({filteredApis.length})</h2>
+            <h2 className="text-lg font-semibold text-purple-800 mb-2">{t('browserApiView')} ({filteredApis.length})</h2>
             <p className="text-sm text-purple-700">
-              显示项目中直接使用的浏览器原生API。这些API可能存在兼容性问题，建议使用标准库或跨浏览器包来替代。
+              {t('browserApiDescription')}
             </p>
           </div>
 
@@ -193,13 +194,13 @@ const BrowserApiAnalyzer: React.FC<BrowserApiAnalyzerProps> = ({ data, loading, 
                       )}
                     </div>
                     <span className="text-sm bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full">
-                      {api.callCount}次调用
+                      {api.callCount}{t('callCount')}
                     </span>
                   </div>
                   {api.isBlack && (
                     <div className="mt-1 text-xs text-red-600 border border-red-300 bg-red-50 p-1 rounded flex items-center">
                       <AlertTriangle size={14} className="mr-1" />
-                      黑名单API - 不推荐使用
+                      {t('blacklistedApiWarning')}
                     </div>
                   )}
                 </div>
@@ -207,7 +208,7 @@ const BrowserApiAnalyzer: React.FC<BrowserApiAnalyzerProps> = ({ data, loading, 
             </div>
           ) : (
             <div className="text-center p-4 text-gray-500">
-              未找到匹配的浏览器API
+              {t('noMatchingApis')}
             </div>
           )}
         </div>
@@ -218,16 +219,16 @@ const BrowserApiAnalyzer: React.FC<BrowserApiAnalyzerProps> = ({ data, loading, 
             {selectedApi ? (
               <div className="flex items-center gap-2">
                 <Globe size={18} className="text-purple-500" />
-                <span>{selectedApi.name} 调用详情</span>
+                <span>{selectedApi.name} {t('callDetails')}</span>
                 {selectedApi.isBlack && (
                   <AlertTriangle size={16} className="text-red-500" />
                 )}
                 <span className="text-sm font-normal text-gray-600">
-                  ({Object.keys(selectedApi.callFiles).length} 个文件)
+                  ({Object.keys(selectedApi.callFiles).length} {t('files')})
                 </span>
               </div>
             ) : (
-              '选择一个浏览器API查看调用详情'
+              t('selectBrowserApiToViewDetails')
             )}
           </h2>
 
@@ -258,12 +259,12 @@ const BrowserApiAnalyzer: React.FC<BrowserApiAnalyzerProps> = ({ data, loading, 
                     )}
 
                     <div className="mt-1 text-xs text-gray-500">
-                      项目: {filePath.split('&')[0]}
+                      {t('project')}: {filePath.split('&')[0]}
                     </div>
 
                     {lineNumbers.length > 0 && (
                       <div className="mt-2 text-xs">
-                        <span className="font-semibold">行号: </span>
+                        <span className="font-semibold">{t('lineNumbers')}: </span>
                         {lineNumbers.map((line, i) => (
                           <span key={i} className="bg-purple-100 text-purple-800 px-1.5 py-0.5 rounded mr-1">
                             {line}
@@ -278,7 +279,7 @@ const BrowserApiAnalyzer: React.FC<BrowserApiAnalyzerProps> = ({ data, loading, 
           ) : (
             <div className="text-gray-500 text-center p-8">
               <Globe size={48} className="text-purple-200 mx-auto mb-4" />
-              <p>请从左侧列表选择一个浏览器API查看其调用详情</p>
+              <p>{t('selectBrowserApiFromList')}</p>
             </div>
           )}
         </div>

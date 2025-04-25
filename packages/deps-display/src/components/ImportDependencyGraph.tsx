@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { CallFileInfo, DependencyJsonData } from '../types/dependencyTypes';
 import { Package, Code, Type, AlertTriangle } from 'lucide-react';
 
@@ -28,6 +29,7 @@ interface PackageDependency {
 }
 
 const ImportDependencyGraph: React.FC<ImportDependencyGraphProps> = ({ data, loading, error }) => {
+  const { t } = useTranslation();
   const [dependencies, setDependencies] = useState<PackageDependency[]>([]);
   const [selectedPackage, setSelectedPackage] = useState<string | null>(null);
   const [selectedImport, setSelectedImport] = useState<ImportItem | null>(null);
@@ -256,17 +258,17 @@ const ImportDependencyGraph: React.FC<ImportDependencyGraphProps> = ({ data, loa
   };
 
   if (loading) {
-    return <div className="flex justify-center p-8">加载中...</div>;
+    return <div className="flex justify-center p-8">{t('loading')}</div>;
   }
 
   if (error) {
     return <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 my-4">
-      错误: {error}
+      {t('error')}: {error}
     </div>;
   }
 
   if (!data || !data.importItemMap) {
-    return <div className="text-center p-8">没有可用的依赖数据</div>;
+    return <div className="text-center p-8">{t('noData')}</div>;
   }
 
   const selectedPackageData = dependencies.find(dep => dep.packageName === selectedPackage);
@@ -312,7 +314,7 @@ const ImportDependencyGraph: React.FC<ImportDependencyGraphProps> = ({ data, loa
       <div className="w-full p-4 bg-gray-50 rounded-md">
         <input
           type="text"
-          placeholder="搜索包或导入项..."
+          placeholder={t('searchDependencies')}
           className="w-full p-2 border border-gray-300 rounded-md"
           value={searchTerm}
           onChange={handleSearchChange}
@@ -322,7 +324,7 @@ const ImportDependencyGraph: React.FC<ImportDependencyGraphProps> = ({ data, loa
       <div className="flex flex-col md:flex-row gap-4">
         {/* 包列表 */}
         <div className="w-full md:w-1/4 bg-gray-50 p-4 rounded-md shadow-sm max-h-[800px] overflow-y-auto">
-          <h2 className="text-xl font-bold mb-4">包列表 ({filteredDependencies.length})</h2>
+          <h2 className="text-xl font-bold mb-4">{t('packageList')} ({filteredDependencies.length})</h2>
           <div className="space-y-1">
             {filteredDependencies.map((dep) => (
               <div
@@ -357,20 +359,20 @@ const ImportDependencyGraph: React.FC<ImportDependencyGraphProps> = ({ data, loa
                 {hasBlackListApi(dep) && (
                   <div className="mt-1 text-xs text-red-600 border border-red-300 bg-red-50 p-1 rounded flex items-center">
                     <AlertTriangle size={14} className="mr-1" />
-                    包含 {getBlackListCount(dep)} 个黑名单API
+                    {t('containsBlacklistedApis', { count: getBlackListCount(dep) })}
                   </div>
                 )}
 
                 {/* 显示分类数量 */}
                 <div className="mt-2 flex flex-wrap gap-2 text-xs">
                   <span className="flex items-center gap-1 text-green-600">
-                    <Code size={12} /> 方法: {dep.methodItems.length}
+                    <Code size={12} /> {t('methods')}: {dep.methodItems.length}
                   </span>
                   <span className="flex items-center gap-1 text-blue-600">
-                    <Type size={12} /> 类型: {dep.typeItems.length}
+                    <Type size={12} /> {t('types')}: {dep.typeItems.length}
                   </span>
                   <span className="flex items-center gap-1 text-gray-600">
-                    <Package size={12} /> 其他: {dep.otherItems.length}
+                    <Package size={12} /> {t('other')}: {dep.otherItems.length}
                   </span>
                 </div>
               </div>
@@ -381,7 +383,7 @@ const ImportDependencyGraph: React.FC<ImportDependencyGraphProps> = ({ data, loa
         {/* 导入项列表 */}
         <div className="w-full md:w-1/3 bg-gray-50 p-4 rounded-md shadow-sm max-h-[800px] overflow-y-auto">
           <h2 className="text-xl font-bold mb-2">
-            {selectedPackage ? `${selectedPackage} 导入项` : '选择一个包'}
+            {selectedPackage ? `${selectedPackage} ${t('importItems')}` : t('selectPackage')}
             {selectedPackageData && ` (${categoryCount.all})`}
           </h2>
 
@@ -392,28 +394,28 @@ const ImportDependencyGraph: React.FC<ImportDependencyGraphProps> = ({ data, loa
                   }`}
                 onClick={() => setActiveTab('all')}
               >
-                全部 ({categoryCount.all})
+                {t('all')} ({categoryCount.all})
               </button>
               <button
                 className={`px-3 py-1 text-sm rounded-full flex items-center gap-1 ${activeTab === 'method' ? 'bg-green-600 text-white' : 'bg-green-100 text-green-700'
                   }`}
                 onClick={() => setActiveTab('method')}
               >
-                <Code size={14} /> 方法 ({categoryCount.method})
+                <Code size={14} /> {t('methods')} ({categoryCount.method})
               </button>
               <button
                 className={`px-3 py-1 text-sm rounded-full flex items-center gap-1 ${activeTab === 'type' ? 'bg-blue-600 text-white' : 'bg-blue-100 text-blue-700'
                   }`}
                 onClick={() => setActiveTab('type')}
               >
-                <Type size={14} /> 类型 ({categoryCount.type})
+                <Type size={14} /> {t('types')} ({categoryCount.type})
               </button>
               <button
                 className={`px-3 py-1 text-sm rounded-full flex items-center gap-1 ${activeTab === 'other' ? 'bg-gray-600 text-white' : 'bg-gray-100 text-gray-700'
                   }`}
                 onClick={() => setActiveTab('other')}
               >
-                <Package size={14} /> 其他 ({categoryCount.other})
+                <Package size={14} /> {t('other')} ({categoryCount.other})
               </button>
             </div>
           )}
@@ -438,27 +440,27 @@ const ImportDependencyGraph: React.FC<ImportDependencyGraphProps> = ({ data, loa
                   </div>
                   {item.callOrigin && (
                     <div className="text-gray-500 text-sm mt-1">
-                      来自: {item.callOrigin}
+                      {t('from')}: {item.callOrigin}
                     </div>
                   )}
                   {item.isBlack && (
                     <div className="text-red-600 text-sm font-semibold mt-1 border border-red-300 bg-red-50 p-1 rounded">
-                      ⚠️ 黑名单API - 不推荐使用
+                      ⚠️ {t('blacklistedApiWarning')}
                     </div>
                   )}
                   <div className="text-sm text-gray-600 mt-1">
-                    调用次数: {item.callCount}
+                    {t('calls')}: {item.callCount}
                   </div>
                 </div>
               ))}
               {getFilteredImportItems(selectedPackageData).length === 0 && (
                 <div className="text-gray-500 text-center py-4">
-                  没有{activeTab === 'all' ? '' : activeTab === 'method' ? '方法' : activeTab === 'type' ? '类型' : '其他'}导入项
+                  {t('noImportItems', { type: activeTab === 'all' ? '' : activeTab === 'method' ? t('method') : activeTab === 'type' ? t('type') : t('other') })}
                 </div>
               )}
             </div>
           ) : (
-            <div className="text-gray-500 text-center">请选择一个包查看其导入项</div>
+            <div className="text-gray-500 text-center">{t('selectPackageToViewImports')}</div>
           )}
         </div>
 
@@ -468,16 +470,16 @@ const ImportDependencyGraph: React.FC<ImportDependencyGraphProps> = ({ data, loa
             {selectedImport ? (
               <div className="flex items-center gap-2">
                 {getCategoryIcon(selectedImport.type)}
-                <span>{selectedImport.name} 调用详情</span>
+                <span>{selectedImport.name} {t('callDetails')}</span>
                 {selectedImport.isBlack && (
                   <AlertTriangle size={16} className="text-red-500" />
                 )}
                 <span className="text-sm font-normal text-gray-600">
-                  ({Object.keys(selectedImport.callFiles).length} 个文件)
+                  ({Object.keys(selectedImport.callFiles).length} {t('files')})
                 </span>
               </div>
             ) : (
-              '选择一个导入项'
+              t('selectImportItem')
             )}
           </h2>
 
@@ -508,12 +510,12 @@ const ImportDependencyGraph: React.FC<ImportDependencyGraphProps> = ({ data, loa
                     )}
 
                     <div className="mt-1 text-xs text-gray-500">
-                      项目: {filePath.split('&')[0]}
+                      {t('project')}: {filePath.split('&')[0]}
                     </div>
 
                     {lineNumbers.length > 0 && (
                       <div className="mt-2 text-xs">
-                        <span className="font-semibold">行号: </span>
+                        <span className="font-semibold">{t('lineNumbers')}: </span>
                         {lineNumbers.map((line, i) => (
                           <span key={i} className="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded mr-1">
                             {line}
@@ -526,7 +528,7 @@ const ImportDependencyGraph: React.FC<ImportDependencyGraphProps> = ({ data, loa
               })}
             </div>
           ) : (
-            <div className="text-gray-500 text-center">请选择一个导入项查看其调用详情</div>
+            <div className="text-gray-500 text-center">{t('selectImportItemToViewDetails')}</div>
           )}
         </div>
       </div>
