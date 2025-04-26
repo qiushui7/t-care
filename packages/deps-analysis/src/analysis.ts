@@ -10,6 +10,7 @@ import {
   Language,
 } from '@t-care/utils';
 import { CODEFILETYPE } from './constant';
+import { resolveModulePath } from './moduleResolver';
 import { ScanSource, AnalysisPlugin, AnalysisPluginCreator, DepsAnalysisOptions, DiagnosisInfo } from './types';
 import { methodPlugin } from './plugins/methodPlugin';
 import { typePlugin } from './plugins/typePlugin';
@@ -177,6 +178,14 @@ export class DepsAnalysis {
     // console.log(entrys);
     for (const item of entrys) {
       const tsConfig = parseTsConfig(item.tsConfigPath);
+      if (tsConfig?.options?.baseUrl) {
+        // 获取tsconfig.json所在的目录
+        const tsConfigDir = path.dirname(item.tsConfigPath);
+        // 将baseUrl解析为基于tsconfig目录的路径，但保持为相对路径
+        const absoluteBaseUrl = path.resolve(tsConfigDir, tsConfig.options.baseUrl);
+        // 转换为相对于当前执行目录的相对路径
+        tsConfig.options.baseUrl = path.relative(process.cwd(), absoluteBaseUrl);
+      }
       const parseFiles = item.parse;
       if (parseFiles.length > 0) {
         for (let eIndex = 0; eIndex < parseFiles.length; eIndex++) {
@@ -184,28 +193,17 @@ export class DepsAnalysis {
           const showPath = item.name + '&' + item.show[eIndex];
           try {
             if (type === CODEFILETYPE.VUE) {
-              const { ast, checker, baseLine } = parseVue(element, {
-                target: ts.ScriptTarget.Latest,
-                module: ts.ModuleKind.ESNext,
-              }); // 解析vue文件中的ts script片段,将其转化为AST
+              const { ast, checker, baseLine } = parseVue(element, tsConfig?.options); // 解析vue文件中的ts script片段,将其转化为AST
               if (ast && checker) {
-                const importItems = this._findImportItems(
-                  ast,
-                  showPath,
-                  tsConfig?.config?.compilerOptions?.paths,
-                  baseLine
-                ); // 从import语句中获取导入的需要分析的目标API
+                const importItems = this._findImportItems(ast, showPath, tsConfig?.options, element, baseLine); // 从import语句中获取导入的需要分析的目标API
                 if (Object.keys(importItems).length > 0 || this._browserApis.length > 0) {
                   this._dealAST(importItems, ast, checker, showPath, item.name, item.httpRepo, baseLine); // 递归分析AST，统计相关信息
                 }
               }
             } else if (type === CODEFILETYPE.TS) {
-              const { ast, checker } = parseTs(element, {
-                target: ts.ScriptTarget.Latest,
-                module: ts.ModuleKind.ESNext,
-              }); // 解析ts文件代码,将其转化为AST
+              const { ast, checker } = parseTs(element, tsConfig?.options); // 解析ts文件代码,将其转化为AST
               if (ast && checker) {
-                const importItems = this._findImportItems(ast, showPath, tsConfig?.config?.compilerOptions?.paths); // 从import语句中获取导入的需要分析的目标API
+                const importItems = this._findImportItems(ast, showPath, tsConfig?.options, element); // 从import语句中获取导入的需要分析的目标API
                 // console.log(importItems);
                 if (Object.keys(importItems).length > 0 || this._browserApis.length > 0) {
                   this._dealAST(importItems, ast, checker, showPath, item.name, item.httpRepo); // 递归分析AST，统计相关信息
@@ -223,6 +221,7 @@ export class DepsAnalysis {
               line: 0,
               stack: e instanceof Error ? e.stack || '' : String(e),
             };
+            console.log(info);
             this.addDiagnosisInfo(info);
           }
           // 使用国际化文本显示进度
@@ -527,115 +526,26 @@ export class DepsAnalysis {
   _findImportItems(
     ast: ts.SourceFile,
     filePath: string,
-    paths: any,
+    tsCompilerOptions: ts.CompilerOptions,
+    element: string,
     baseLine: number = 0
   ): Record<string, ImportItemsMap> {
     const importItems: Record<string, ImportItemsMap> = {};
     const that = this;
-
     // 模块类型常量
     const ModuleType = {
       LOCAL_FILE: 'LOCAL_FILE', // 本地文件导入
       NODE_PACKAGE: 'NODE_PACKAGE', // Node包导入
+      NODE_MODULE: 'NODE_MODULE', // Node模块导入
       UNKNOWN: 'UNKNOWN', // 未知类型
     } as const;
 
     type ModuleTypeValue = (typeof ModuleType)[keyof typeof ModuleType];
-
     // 使用正则表达式模式判断模块类型
-    function determineModuleType(modulePath: string): ModuleTypeValue {
-      // 特殊情况：空路径
-      if (!modulePath || modulePath.length === 0) {
-        return ModuleType.UNKNOWN;
-      }
-
-      // 处理已经解析的本地路径别名
-      if (paths) {
-        const commonLocalPrefixes = ['src/', 'app/', 'libs/', 'packages/'];
-        for (const prefix of commonLocalPrefixes) {
-          if (modulePath.startsWith(prefix)) {
-            return ModuleType.LOCAL_FILE;
-          }
-        }
-      }
-
-      // 使用正则模式匹配不同类型的路径
-
-      // 1. 相对路径 (./ 或 ../ 开头)
-      if (/^\.\.?\//.test(modulePath)) {
-        return ModuleType.LOCAL_FILE;
-      }
-
-      // 2. 绝对路径 (以 / 开头)
-      if (/^\//.test(modulePath)) {
-        return ModuleType.LOCAL_FILE;
-      }
-
-      // 3. 作用域包 (以 @ 开头，格式为 @scope/package)
-      const scopedPackageMatch = modulePath.match(/^@([^/]+)\/([^/]+)/);
-      if (scopedPackageMatch) {
-        const packageName = scopedPackageMatch[0]; // 完整的包名 (@scope/package)
-
-        // 检查分析目标
-        if (that._analysisTarget.length > 0) {
-          return that._analysisTarget.includes(packageName) ? ModuleType.NODE_PACKAGE : ModuleType.UNKNOWN;
-        }
-        return ModuleType.NODE_PACKAGE;
-      }
-
-      // 4. 普通包 (不含 / 的顶层包名)
-      const normalPackageMatch = modulePath.match(/^([^/]+)(?:\/|$)/);
-      if (normalPackageMatch) {
-        const packageName = normalPackageMatch[1]; // 包名
-
-        // 检查分析目标
-        if (that._analysisTarget.length > 0) {
-          return that._analysisTarget.includes(packageName) ? ModuleType.NODE_PACKAGE : ModuleType.UNKNOWN;
-        }
-        return ModuleType.NODE_PACKAGE;
-      }
-
-      // 无法确定类型
-      return ModuleType.UNKNOWN;
-    }
-
-    // 解析模块路径，处理别名
-    function resolveModulePath(modulePath: string): string {
-      // 如果没有提供paths配置，直接返回原始路径
-      if (!paths) return modulePath;
-
-      // 遍历paths配置中的所有别名
-      for (const alias in paths) {
-        // 替换别名中的通配符，比如将 "@/*" 转换为正则 "^@\/(.*)$"
-        const aliasPattern = alias.replace(/\*/g, '(.*)');
-        const aliasRegex = new RegExp(`^${aliasPattern.replace(/\//g, '\\/')}$`);
-
-        // 检查模块路径是否匹配当前别名
-        const matches = modulePath.match(aliasRegex);
-        if (matches) {
-          // 获取通配符捕获的部分
-          const wildcardPart = matches[1] || '';
-
-          // 获取别名对应的真实路径模板
-          const realPathTemplates = paths[alias];
-
-          // 使用第一个路径模板替换别名
-          if (realPathTemplates && realPathTemplates.length > 0) {
-            // 将路径模板中的通配符替换为捕获的部分
-            let realPath = realPathTemplates[0].replace(/\*/g, wildcardPart);
-
-            // 移除路径末尾的index (如果有)
-            if (realPath.endsWith('/index')) {
-              realPath = realPath.substring(0, realPath.length - 6);
-            }
-
-            return realPath;
-          }
-        }
-      }
-
-      // 如果没有匹配的别名，返回原始路径
-      return modulePath;
+    function determineModuleType(modulePath: string | null): ModuleTypeValue {
+      if (modulePath === null) return ModuleType.NODE_MODULE;
+      if (modulePath && modulePath.includes('node_modules')) return ModuleType.NODE_PACKAGE;
+      return ModuleType.LOCAL_FILE;
     }
 
     // 遍历AST寻找import节点
@@ -655,22 +565,21 @@ export class DepsAnalysis {
         if (node.moduleSpecifier && ts.isStringLiteral(node.moduleSpecifier)) {
           // 获取并解析模块路径
           const rawModulePath = node.moduleSpecifier.text;
-          const resolvedModulePath = resolveModulePath(rawModulePath);
+          const resolvedModulePath = resolveModulePath(rawModulePath, element, tsCompilerOptions);
 
           // 判断模块类型，过滤本地文件导入
           const moduleType = determineModuleType(resolvedModulePath);
           if (moduleType === ModuleType.LOCAL_FILE) {
             return; // 跳过本地文件导入
           }
-
           // 只有通过检查的模块才处理
-          if (checkModuleSpecifier(resolvedModulePath)) {
+          if (checkModuleSpecifier(rawModulePath)) {
             // 存在导入项
             if (node.importClause) {
               // default直接引入场景
               if (node.importClause.name) {
                 const temp: ImportItem = {
-                  depName: resolvedModulePath, // 使用解析后的路径
+                  depName: rawModulePath,
                   name: node.importClause.name.text,
                   origin: null,
                   symbolPos: node.importClause.pos,
@@ -692,7 +601,7 @@ export class DepsAnalysis {
                     for (const element of tempArr) {
                       if (ts.isImportSpecifier(element)) {
                         const temp: ImportItem = {
-                          depName: resolvedModulePath, // 使用解析后的路径
+                          depName: rawModulePath,
                           name: element.name.text,
                           origin: element.propertyName ? element.propertyName.text : null,
                           symbolPos: element.pos,
@@ -710,7 +619,7 @@ export class DepsAnalysis {
                 // * 全量导入as场景
                 if (ts.isNamespaceImport(node.importClause.namedBindings) && node.importClause.namedBindings.name) {
                   const temp: ImportItem = {
-                    depName: resolvedModulePath, // 使用解析后的路径
+                    depName: rawModulePath, // 使用解析后的路径
                     name: node.importClause.namedBindings.name.text,
                     origin: '*',
                     symbolPos: node.importClause.namedBindings.pos,

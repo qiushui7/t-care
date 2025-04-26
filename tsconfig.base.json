@@ -26,6 +26,15 @@
     },
     {
       "path": "./packages/cli"
+    },
+    {
+      "path": "./packages/deps-analysis"
+    },
+    {
+      "path": "./packages/utils"
+    },
+    {
+      "path": "./packages/mastra"
     }
   ]
 }

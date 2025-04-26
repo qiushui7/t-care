@@ -1,5 +1,5 @@
 import * as ts from 'typescript';
-import { parse, ElementNode, TemplateChildNode } from '@vue/compiler-dom';
+import { parse } from '@vue/compiler-dom';
 import { createHash } from 'crypto';
 import { getCode } from './file';
 import fs from 'fs';
@@ -12,7 +12,10 @@ function md5(str: string): string {
 // 解析ts文件代码，获取ast，checker
 export const parseTs = function (fileName: string, options: ts.CompilerOptions) {
   // 将ts代码转化为AST
-  const program = ts.createProgram([fileName], options);
+  const program = ts.createProgram([fileName], {
+    target: options.target,
+    module: options.module, //其它采用默认值
+  });
   const ast = program.getSourceFile(fileName);
   const checker = program.getTypeChecker();
   // console.log(ast);
@@ -81,7 +84,10 @@ export const parseVue = function (fileName: string, options: ts.CompilerOptions)
   // 创建一个 Program
   const program = ts.createProgram({
     rootNames: [`${ts_hash_name}.ts`],
-    options,
+    options: {
+      target: options.target,
+      module: options.module, //其它采用默认值
+    },
     host: compilerHost,
   });
 
@@ -92,8 +98,20 @@ export const parseVue = function (fileName: string, options: ts.CompilerOptions)
 };
 
 export const parseTsConfig = function (fileName: string) {
-  const tsConfig = ts.readConfigFile(fileName, ts.sys.readFile);
-  return tsConfig;
+  // 读取tsconfig文件
+  const configFile = ts.readConfigFile(fileName, ts.sys.readFile);
+  if (configFile.error) {
+    throw new Error(`Failed to read tsconfig: ${configFile.error.messageText}`);
+  }
+
+  // 解析tsconfig内容
+  const parsedConfig = ts.parseJsonConfigFileContent(configFile.config, ts.sys, path.dirname(fileName));
+
+  if (parsedConfig.errors && parsedConfig.errors.length > 0) {
+    throw new Error(`Failed to parse tsconfig: ${parsedConfig.errors[0].messageText}`);
+  }
+
+  return parsedConfig;
 };
 
 export const parsePackageJson = function (fileName: string) {

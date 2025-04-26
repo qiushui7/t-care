@@ -1,5 +1,22 @@
 # @care/core
 
+## 1.3.3
+
+### Patch Changes
+
+- Tsconfig. moduleSolution has a significant impact on parse speed, so creatProgram only uses the target and module in options, while others use default values
+- Updated dependencies
+  - @t-care/deps-analysis@1.0.3
+  - @t-care/utils@1.2.4
+
+## 1.3.2
+
+### Patch Changes
+
+- Updated dependencies
+  - @t-care/deps-analysis@1.0.2
+  - @t-care/utils@1.2.3
+
 ## 1.3.1
 
 ### Patch Changes
