@@ -129,7 +129,7 @@ export default {
     ],
     analysisTarget: ['lodash', 'react', 'axios'], //目标依赖，若不输入，默认扫描全部依赖
     blackList: ['@types/*'], //黑名单api，扫描结果会给出警告
-    browserApis: ['localStorage', 'sessionStorage', 'navigator', 'document'], //检查浏览器api，请输入最顶层api，例如输入window，会自动扫描window.addEventListener
+    browserApis: ['localStorage', 'sessionStorage', 'navigator', 'document'], //检查浏览器api，请输入最顶层api，例如输入window，会自动扫描window.addEventListener,不输入默认扫描所有
     isScanVue: false, //默认分析ts、tsx文件，开启后可以支持vue文件
   }
 };

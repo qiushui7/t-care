@@ -1,5 +1,11 @@
 # @t-care/deps-analysis
 
+## 1.1.0
+
+### Minor Changes
+
+- new feature nodejs api view
+
 ## 1.0.3
 
 ### Patch Changes

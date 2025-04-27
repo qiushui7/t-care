@@ -128,7 +128,7 @@ export default {
     ],
     analysisTarget: ['lodash', 'react', 'axios'], // Target dependencies, if not provided, scans all dependencies
     blackList: ['@types/*'], // Blacklisted APIs, will show warnings in scan results
-    browserApis: ['localStorage', 'sessionStorage', 'navigator', 'document'], // Browser APIs to check, enter top-level APIs, e.g., window will scan window.addEventListener
+    browserApis: ['localStorage', 'sessionStorage', 'navigator', 'document'], // Browser APIs to check, enter top-level APIs, e.g., window will scan window.addEventListener, if not provided, scans all apis
     isScanVue: false, // Defaults to analyzing ts, tsx files, enable to support Vue files
   }
 };

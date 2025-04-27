@@ -30,10 +30,13 @@ export interface PluginQueue {
 }
 
 export interface ImportItemMapEntry {
-  [key: string]: {
-    callOrigin: string | null;
-    callFiles: Record<string, CallFileInfo>;
-  };
+  [key: string]:
+    | {
+        callOrigin: string | null;
+        callFiles: Record<string, CallFileInfo>;
+      }
+    | string
+    | undefined;
 }
 
 export interface TypeMapEntry {
@@ -64,6 +67,14 @@ export interface MethodMapEntry {
 }
 
 export interface BrowserApiEntry {
+  callNum: number;
+  callOrigin: string | null;
+  callFiles: Record<string, CallFileInfo>;
+  isBlack?: boolean;
+}
+
+// Node API相关类型
+export interface NodeApiEntry {
   callNum: number;
   callOrigin: string | null;
   callFiles: Record<string, CallFileInfo>;

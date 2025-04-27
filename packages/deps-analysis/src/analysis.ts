@@ -9,7 +9,7 @@ import {
   getLocalization,
   Language,
 } from '@t-care/utils';
-import { CODEFILETYPE } from './constant';
+import { CODEFILETYPE, ModuleType } from './constant';
 import { resolveModulePath } from './moduleResolver';
 import { ScanSource, AnalysisPlugin, AnalysisPluginCreator, DepsAnalysisOptions, DiagnosisInfo } from './types';
 import { methodPlugin } from './plugins/methodPlugin';
@@ -17,6 +17,7 @@ import { typePlugin } from './plugins/typePlugin';
 import { defaultPlugin } from './plugins/defaultPlugin';
 import { browserPlugin } from './plugins/browserPlugin';
 import path from 'path';
+import { builtinModules } from 'module';
 
 // EntryObject接口定义
 interface EntryObject {
@@ -26,6 +27,8 @@ interface EntryObject {
   show: string[];
   tsConfigPath: string;
 }
+
+type ModuleTypeValue = (typeof ModuleType)[keyof typeof ModuleType];
 
 // ImportItem接口定义
 interface ImportItem {
@@ -37,6 +40,8 @@ interface ImportItem {
   identifierPos: number;
   identifierEnd: number;
   line: number;
+  projectName: string;
+  moduleType: ModuleTypeValue;
 }
 
 // ImportItems映射类型
@@ -78,10 +83,11 @@ export class DepsAnalysis {
     string,
     Record<
       string,
-      {
-        callOrigin?: string | null;
-        callFiles: string[];
-      }
+      | {
+          callOrigin?: string | null;
+          callFiles: string[];
+        }
+      | ModuleTypeValue
     >
   > = {}; // importItem统计Map
   public importFrom: Record<string, any> = {}; // 依赖统计
@@ -195,7 +201,14 @@ export class DepsAnalysis {
             if (type === CODEFILETYPE.VUE) {
               const { ast, checker, baseLine } = parseVue(element, tsConfig?.options); // 解析vue文件中的ts script片段,将其转化为AST
               if (ast && checker) {
-                const importItems = this._findImportItems(ast, showPath, tsConfig?.options, element, baseLine); // 从import语句中获取导入的需要分析的目标API
+                const importItems = this._findImportItems(
+                  ast,
+                  showPath,
+                  tsConfig?.options,
+                  element,
+                  item.name,
+                  baseLine
+                ); // 从import语句中获取导入的需要分析的目标API
                 if (Object.keys(importItems).length > 0 || this._browserApis.length > 0) {
                   this._dealAST(importItems, ast, checker, showPath, item.name, item.httpRepo, baseLine); // 递归分析AST，统计相关信息
                 }
@@ -203,7 +216,7 @@ export class DepsAnalysis {
             } else if (type === CODEFILETYPE.TS) {
               const { ast, checker } = parseTs(element, tsConfig?.options); // 解析ts文件代码,将其转化为AST
               if (ast && checker) {
-                const importItems = this._findImportItems(ast, showPath, tsConfig?.options, element); // 从import语句中获取导入的需要分析的目标API
+                const importItems = this._findImportItems(ast, showPath, tsConfig?.options, element, item.name); // 从import语句中获取导入的需要分析的目标API
                 // console.log(importItems);
                 if (Object.keys(importItems).length > 0 || this._browserApis.length > 0) {
                   this._dealAST(importItems, ast, checker, showPath, item.name, item.httpRepo); // 递归分析AST，统计相关信息
@@ -292,9 +305,7 @@ export class DepsAnalysis {
     this.pluginsQueue.push(methodPlugin(this));
     this.pluginsQueue.push(typePlugin(this));
     this.pluginsQueue.push(defaultPlugin(this));
-    if (this._browserApis.length > 0) {
-      this.browserQueue.push(browserPlugin(this));
-    }
+    this.browserQueue.push(browserPlugin(this));
   }
   // 执行Target分析插件队列中的checkFun函数
   _runAnalysisPlugins(
@@ -489,7 +500,13 @@ export class DepsAnalysis {
         }
       }
       // browser analysis
-      if (ts.isIdentifier(node) && node.text && that._browserApis.length > 0 && that._browserApis.includes(node.text)) {
+      function checkBrowserApi(text: string) {
+        if (that._browserApis.length > 0) {
+          return that._browserApis.includes(text);
+        }
+        return true;
+      }
+      if (ts.isIdentifier(node) && node.text && checkBrowserApi(node.text)) {
         // 命中Browser Api Item Name
         const symbol = checker.getSymbolAtLocation(node);
         if (symbol && symbol.declarations) {
@@ -528,22 +545,17 @@ export class DepsAnalysis {
     filePath: string,
     tsCompilerOptions: ts.CompilerOptions,
     element: string,
+    projectName: string,
     baseLine: number = 0
   ): Record<string, ImportItemsMap> {
     const importItems: Record<string, ImportItemsMap> = {};
     const that = this;
     // 模块类型常量
-    const ModuleType = {
-      LOCAL_FILE: 'LOCAL_FILE', // 本地文件导入
-      NODE_PACKAGE: 'NODE_PACKAGE', // Node包导入
-      NODE_MODULE: 'NODE_MODULE', // Node模块导入
-      UNKNOWN: 'UNKNOWN', // 未知类型
-    } as const;
 
-    type ModuleTypeValue = (typeof ModuleType)[keyof typeof ModuleType];
     // 使用正则表达式模式判断模块类型
-    function determineModuleType(modulePath: string | null): ModuleTypeValue {
-      if (modulePath === null) return ModuleType.NODE_MODULE;
+    function determineModuleType(modulePath: string | null, rawModulePath: string): ModuleTypeValue {
+      if (modulePath === null && builtinModules.includes(rawModulePath)) return ModuleType.NODE_MODULE;
+      if (modulePath === null) return ModuleType.UNKNOWN;
       if (modulePath && modulePath.includes('node_modules')) return ModuleType.NODE_PACKAGE;
       return ModuleType.LOCAL_FILE;
     }
@@ -568,7 +580,7 @@ export class DepsAnalysis {
           const resolvedModulePath = resolveModulePath(rawModulePath, element, tsCompilerOptions);
 
           // 判断模块类型，过滤本地文件导入
-          const moduleType = determineModuleType(resolvedModulePath);
+          const moduleType = determineModuleType(resolvedModulePath, rawModulePath);
           if (moduleType === ModuleType.LOCAL_FILE) {
             return; // 跳过本地文件导入
           }
@@ -587,6 +599,8 @@ export class DepsAnalysis {
                   identifierPos: node.importClause.name.pos,
                   identifierEnd: node.importClause.name.end,
                   line: line,
+                  projectName: projectName,
+                  moduleType: moduleType,
                 };
                 dealImports(temp);
               }
@@ -609,6 +623,8 @@ export class DepsAnalysis {
                           identifierPos: element.name.pos,
                           identifierEnd: element.name.end,
                           line: line,
+                          projectName: projectName,
+                          moduleType: moduleType,
                         };
                         dealImports(temp);
                       }
@@ -627,6 +643,8 @@ export class DepsAnalysis {
                     identifierPos: node.importClause.namedBindings.name.pos,
                     identifierEnd: node.importClause.namedBindings.name.end,
                     line: line,
+                    projectName: projectName,
+                    moduleType: moduleType,
                   };
                   dealImports(temp);
                 }
@@ -657,6 +675,10 @@ export class DepsAnalysis {
         identifierEnd: temp.identifierEnd,
       };
 
+      if (!that.importItemMap[temp.depName][temp.projectName]) {
+        that.importItemMap[temp.depName][temp.projectName] = temp.moduleType;
+      }
+
       if (!that.importItemMap[temp.depName][temp.name]) {
         that.importItemMap[temp.depName][temp.name] = {
           callOrigin: temp.origin,
@@ -664,8 +686,15 @@ export class DepsAnalysis {
         };
       } else {
         // 避免重复添加相同的文件路径
-        if (!that.importItemMap[temp.depName][temp.name].callFiles.includes(filePath)) {
-          that.importItemMap[temp.depName][temp.name].callFiles.push(filePath);
+        // 检查是否为ModuleTypeValue类型
+        if (typeof that.importItemMap[temp.depName][temp.name] === 'object') {
+          const item = that.importItemMap[temp.depName][temp.name] as {
+            callOrigin?: string | null;
+            callFiles: string[];
+          };
+          if (!item.callFiles.includes(filePath)) {
+            item.callFiles.push(filePath);
+          }
         }
       }
     }

@@ -4,7 +4,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { DependencyJsonData } from './types/dependencyTypes';
 import ImportDependencyGraph from './components/ImportDependencyGraph';
 import BrowserApiAnalyzer from './components/BrowserApiAnalyzer';
-import { Package, Globe } from 'lucide-react';
+import NodeApiAnalyzer from './components/NodeApiAnalyzer';
+import { Package, Globe, Server } from 'lucide-react';
 
 function App() {
   const { t, i18n } = useTranslation();
@@ -13,7 +14,7 @@ function App() {
   const [data, setData] = useState<DependencyJsonData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<'list' | 'browserApi'>('list');
+  const [viewMode, setViewMode] = useState<'list' | 'browserApi' | 'nodeApi'>('list');
 
   // 在组件挂载时根据路径设置语言
   useEffect(() => {
@@ -79,6 +80,12 @@ function App() {
   // 检查当前数据是否包含浏览器API数据
   const hasBrowserApiData = data?.browserMap && Object.keys(data.browserMap).length > 0;
 
+  // 检查数据是否包含Node API数据
+  const hasNodeApiData = data?.importItemMap &&
+    Object.values(data.importItemMap).some(moduleInfo =>
+      Object.values(moduleInfo).some(item => item === 'NODE_MODULE')
+    );
+
   return (
     <div className="container mx-auto px-4 py-8">
       <header className="mb-8">
@@ -130,6 +137,18 @@ function App() {
                   </span>
                 )}
             </button>
+            <button
+              className={`px-4 py-2 rounded-md flex items-center gap-2 ${viewMode === 'nodeApi'
+                ? 'bg-blue-500 text-white shadow-md'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                } ${!hasNodeApiData ? 'opacity-50 cursor-not-allowed' : ''}`}
+              onClick={() => hasNodeApiData && setViewMode('nodeApi')}
+              disabled={!hasNodeApiData}
+              title={!hasNodeApiData ? t('noNodeApiData') : t('nodeApiView')}
+            >
+              <Server size={18} />
+              <span>{t('nodeApiView')}</span>
+            </button>
           </div>
         )}
       </header>
@@ -154,8 +173,14 @@ function App() {
               loading={false}
               error={null}
             />
-          ) : (
+          ) : viewMode === 'browserApi' ? (
             <BrowserApiAnalyzer
+              data={data}
+              loading={false}
+              error={null}
+            />
+          ) : (
+            <NodeApiAnalyzer
               data={data}
               loading={false}
               error={null}

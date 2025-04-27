@@ -90,6 +90,11 @@ const ImportDependencyGraph: React.FC<ImportDependencyGraphProps> = ({ data, loa
 
     // 处理importItemMap
     Object.entries(importItemMap).forEach(([packageName, importEntries]) => {
+      // 跳过NODE_MODULE类型的模块，它们将在Node API视图中显示
+      if (typeof importEntries === 'object' && projectNames.some(name => importEntries[name] === 'NODE_MODULE')) {
+        return;
+      }
+
       let allImportItems: ImportItem[] = [];
       let methodItems: ImportItem[] = [];
       let typeItems: ImportItem[] = [];
