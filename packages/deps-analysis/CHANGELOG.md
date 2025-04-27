@@ -1,5 +1,16 @@
 # @t-care/deps-analysis
 
+## 1.2.0
+
+### Minor Changes
+
+- new feature ghost dependencies warn
+
+### Patch Changes
+
+- Updated dependencies
+  - @t-care/utils@1.2.5
+
 ## 1.1.0
 
 ### Minor Changes

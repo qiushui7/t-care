@@ -1,5 +1,11 @@
 # @care/utils
 
+## 1.2.5
+
+### Patch Changes
+
+- new feature ghost dependencies warn
+
 ## 1.2.4
 
 ### Patch Changes

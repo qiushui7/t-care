@@ -8,7 +8,8 @@
 
 - 检查本地未提交的代码文件
 - 检查指定的代码文件
-- 分析前端依赖、浏览器api真实调用情况
+- 分析依赖包、浏览器api、nodejs api真实调用情况
+- 检测幽灵依赖，保障项目运行
 - 支持多种输出格式
 - 支持配置文件管理设置
 
@@ -78,6 +79,9 @@ care config --show
 
 ![浏览器api分析](image/example/browserApiView.png)
 
+![nodejsApi分析](image/example/nodejsApiView.png)
+
+![幽灵依赖警告](image/example/ghostDependencies.png)
 
 ## 配置
 

@@ -13,3 +13,5 @@ packages/*/.mastra
 /node_modules/
 
 .env.development
+
+.carerc.js

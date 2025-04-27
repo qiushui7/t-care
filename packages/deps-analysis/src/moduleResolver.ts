@@ -14,6 +14,13 @@ export function resolveModulePath(
   containingFile: string,
   compilerOptions: ts.CompilerOptions = {}
 ): string | null {
+  // CSS文件特殊处理
+  if (importPath.endsWith('.css')) {
+    // 直接返回导入路径，表示这是一个已知的CSS导入
+    // 可以根据项目需求返回null或构造一个绝对路径
+    return importPath;
+  }
+
   // 创建模拟的宿主对象
   const compilerHost = ts.createCompilerHost(compilerOptions);
 

@@ -18,7 +18,6 @@ const DEFAULT_PORT = 3080;
  */
 export async function startDepsDisplay(options = {}) {
   const { jsonFilePath = '', port = DEFAULT_PORT, language = 'zh' } = options;
-  console.log('language', language);
 
   try {
     // 项目根目录

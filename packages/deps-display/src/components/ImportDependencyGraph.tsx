@@ -315,15 +315,18 @@ const ImportDependencyGraph: React.FC<ImportDependencyGraphProps> = ({ data, loa
   const categoryCount = getCategoryCount(selectedPackageData);
 
   return (
-    <div className="flex flex-col space-y-4">
-      <div className="w-full p-4 bg-gray-50 rounded-md">
-        <input
-          type="text"
-          placeholder={t('searchDependencies')}
-          className="w-full p-2 border border-gray-300 rounded-md"
-          value={searchTerm}
-          onChange={handleSearchChange}
-        />
+    <div className="grid grid-cols-1 gap-6">
+      {/* 搜索框 */}
+      <div className="mb-4">
+        <div className="w-full p-4 bg-gray-50 rounded-md">
+          <input
+            type="text"
+            placeholder={t('searchDependencies')}
+            className="w-full p-2 border border-gray-300 rounded-md"
+            value={searchTerm}
+            onChange={handleSearchChange}
+          />
+        </div>
       </div>
 
       <div className="flex flex-col md:flex-row gap-4">

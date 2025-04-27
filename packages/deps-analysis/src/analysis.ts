@@ -90,8 +90,7 @@ export class DepsAnalysis {
       | ModuleTypeValue
     >
   > = {}; // importItem统计Map
-  public importFrom: Record<string, any> = {}; // 依赖统计
-  public dependenciesWarn: Record<string, any> = {}; // 可能未安装的依赖
+  public ghostDependenciesWarn: Record<string, any> = {}; // 可能的幽灵依赖依赖
   public diagnosisInfo: DiagnosisInfo[] = [];
   public versionMap: Record<string, Record<string, any>> = {};
 
@@ -114,41 +113,41 @@ export class DepsAnalysis {
     this.pluginsQueue = [];
     this.browserQueue = [];
     this.importItemMap = {};
-    this.importFrom = {};
-    this.dependenciesWarn = {};
+    this.ghostDependenciesWarn = {};
   }
   async analysis() {
     this._installPlugins(this._analysisPlugins);
+    this._targetVersionCollect(this._scanSource);
     if (this._isScanVue) {
       await this._scanCode(this._scanSource, CODEFILETYPE.VUE);
     }
     await this._scanCode(this._scanSource, CODEFILETYPE.TS);
     this._blackTag(this.pluginsQueue);
     this._blackTag(this.browserQueue);
-    this._targetVersionCollect(this._scanSource);
     return this;
   }
   // 目标依赖安装版本收集
   _targetVersionCollect(scanSource: ScanSource[]) {
     const texts = getLocalization(this._language).depsAnalysis;
-    scanSource.forEach((item) => {
+    for (const item of scanSource) {
       if (item.packageJsonPath && item.packageJsonPath != '') {
         try {
           const lockInfo = parsePackageJson(item.packageJsonPath);
-          const temp = Object.keys(lockInfo.dependencies).concat(Object.keys(lockInfo.devDependencies));
+          const temp = Object.keys(lockInfo?.dependencies || {}).concat(Object.keys(lockInfo?.devDependencies || {}));
           if (temp.length > 0) {
             temp.forEach((element) => {
               if (!this.versionMap[item.name]) {
                 this.versionMap[item.name] = {};
               }
-              this.versionMap[item.name][element] = lockInfo.dependencies[element];
+              this.versionMap[item.name][element] =
+                lockInfo?.dependencies[element] || lockInfo?.devDependencies[element];
             });
           }
         } catch (e) {
           process.stderr.write(`\r❌ ${texts.versionError(e instanceof Error ? e.message : String(e))}\n`);
         }
       }
-    });
+    }
   }
   addDiagnosisInfo(info: DiagnosisInfo): void {
     this.diagnosisInfo.push(info);
@@ -181,7 +180,6 @@ export class DepsAnalysis {
   async _scanCode(scanSource: ScanSource[], type: string): Promise<void> {
     const texts = getLocalization(this._language).depsAnalysis;
     const entrys = await this._scanFiles(scanSource, type);
-    // console.log(entrys);
     for (const item of entrys) {
       const tsConfig = parseTsConfig(item.tsConfigPath);
       if (tsConfig?.options?.baseUrl) {
@@ -217,7 +215,6 @@ export class DepsAnalysis {
               const { ast, checker } = parseTs(element, tsConfig?.options); // 解析ts文件代码,将其转化为AST
               if (ast && checker) {
                 const importItems = this._findImportItems(ast, showPath, tsConfig?.options, element, item.name); // 从import语句中获取导入的需要分析的目标API
-                // console.log(importItems);
                 if (Object.keys(importItems).length > 0 || this._browserApis.length > 0) {
                   this._dealAST(importItems, ast, checker, showPath, item.name, item.httpRepo); // 递归分析AST，统计相关信息
                 }
@@ -551,9 +548,79 @@ export class DepsAnalysis {
     const importItems: Record<string, ImportItemsMap> = {};
     const that = this;
     // 模块类型常量
+    function resolveDepName(absolutePath: string | null): string {
+      if (absolutePath === null) {
+        return '';
+      }
+
+      // 处理pnpm格式路径
+      // 例如: /node_modules/.pnpm/@nestjs+core@10.4.15_xxx/node_modules/@nestjs/core/
+      const pnpmMatch = absolutePath.match(
+        /node_modules\/\.pnpm\/([^/]+)(?:@[^/]+)(?:_[^/]+)?\/node_modules\/(@[^/]+\/[^/]+|[^/]+)/
+      );
+      if (pnpmMatch) {
+        return pnpmMatch[2]; // 返回真实包名（如@nestjs/core）
+      }
+
+      // 处理常规npm/yarn路径格式
+      // 例如: /node_modules/@nestjs/core/ 或 /node_modules/react/
+      const nodeModulesMatch = absolutePath.match(/node_modules[/\\](@[^/\\]+[/\\][^/\\]+|[^/\\]+)/);
+      if (nodeModulesMatch && nodeModulesMatch[1]) {
+        return nodeModulesMatch[1];
+      }
+
+      return absolutePath;
+    }
+
+    // 将依赖添加到幽灵依赖警告列表中
+    function dealGhostDependencies(projectName: string, depName: string) {
+      // 确保项目在幽灵依赖警告映射中有一个数组
+      if (!that.ghostDependenciesWarn[projectName]) {
+        that.ghostDependenciesWarn[projectName] = [];
+      }
+
+      // 避免重复添加同一个依赖
+      if (!that.ghostDependenciesWarn[projectName].includes(depName)) {
+        that.ghostDependenciesWarn[projectName].push(depName);
+      }
+    }
+
+    // 检查幽灵依赖（在代码中使用但未在package.json中声明的依赖）
+    function checkGhostDependencies(
+      projectName: string,
+      depName: string,
+      absolutePath: string | null,
+      moduleType: ModuleTypeValue
+    ) {
+      if (moduleType === ModuleType.NODE_MODULE) return;
+      // 对未知模块类型直接添加警告
+      if (moduleType === ModuleType.UNKNOWN) {
+        dealGhostDependencies(projectName, depName);
+        return;
+      }
+
+      // 解析实际的依赖包名
+      const resolvedDepName = resolveDepName(absolutePath);
+
+      // 检查项目的package.json中是否包含该依赖
+      const hasDependency = that.versionMap[projectName] && that.versionMap[projectName][resolvedDepName];
+      if (!hasDependency) {
+        dealGhostDependencies(projectName, resolvedDepName);
+      }
+
+      // 对@types包特殊处理
+      if (resolvedDepName.startsWith('@types/')) {
+        const actualPackageName = resolvedDepName.split('/')[1];
+        const hasTypeDependency = that.versionMap[projectName] && that.versionMap[projectName][actualPackageName];
+        if (!hasTypeDependency) {
+          dealGhostDependencies(projectName, actualPackageName);
+        }
+      }
+    }
 
     // 使用正则表达式模式判断模块类型
     function determineModuleType(modulePath: string | null, rawModulePath: string): ModuleTypeValue {
+      if (/^\.\.?\//.test(rawModulePath)) return ModuleType.LOCAL_FILE;
       if (modulePath === null && builtinModules.includes(rawModulePath)) return ModuleType.NODE_MODULE;
       if (modulePath === null) return ModuleType.UNKNOWN;
       if (modulePath && modulePath.includes('node_modules')) return ModuleType.NODE_PACKAGE;
@@ -584,6 +651,7 @@ export class DepsAnalysis {
           if (moduleType === ModuleType.LOCAL_FILE) {
             return; // 跳过本地文件导入
           }
+          checkGhostDependencies(projectName, rawModulePath, resolvedModulePath, moduleType);
           // 只有通过检查的模块才处理
           if (checkModuleSpecifier(rawModulePath)) {
             // 存在导入项

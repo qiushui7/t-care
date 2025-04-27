@@ -8,7 +8,8 @@
 
 - Check uncommitted local code files
 - Inspect specified code files
-- Analyze frontend dependency and browser API usage patterns
+- Analyze dependency, browser API and nodejs API usage patterns
+- Detect ghost dependencies to ensure project stability
 - Support multiple output formats
 - Support configuration file management
 
@@ -77,6 +78,10 @@ care config --show
 ![Dependency Analysis](image/example/dependencyView.png)
 
 ![Browser API Analysis](image/example/browserApiView.png)
+
+![Nodejs API Analysis](image/example/nodejsApiView.png)
+
+![Ghost Dependencies Warn](image/example/ghostDependencies.png)
 
 ## Configuration
 

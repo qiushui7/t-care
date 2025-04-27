@@ -142,41 +142,59 @@ const BrowserApiAnalyzer: React.FC<BrowserApiAnalyzerProps> = ({ data, loading, 
     </div>;
   }
 
-  if (!data || !data.browserMap || Object.keys(data.browserMap).length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center p-12 bg-gray-50 rounded-lg">
-        <Globe size={64} className="text-gray-300 mb-4" />
-        <h2 className="text-xl font-semibold text-gray-700 mb-2">{t('noBrowserApiData')}</h2>
-        <p className="text-gray-500 text-center max-w-md">
-          {t('noBrowserApiExplanation')}
-        </p>
-      </div>
-    );
-  }
+  // 判断初始状态：无数据或数据中没有浏览器API
+  const hasNoBrowserApis = !data || !data.browserMap || Object.keys(data.browserMap).length === 0;
+  // 判断搜索结果为空的状态
+  const hasEmptySearchResults = browserApis.length > 0 && filteredApis.length === 0;
 
   return (
     <div className="flex flex-col space-y-4">
-      <div className="w-full p-4 bg-gray-50 rounded-md">
-        <input
-          type="text"
-          placeholder={t('searchBrowserApi')}
-          className="w-full p-2 border border-gray-300 rounded-md"
-          value={searchTerm}
-          onChange={handleSearchChange}
-        />
-      </div>
+      {/* 搜索栏始终显示，只要有数据 */}
+      {(!hasNoBrowserApis || searchTerm) && (
+        <div className="w-full p-4 bg-gray-50 rounded-md">
+          <input
+            type="text"
+            placeholder={t('searchBrowserApi')}
+            className="w-full p-2 border border-gray-300 rounded-md"
+            value={searchTerm}
+            onChange={handleSearchChange}
+          />
+        </div>
+      )}
 
-      <div className="flex flex-col md:flex-row gap-4">
-        {/* 浏览器API列表 */}
-        <div className="w-full md:w-1/3 bg-gray-50 p-4 rounded-md shadow-sm max-h-[800px] overflow-y-auto">
-          <div className="p-3 bg-purple-50 rounded-md mb-4">
-            <h2 className="text-lg font-semibold text-purple-800 mb-2">{t('browserApiView')} ({filteredApis.length})</h2>
-            <p className="text-sm text-purple-700">
-              {t('browserApiDescription')}
-            </p>
-          </div>
+      {/* 无初始数据时显示空状态 */}
+      {hasNoBrowserApis && (
+        <div className="flex flex-col items-center justify-center p-12 bg-gray-50 rounded-lg">
+          <Globe size={64} className="text-gray-300 mb-4" />
+          <h2 className="text-xl font-semibold text-gray-700 mb-2">{t('noBrowserApiData')}</h2>
+          <p className="text-gray-500 text-center max-w-md">
+            {t('noBrowserApiExplanation')}
+          </p>
+        </div>
+      )}
 
-          {filteredApis.length > 0 ? (
+      {/* 搜索结果为空时显示提示 */}
+      {hasEmptySearchResults && (
+        <div className="flex flex-col items-center justify-center p-8 bg-gray-50 rounded-lg">
+          <h2 className="text-lg font-semibold text-gray-700 mb-2">{t('noMatchingApis')}</h2>
+          <p className="text-gray-500 text-center">
+            {t('tryAdjustingSearch')}
+          </p>
+        </div>
+      )}
+
+      {/* 有搜索结果时显示内容区域 */}
+      {filteredApis.length > 0 && (
+        <div className="flex flex-col md:flex-row gap-4">
+          {/* 浏览器API列表 */}
+          <div className="w-full md:w-1/3 bg-gray-50 p-4 rounded-md shadow-sm max-h-[800px] overflow-y-auto">
+            <div className="p-3 bg-purple-50 rounded-md mb-4">
+              <h2 className="text-lg font-semibold text-purple-800 mb-2">{t('browserApiView')} ({filteredApis.length})</h2>
+              <p className="text-sm text-purple-700">
+                {t('browserApiDescription')}
+              </p>
+            </div>
+
             <div className="space-y-2">
               {filteredApis.map((api, index) => (
                 <div
@@ -206,84 +224,80 @@ const BrowserApiAnalyzer: React.FC<BrowserApiAnalyzerProps> = ({ data, loading, 
                 </div>
               ))}
             </div>
-          ) : (
-            <div className="text-center p-4 text-gray-500">
-              {t('noMatchingApis')}
-            </div>
-          )}
-        </div>
+          </div>
 
-        {/* 调用文件详情 */}
-        <div className="w-full md:w-2/3 bg-gray-50 p-4 rounded-md shadow-sm max-h-[800px] overflow-y-auto">
-          <h2 className="text-xl font-bold mb-4">
+          {/* 调用文件详情 */}
+          <div className="w-full md:w-2/3 bg-gray-50 p-4 rounded-md shadow-sm max-h-[800px] overflow-y-auto">
+            <h2 className="text-xl font-bold mb-4">
+              {selectedApi ? (
+                <div className="flex items-center gap-2">
+                  <Globe size={18} className="text-purple-500" />
+                  <span>{selectedApi.name} {t('callDetails')}</span>
+                  {selectedApi.isBlack && (
+                    <AlertTriangle size={16} className="text-red-500" />
+                  )}
+                  <span className="text-sm font-normal text-gray-600">
+                    ({Object.keys(selectedApi.callFiles).length} {t('files')})
+                  </span>
+                </div>
+              ) : (
+                t('selectBrowserApiToViewDetails')
+              )}
+            </h2>
+
             {selectedApi ? (
-              <div className="flex items-center gap-2">
-                <Globe size={18} className="text-purple-500" />
-                <span>{selectedApi.name} {t('callDetails')}</span>
-                {selectedApi.isBlack && (
-                  <AlertTriangle size={16} className="text-red-500" />
-                )}
-                <span className="text-sm font-normal text-gray-600">
-                  ({Object.keys(selectedApi.callFiles).length} {t('files')})
-                </span>
+              <div className="space-y-4">
+                {Object.entries(selectedApi.callFiles).map(([filePath], index) => {
+                  const { url: repoLink, lineNumbers } = getRepoLink(selectedApi, filePath);
+                  return (
+                    <div key={index} className="border border-gray-200 rounded-md p-3 hover:bg-gray-100">
+                      {repoLink ? (
+                        <div>
+                          <a
+                            href={lineNumbers.length > 0 ? `${repoLink}#L${lineNumbers[0]}` : repoLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="font-mono text-blue-600 hover:underline flex items-center"
+                          >
+                            {filePath}
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                            </svg>
+                          </a>
+                        </div>
+                      ) : (
+                        <div className="font-mono text-blue-600">
+                          {filePath}
+                        </div>
+                      )}
+
+                      <div className="mt-1 text-xs text-gray-500">
+                        {t('project')}: {filePath.split('&')[0]}
+                      </div>
+
+                      {lineNumbers.length > 0 && (
+                        <div className="mt-2 text-xs">
+                          <span className="font-semibold">{t('lineNumbers')}: </span>
+                          {lineNumbers.map((line, i) => (
+                            <span key={i} className="bg-purple-100 text-purple-800 px-1.5 py-0.5 rounded mr-1">
+                              {line}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             ) : (
-              t('selectBrowserApiToViewDetails')
+              <div className="text-gray-500 text-center p-8">
+                <Globe size={48} className="text-purple-200 mx-auto mb-4" />
+                <p>{t('selectBrowserApiFromList')}</p>
+              </div>
             )}
-          </h2>
-
-          {selectedApi ? (
-            <div className="space-y-4">
-              {Object.entries(selectedApi.callFiles).map(([filePath], index) => {
-                const { url: repoLink, lineNumbers } = getRepoLink(selectedApi, filePath);
-                return (
-                  <div key={index} className="border border-gray-200 rounded-md p-3 hover:bg-gray-100">
-                    {repoLink ? (
-                      <div>
-                        <a
-                          href={lineNumbers.length > 0 ? `${repoLink}#L${lineNumbers[0]}` : repoLink}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="font-mono text-blue-600 hover:underline flex items-center"
-                        >
-                          {filePath}
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                          </svg>
-                        </a>
-                      </div>
-                    ) : (
-                      <div className="font-mono text-blue-600">
-                        {filePath}
-                      </div>
-                    )}
-
-                    <div className="mt-1 text-xs text-gray-500">
-                      {t('project')}: {filePath.split('&')[0]}
-                    </div>
-
-                    {lineNumbers.length > 0 && (
-                      <div className="mt-2 text-xs">
-                        <span className="font-semibold">{t('lineNumbers')}: </span>
-                        {lineNumbers.map((line, i) => (
-                          <span key={i} className="bg-purple-100 text-purple-800 px-1.5 py-0.5 rounded mr-1">
-                            {line}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          ) : (
-            <div className="text-gray-500 text-center p-8">
-              <Globe size={48} className="text-purple-200 mx-auto mb-4" />
-              <p>{t('selectBrowserApiFromList')}</p>
-            </div>
-          )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

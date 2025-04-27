@@ -1,0 +1,4013 @@
+{
+  "_scanSource": [
+    {
+      "name": "cli",
+      "include": [
+        "packages/cli/src"
+      ],
+      "exclude": [
+        "**/node_modules/**"
+      ],
+      "httpRepo": "https://github.com/qiushui7/t-care",
+      "packageJsonPath": "packages/cli/package.json",
+      "tsConfigPath": "packages/cli/tsconfig.json"
+    },
+    {
+      "name": "deps-analysis",
+      "include": [
+        "packages/deps-analysis/src"
+      ],
+      "exclude": [
+        "**/node_modules/**"
+      ],
+      "httpRepo": "https://github.com/qiushui7/t-care",
+      "packageJsonPath": "packages/deps-analysis/package.json",
+      "tsConfigPath": "packages/deps-analysis/tsconfig.json"
+    },
+    {
+      "name": "deps-display",
+      "include": [
+        "packages/deps-display/src"
+      ],
+      "exclude": [
+        "**/node_modules/**"
+      ],
+      "httpRepo": "https://github.com/qiushui7/t-care",
+      "packageJsonPath": "packages/deps-display/package.json",
+      "tsConfigPath": "packages/deps-display/tsconfig.json"
+    },
+    {
+      "name": "mastra",
+      "include": [
+        "packages/mastra/src"
+      ],
+      "exclude": [
+        "**/node_modules/**"
+      ],
+      "httpRepo": "https://github.com/qiushui7/t-care",
+      "packageJsonPath": "packages/mastra/package.json",
+      "tsConfigPath": "packages/mastra/tsconfig.json"
+    },
+    {
+      "name": "utils",
+      "include": [
+        "packages/utils/src"
+      ],
+      "exclude": [
+        "**/node_modules/**"
+      ],
+      "httpRepo": "https://github.com/qiushui7/t-care",
+      "packageJsonPath": "packages/utils/package.json",
+      "tsConfigPath": "packages/utils/tsconfig.json"
+    }
+  ],
+  "_analysisTarget": [],
+  "_blackList": [],
+  "_browserApis": [],
+  "_isScanVue": false,
+  "_analysisPlugins": [],
+  "_language": "zh",
+  "pluginsQueue": [
+    {
+      "mapName": "methodMap",
+      "checkFn": "Function",
+      "afterHook": null
+    },
+    {
+      "mapName": "typeMap",
+      "checkFn": "Function",
+      "afterHook": null
+    },
+    {
+      "mapName": "apiMap",
+      "checkFn": "Function",
+      "afterHook": null
+    }
+  ],
+  "browserQueue": [
+    {
+      "mapName": "browserMap",
+      "checkFn": "Function",
+      "afterHook": null
+    }
+  ],
+  "importItemMap": {
+    "chalk": {
+      "cli": "NODE_PACKAGE",
+      "chalk": {
+        "callOrigin": null,
+        "callFiles": [
+          "cli&packages/cli/src/utils.ts",
+          "cli&packages/cli/src/care.ts",
+          "cli&packages/cli/src/commands/deps-analysis.ts"
+        ]
+      }
+    },
+    "figures": {
+      "cli": "NODE_PACKAGE",
+      "figures": {
+        "callOrigin": null,
+        "callFiles": [
+          "cli&packages/cli/src/utils.ts"
+        ]
+      }
+    },
+    "ora": {
+      "cli": "NODE_PACKAGE",
+      "ora": {
+        "callOrigin": null,
+        "callFiles": [
+          "cli&packages/cli/src/utils.ts",
+          "cli&packages/cli/src/commands/deps-analysis.ts"
+        ]
+      }
+    },
+    "boxen": {
+      "cli": "NODE_PACKAGE",
+      "boxen": {
+        "callOrigin": null,
+        "callFiles": [
+          "cli&packages/cli/src/utils.ts"
+        ]
+      }
+    },
+    "fs/promises": {
+      "cli": "NODE_MODULE",
+      "fs": {
+        "callOrigin": null,
+        "callFiles": [
+          "cli&packages/cli/src/utils.ts",
+          "cli&packages/cli/src/commands/inspect.ts"
+        ]
+      }
+    },
+    "os": {
+      "cli": "NODE_MODULE",
+      "os": {
+        "callOrigin": null,
+        "callFiles": [
+          "cli&packages/cli/src/utils.ts",
+          "cli&packages/cli/src/commands/config.ts"
+        ]
+      }
+    },
+    "path": {
+      "cli": "NODE_MODULE",
+      "path": {
+        "callOrigin": null,
+        "callFiles": [
+          "cli&packages/cli/src/utils.ts",
+          "cli&packages/cli/src/commands/inspect.ts",
+          "cli&packages/cli/src/commands/deps-analysis.ts",
+          "cli&packages/cli/src/commands/config.ts",
+          "deps-analysis&packages/deps-analysis/src/moduleResolver.ts",
+          "deps-analysis&packages/deps-analysis/src/analysis.ts",
+          "utils&packages/utils/src/parse.ts",
+          "utils&packages/utils/src/git.ts",
+          "utils&packages/utils/src/file.ts"
+        ]
+      },
+      "dirname": {
+        "callOrigin": null,
+        "callFiles": [
+          "cli&packages/cli/src/care.ts"
+        ]
+      },
+      "resolve": {
+        "callOrigin": null,
+        "callFiles": [
+          "cli&packages/cli/src/care.ts"
+        ]
+      },
+      "deps-analysis": "NODE_MODULE",
+      "utils": "NODE_MODULE"
+    },
+    "commander": {
+      "cli": "NODE_PACKAGE",
+      "Command": {
+        "callOrigin": null,
+        "callFiles": [
+          "cli&packages/cli/src/care.ts"
+        ]
+      }
+    },
+    "figlet": {
+      "cli": "NODE_PACKAGE",
+      "figlet": {
+        "callOrigin": null,
+        "callFiles": [
+          "cli&packages/cli/src/care.ts"
+        ]
+      }
+    },
+    "url": {
+      "cli": "NODE_MODULE",
+      "fileURLToPath": {
+        "callOrigin": null,
+        "callFiles": [
+          "cli&packages/cli/src/care.ts"
+        ]
+      }
+    },
+    "fs": {
+      "cli": "NODE_MODULE",
+      "fs": {
+        "callOrigin": null,
+        "callFiles": [
+          "cli&packages/cli/src/care.ts",
+          "cli&packages/cli/src/commands/deps-analysis.ts",
+          "deps-analysis&packages/deps-analysis/src/moduleResolver.ts",
+          "utils&packages/utils/src/parse.ts",
+          "utils&packages/utils/src/file.ts"
+        ]
+      },
+      "deps-analysis": "NODE_MODULE",
+      "utils": "NODE_MODULE"
+    },
+    "typescript": {
+      "deps-analysis": "NODE_PACKAGE",
+      "ts": {
+        "callOrigin": "*",
+        "callFiles": [
+          "deps-analysis&packages/deps-analysis/src/types.ts",
+          "deps-analysis&packages/deps-analysis/src/moduleResolver.ts",
+          "deps-analysis&packages/deps-analysis/src/analysis.ts",
+          "deps-analysis&packages/deps-analysis/src/plugins/typePlugin.ts",
+          "deps-analysis&packages/deps-analysis/src/plugins/methodPlugin.ts",
+          "deps-analysis&packages/deps-analysis/src/plugins/defaultPlugin.ts",
+          "deps-analysis&packages/deps-analysis/src/plugins/browserPlugin.ts",
+          "utils&packages/utils/src/parse.ts"
+        ]
+      },
+      "utils": "NODE_PACKAGE"
+    },
+    "module": {
+      "deps-analysis": "NODE_MODULE",
+      "builtinModules": {
+        "callOrigin": null,
+        "callFiles": [
+          "deps-analysis&packages/deps-analysis/src/analysis.ts"
+        ]
+      }
+    },
+    "clsx": {
+      "deps-display": "NODE_PACKAGE",
+      "clsx": {
+        "callOrigin": null,
+        "callFiles": [
+          "deps-display&packages/deps-display/src/utils/cn.ts"
+        ]
+      },
+      "ClassValue": {
+        "callOrigin": null,
+        "callFiles": [
+          "deps-display&packages/deps-display/src/utils/cn.ts"
+        ]
+      }
+    },
+    "tailwind-merge": {
+      "deps-display": "NODE_PACKAGE",
+      "twMerge": {
+        "callOrigin": null,
+        "callFiles": [
+          "deps-display&packages/deps-display/src/utils/cn.ts"
+        ]
+      }
+    },
+    "i18next": {
+      "deps-display": "NODE_PACKAGE",
+      "i18n": {
+        "callOrigin": null,
+        "callFiles": [
+          "deps-display&packages/deps-display/src/i18n/index.ts"
+        ]
+      }
+    },
+    "react-i18next": {
+      "deps-display": "NODE_PACKAGE",
+      "initReactI18next": {
+        "callOrigin": null,
+        "callFiles": [
+          "deps-display&packages/deps-display/src/i18n/index.ts"
+        ]
+      },
+      "useTranslation": {
+        "callOrigin": null,
+        "callFiles": [
+          "deps-display&packages/deps-display/src/App.tsx",
+          "deps-display&packages/deps-display/src/components/NodeApiAnalyzer.tsx",
+          "deps-display&packages/deps-display/src/components/ImportDependencyGraph.tsx",
+          "deps-display&packages/deps-display/src/components/GhostDependenciesWarning.tsx",
+          "deps-display&packages/deps-display/src/components/BrowserApiAnalyzer.tsx"
+        ]
+      }
+    },
+    "i18next-browser-languagedetector": {
+      "deps-display": "NODE_PACKAGE",
+      "LanguageDetector": {
+        "callOrigin": null,
+        "callFiles": [
+          "deps-display&packages/deps-display/src/i18n/index.ts"
+        ]
+      }
+    },
+    "react": {
+      "deps-display": "NODE_PACKAGE",
+      "StrictMode": {
+        "callOrigin": null,
+        "callFiles": [
+          "deps-display&packages/deps-display/src/main.tsx"
+        ]
+      },
+      "useState": {
+        "callOrigin": null,
+        "callFiles": [
+          "deps-display&packages/deps-display/src/App.tsx",
+          "deps-display&packages/deps-display/src/components/NodeApiAnalyzer.tsx",
+          "deps-display&packages/deps-display/src/components/ImportDependencyGraph.tsx",
+          "deps-display&packages/deps-display/src/components/BrowserApiAnalyzer.tsx"
+        ]
+      },
+      "useEffect": {
+        "callOrigin": null,
+        "callFiles": [
+          "deps-display&packages/deps-display/src/App.tsx",
+          "deps-display&packages/deps-display/src/components/NodeApiAnalyzer.tsx",
+          "deps-display&packages/deps-display/src/components/ImportDependencyGraph.tsx",
+          "deps-display&packages/deps-display/src/components/BrowserApiAnalyzer.tsx"
+        ]
+      }
+    },
+    "react-dom/client": {
+      "deps-display": "NODE_PACKAGE",
+      "createRoot": {
+        "callOrigin": null,
+        "callFiles": [
+          "deps-display&packages/deps-display/src/main.tsx"
+        ]
+      }
+    },
+    "react-router-dom": {
+      "deps-display": "NODE_PACKAGE",
+      "BrowserRouter": {
+        "callOrigin": null,
+        "callFiles": [
+          "deps-display&packages/deps-display/src/main.tsx"
+        ]
+      },
+      "useNavigate": {
+        "callOrigin": null,
+        "callFiles": [
+          "deps-display&packages/deps-display/src/App.tsx"
+        ]
+      },
+      "useLocation": {
+        "callOrigin": null,
+        "callFiles": [
+          "deps-display&packages/deps-display/src/App.tsx"
+        ]
+      }
+    },
+    "lucide-react": {
+      "deps-display": "NODE_PACKAGE",
+      "Package": {
+        "callOrigin": null,
+        "callFiles": [
+          "deps-display&packages/deps-display/src/App.tsx",
+          "deps-display&packages/deps-display/src/components/ImportDependencyGraph.tsx"
+        ]
+      },
+      "Globe": {
+        "callOrigin": null,
+        "callFiles": [
+          "deps-display&packages/deps-display/src/App.tsx",
+          "deps-display&packages/deps-display/src/components/BrowserApiAnalyzer.tsx"
+        ]
+      },
+      "Server": {
+        "callOrigin": null,
+        "callFiles": [
+          "deps-display&packages/deps-display/src/App.tsx",
+          "deps-display&packages/deps-display/src/components/NodeApiAnalyzer.tsx"
+        ]
+      },
+      "AlertTriangle": {
+        "callOrigin": null,
+        "callFiles": [
+          "deps-display&packages/deps-display/src/components/NodeApiAnalyzer.tsx",
+          "deps-display&packages/deps-display/src/components/ImportDependencyGraph.tsx",
+          "deps-display&packages/deps-display/src/components/GhostDependenciesWarning.tsx",
+          "deps-display&packages/deps-display/src/components/BrowserApiAnalyzer.tsx"
+        ]
+      },
+      "Code": {
+        "callOrigin": null,
+        "callFiles": [
+          "deps-display&packages/deps-display/src/components/ImportDependencyGraph.tsx"
+        ]
+      },
+      "Type": {
+        "callOrigin": null,
+        "callFiles": [
+          "deps-display&packages/deps-display/src/components/ImportDependencyGraph.tsx"
+        ]
+      }
+    },
+    "@mastra/core": {
+      "mastra": "NODE_PACKAGE",
+      "Mastra": {
+        "callOrigin": null,
+        "callFiles": [
+          "mastra&packages/mastra/src/mastra/index.ts"
+        ]
+      }
+    },
+    "@mastra/core/logger": {
+      "mastra": "NODE_PACKAGE",
+      "createLogger": {
+        "callOrigin": null,
+        "callFiles": [
+          "mastra&packages/mastra/src/mastra/index.ts"
+        ]
+      }
+    },
+    "@mastra/core/tools": {
+      "mastra": "NODE_PACKAGE",
+      "createTool": {
+        "callOrigin": null,
+        "callFiles": [
+          "mastra&packages/mastra/src/mastra/tools/codeReview.ts"
+        ]
+      }
+    },
+    "zod": {
+      "mastra": "NODE_PACKAGE",
+      "z": {
+        "callOrigin": null,
+        "callFiles": [
+          "mastra&packages/mastra/src/mastra/tools/codeReview.ts"
+        ]
+      }
+    },
+    "@mastra/core/agent": {
+      "mastra": "NODE_PACKAGE",
+      "Agent": {
+        "callOrigin": null,
+        "callFiles": [
+          "mastra&packages/mastra/src/mastra/agents/codeReviewAgent.ts"
+        ]
+      }
+    },
+    "@ai-sdk/openai": {
+      "mastra": "NODE_PACKAGE",
+      "openai": {
+        "callOrigin": null,
+        "callFiles": [
+          "mastra&packages/mastra/src/mastra/agents/codeReviewAgent.ts"
+        ]
+      }
+    },
+    "@vue/compiler-dom": {
+      "utils": "NODE_PACKAGE",
+      "parse": {
+        "callOrigin": null,
+        "callFiles": [
+          "utils&packages/utils/src/parse.ts"
+        ]
+      }
+    },
+    "crypto": {
+      "utils": "NODE_MODULE",
+      "createHash": {
+        "callOrigin": null,
+        "callFiles": [
+          "utils&packages/utils/src/parse.ts"
+        ]
+      }
+    },
+    "simple-git": {
+      "utils": "NODE_PACKAGE",
+      "simpleGit": {
+        "callOrigin": null,
+        "callFiles": [
+          "utils&packages/utils/src/git.ts"
+        ]
+      },
+      "GitType": {
+        "callOrigin": "SimpleGit",
+        "callFiles": [
+          "utils&packages/utils/src/git.ts"
+        ]
+      }
+    },
+    "fs-extra": {
+      "utils": "NODE_PACKAGE",
+      "fs": {
+        "callOrigin": null,
+        "callFiles": [
+          "utils&packages/utils/src/git.ts"
+        ]
+      }
+    },
+    "glob": {
+      "utils": "NODE_PACKAGE",
+      "glob": {
+        "callOrigin": null,
+        "callFiles": [
+          "utils&packages/utils/src/file.ts"
+        ]
+      }
+    }
+  },
+  "ghostDependenciesWarn": {},
+  "diagnosisInfo": [],
+  "versionMap": {
+    "cli": {
+      "@t-care/core": "workspace:*",
+      "@t-care/deps-analysis": "workspace:*",
+      "@t-care/deps-display": "workspace:*",
+      "@t-care/utils": "workspace:*",
+      "boxen": "^7.1.1",
+      "chalk": "^5.3.0",
+      "commander": "^12.0.0",
+      "figlet": "^1.8.0",
+      "figures": "^6.0.1",
+      "ora": "^8.0.1",
+      "@types/figlet": "^1.7.0",
+      "@types/node": "^20.11.30",
+      "ts-node": "^10.9.2",
+      "typescript": "^5.8.3"
+    },
+    "deps-analysis": {
+      "@t-care/utils": "workspace:*",
+      "typescript": "^5.8.3"
+    },
+    "deps-display": {
+      "@tailwindcss/vite": "^4.1.4",
+      "clsx": "^2.1.1",
+      "i18next": "^25.0.1",
+      "i18next-browser-languagedetector": "^8.0.5",
+      "lucide-react": "^0.503.0",
+      "react": "^19.0.0",
+      "react-dom": "^19.0.0",
+      "react-i18next": "^15.5.1",
+      "react-router-dom": "^7.5.2",
+      "tailwind-merge": "^3.2.0",
+      "tailwindcss": "^4.1.4",
+      "vite": "^6.3.1",
+      "@vitejs/plugin-react-swc": "^3.8.0",
+      "@eslint/js": "^9.22.0",
+      "@types/react": "^19.0.10",
+      "@types/react-dom": "^19.0.4",
+      "eslint": "^9.22.0",
+      "eslint-plugin-react-hooks": "^5.2.0",
+      "eslint-plugin-react-refresh": "^0.4.19",
+      "globals": "^16.0.0",
+      "typescript": "~5.7.2",
+      "typescript-eslint": "^8.26.1"
+    },
+    "mastra": {
+      "@ai-sdk/openai": "^1.3.7",
+      "@mastra/core": "^0.7.0",
+      "mastra": "^0.4.4",
+      "zod": "^3.24.2",
+      "@types/jest": "^29.5.14",
+      "jest": "^29.7.0",
+      "jest-environment-node": "^29.7.0",
+      "ts-jest": "^29.3.1"
+    },
+    "utils": {
+      "@vue/compiler-dom": "^3.5.13",
+      "fs-extra": "^11.2.0",
+      "glob": "^11.0.1",
+      "simple-git": "^3.23.0",
+      "typescript": "^5.8.3",
+      "@types/fs-extra": "^11.0.1"
+    }
+  },
+  "apiMap": {
+    "figures": {
+      "figures.cross": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "cli&packages/cli/src/utils.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              210
+            ]
+          }
+        }
+      },
+      "figures.tick": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "cli&packages/cli/src/utils.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              219
+            ]
+          }
+        }
+      },
+      "figures.info": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "cli&packages/cli/src/utils.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              228
+            ]
+          }
+        }
+      },
+      "figures.warning": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "cli&packages/cli/src/utils.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              238
+            ]
+          }
+        }
+      },
+      "figures.pointer": {
+        "callNum": 2,
+        "callOrigin": null,
+        "callFiles": {
+          "cli&packages/cli/src/utils.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              277,
+              284
+            ]
+          }
+        }
+      }
+    },
+    "ora": {
+      "ora": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "cli&packages/cli/src/utils.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              246
+            ]
+          }
+        }
+      }
+    },
+    "commander": {
+      "Command": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "cli&packages/cli/src/care.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              29
+            ]
+          }
+        }
+      }
+    },
+    "typescript": {
+      "ts": {
+        "callNum": 32,
+        "callOrigin": "*",
+        "callFiles": {
+          "deps-analysis&packages/deps-analysis/src/types.ts": {
+            "projectName": "deps-analysis",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              34,
+              35
+            ]
+          },
+          "deps-analysis&packages/deps-analysis/src/moduleResolver.ts": {
+            "projectName": "deps-analysis",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              15
+            ]
+          },
+          "deps-analysis&packages/deps-analysis/src/analysis.ts": {
+            "projectName": "deps-analysis",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              61,
+              308,
+              309,
+              348,
+              349,
+              376,
+              377,
+              409,
+              440,
+              441,
+              450,
+              477,
+              516,
+              525,
+              540,
+              542,
+              623
+            ]
+          },
+          "deps-analysis&packages/deps-analysis/src/plugins/typePlugin.ts": {
+            "projectName": "deps-analysis",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              12,
+              13
+            ]
+          },
+          "deps-analysis&packages/deps-analysis/src/plugins/methodPlugin.ts": {
+            "projectName": "deps-analysis",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              11,
+              12
+            ]
+          },
+          "deps-analysis&packages/deps-analysis/src/plugins/defaultPlugin.ts": {
+            "projectName": "deps-analysis",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              12,
+              13
+            ]
+          },
+          "deps-analysis&packages/deps-analysis/src/plugins/browserPlugin.ts": {
+            "projectName": "deps-analysis",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              12,
+              13
+            ]
+          },
+          "utils&packages/utils/src/parse.ts": {
+            "projectName": "utils",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              13,
+              25,
+              68,
+              75
+            ]
+          }
+        }
+      },
+      "ts.ScriptTarget.Latest": {
+        "callNum": 1,
+        "callOrigin": "*",
+        "callFiles": {
+          "utils&packages/utils/src/parse.ts": {
+            "projectName": "utils",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              60
+            ]
+          }
+        }
+      },
+      "ts.sys.fileExists": {
+        "callNum": 1,
+        "callOrigin": "*",
+        "callFiles": {
+          "utils&packages/utils/src/parse.ts": {
+            "projectName": "utils",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              66
+            ]
+          }
+        }
+      },
+      "ts.sys.readFile": {
+        "callNum": 2,
+        "callOrigin": "*",
+        "callFiles": {
+          "utils&packages/utils/src/parse.ts": {
+            "projectName": "utils",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              67,
+              102
+            ]
+          }
+        }
+      },
+      "ts.sys.writeFile": {
+        "callNum": 1,
+        "callOrigin": "*",
+        "callFiles": {
+          "utils&packages/utils/src/parse.ts": {
+            "projectName": "utils",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              76
+            ]
+          }
+        }
+      },
+      "ts.sys.getCurrentDirectory": {
+        "callNum": 1,
+        "callOrigin": "*",
+        "callFiles": {
+          "utils&packages/utils/src/parse.ts": {
+            "projectName": "utils",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              77
+            ]
+          }
+        }
+      },
+      "ts.sys.getDirectories": {
+        "callNum": 1,
+        "callOrigin": "*",
+        "callFiles": {
+          "utils&packages/utils/src/parse.ts": {
+            "projectName": "utils",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              78
+            ]
+          }
+        }
+      },
+      "ts.sys.useCaseSensitiveFileNames": {
+        "callNum": 2,
+        "callOrigin": "*",
+        "callFiles": {
+          "utils&packages/utils/src/parse.ts": {
+            "projectName": "utils",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              79,
+              81
+            ]
+          }
+        }
+      },
+      "ts.sys.newLine": {
+        "callNum": 1,
+        "callOrigin": "*",
+        "callFiles": {
+          "utils&packages/utils/src/parse.ts": {
+            "projectName": "utils",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              80
+            ]
+          }
+        }
+      },
+      "ts.sys": {
+        "callNum": 1,
+        "callOrigin": "*",
+        "callFiles": {
+          "utils&packages/utils/src/parse.ts": {
+            "projectName": "utils",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              108
+            ]
+          }
+        }
+      }
+    },
+    "i18next-browser-languagedetector": {
+      "LanguageDetector": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "deps-display&packages/deps-display/src/i18n/index.ts": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              21
+            ]
+          }
+        }
+      }
+    },
+    "react-i18next": {
+      "initReactI18next": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "deps-display&packages/deps-display/src/i18n/index.ts": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              23
+            ]
+          }
+        }
+      }
+    },
+    "i18next": {
+      "i18n": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "deps-display&packages/deps-display/src/i18n/index.ts": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              45
+            ]
+          }
+        }
+      }
+    },
+    "react": {
+      "StrictMode": {
+        "callNum": 2,
+        "callOrigin": null,
+        "callFiles": {
+          "deps-display&packages/deps-display/src/main.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              9,
+              13
+            ]
+          }
+        }
+      }
+    },
+    "react-router-dom": {
+      "BrowserRouter": {
+        "callNum": 2,
+        "callOrigin": null,
+        "callFiles": {
+          "deps-display&packages/deps-display/src/main.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              10,
+              12
+            ]
+          }
+        }
+      }
+    },
+    "lucide-react": {
+      "Package": {
+        "callNum": 4,
+        "callOrigin": null,
+        "callFiles": {
+          "deps-display&packages/deps-display/src/App.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              127
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/ImportDependencyGraph.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              300,
+              383,
+              426
+            ]
+          }
+        }
+      },
+      "Globe": {
+        "callNum": 5,
+        "callOrigin": null,
+        "callFiles": {
+          "deps-display&packages/deps-display/src/App.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              139
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/BrowserApiAnalyzer.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              168,
+              208,
+              234,
+              294
+            ]
+          }
+        }
+      },
+      "Server": {
+        "callNum": 5,
+        "callOrigin": null,
+        "callFiles": {
+          "deps-display&packages/deps-display/src/App.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              157
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/NodeApiAnalyzer.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              200,
+              239,
+              256,
+              341
+            ]
+          }
+        }
+      },
+      "AlertTriangle": {
+        "callNum": 10,
+        "callOrigin": null,
+        "callFiles": {
+          "deps-display&packages/deps-display/src/components/NodeApiAnalyzer.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              275,
+              285
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/ImportDependencyGraph.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              348,
+              369,
+              446,
+              483
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/GhostDependenciesWarning.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              18
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/BrowserApiAnalyzer.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              211,
+              220,
+              237
+            ]
+          }
+        }
+      },
+      "Code": {
+        "callNum": 3,
+        "callOrigin": null,
+        "callFiles": {
+          "deps-display&packages/deps-display/src/components/ImportDependencyGraph.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              296,
+              377,
+              412
+            ]
+          }
+        }
+      },
+      "Type": {
+        "callNum": 3,
+        "callOrigin": null,
+        "callFiles": {
+          "deps-display&packages/deps-display/src/components/ImportDependencyGraph.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              298,
+              380,
+              419
+            ]
+          }
+        }
+      }
+    },
+    "@mastra/core": {
+      "Mastra": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "mastra&packages/mastra/src/mastra/index.ts": {
+            "projectName": "mastra",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              9
+            ]
+          }
+        }
+      }
+    },
+    "@mastra/core/agent": {
+      "Agent": {
+        "callNum": 2,
+        "callOrigin": null,
+        "callFiles": {
+          "mastra&packages/mastra/src/mastra/agents/codeReviewAgent.ts": {
+            "projectName": "mastra",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              40,
+              69
+            ]
+          }
+        }
+      }
+    }
+  },
+  "methodMap": {
+    "path": {
+      "path.join": {
+        "callNum": 14,
+        "callOrigin": null,
+        "callFiles": {
+          "cli&packages/cli/src/utils.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              46,
+              47,
+              48,
+              49
+            ]
+          },
+          "cli&packages/cli/src/commands/deps-analysis.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              68
+            ]
+          },
+          "cli&packages/cli/src/commands/config.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              27
+            ]
+          },
+          "deps-analysis&packages/deps-analysis/src/analysis.ts": {
+            "projectName": "deps-analysis",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              252
+            ]
+          },
+          "utils&packages/utils/src/parse.ts": {
+            "projectName": "utils",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              118
+            ]
+          },
+          "utils&packages/utils/src/git.ts": {
+            "projectName": "utils",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              109,
+              177
+            ]
+          },
+          "utils&packages/utils/src/file.ts": {
+            "projectName": "utils",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              13,
+              25,
+              26,
+              89
+            ]
+          }
+        }
+      },
+      "path.dirname": {
+        "callNum": 4,
+        "callOrigin": null,
+        "callFiles": {
+          "cli&packages/cli/src/utils.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              122,
+              127
+            ]
+          },
+          "deps-analysis&packages/deps-analysis/src/analysis.ts": {
+            "projectName": "deps-analysis",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              186
+            ]
+          },
+          "utils&packages/utils/src/parse.ts": {
+            "projectName": "utils",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              108
+            ]
+          }
+        }
+      },
+      "path.resolve": {
+        "callNum": 4,
+        "callOrigin": null,
+        "callFiles": {
+          "cli&packages/cli/src/utils.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              126
+            ]
+          },
+          "cli&packages/cli/src/commands/inspect.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              73
+            ]
+          },
+          "cli&packages/cli/src/commands/deps-analysis.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              49
+            ]
+          },
+          "deps-analysis&packages/deps-analysis/src/analysis.ts": {
+            "projectName": "deps-analysis",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              188
+            ]
+          }
+        }
+      },
+      "dirname": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "cli&packages/cli/src/care.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              20
+            ]
+          }
+        }
+      },
+      "resolve": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "cli&packages/cli/src/care.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              21
+            ]
+          }
+        }
+      },
+      "path.isAbsolute": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "cli&packages/cli/src/commands/inspect.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              73
+            ]
+          }
+        }
+      },
+      "path.relative": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "deps-analysis&packages/deps-analysis/src/analysis.ts": {
+            "projectName": "deps-analysis",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              190
+            ]
+          }
+        }
+      },
+      "path.extname": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "utils&packages/utils/src/git.ts": {
+            "projectName": "utils",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              263
+            ]
+          }
+        }
+      }
+    },
+    "os": {
+      "os.homedir": {
+        "callNum": 3,
+        "callOrigin": null,
+        "callFiles": {
+          "cli&packages/cli/src/utils.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              48,
+              49
+            ]
+          },
+          "cli&packages/cli/src/commands/config.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              26
+            ]
+          }
+        }
+      }
+    },
+    "fs/promises": {
+      "fs.access": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "cli&packages/cli/src/utils.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              61
+            ]
+          }
+        }
+      },
+      "fs.mkdir": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "cli&packages/cli/src/utils.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              123
+            ]
+          }
+        }
+      },
+      "fs.readFile": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "cli&packages/cli/src/utils.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              133
+            ]
+          }
+        }
+      },
+      "fs.writeFile": {
+        "callNum": 2,
+        "callOrigin": null,
+        "callFiles": {
+          "cli&packages/cli/src/utils.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              136,
+              187
+            ]
+          }
+        }
+      },
+      "fs.stat": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "cli&packages/cli/src/commands/inspect.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              27
+            ]
+          }
+        }
+      }
+    },
+    "chalk": {
+      "chalk.red": {
+        "callNum": 5,
+        "callOrigin": null,
+        "callFiles": {
+          "cli&packages/cli/src/utils.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              210,
+              277
+            ]
+          },
+          "cli&packages/cli/src/commands/deps-analysis.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              74,
+              102
+            ]
+          }
+        }
+      },
+      "chalk.green": {
+        "callNum": 6,
+        "callOrigin": null,
+        "callFiles": {
+          "cli&packages/cli/src/utils.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              219,
+              284
+            ]
+          },
+          "cli&packages/cli/src/commands/deps-analysis.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              19,
+              26,
+              32,
+              100
+            ]
+          }
+        }
+      },
+      "chalk.blue": {
+        "callNum": 2,
+        "callOrigin": null,
+        "callFiles": {
+          "cli&packages/cli/src/utils.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              228
+            ]
+          },
+          "cli&packages/cli/src/commands/deps-analysis.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              88
+            ]
+          }
+        }
+      },
+      "chalk.yellow": {
+        "callNum": 3,
+        "callOrigin": null,
+        "callFiles": {
+          "cli&packages/cli/src/utils.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              238
+            ]
+          },
+          "cli&packages/cli/src/care.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              150
+            ]
+          }
+        }
+      },
+      "chalk.bold.blue": {
+        "callNum": 2,
+        "callOrigin": null,
+        "callFiles": {
+          "cli&packages/cli/src/utils.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              271
+            ]
+          },
+          "cli&packages/cli/src/commands/deps-analysis.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              16
+            ]
+          }
+        }
+      },
+      "chalk.bold": {
+        "callNum": 3,
+        "callOrigin": null,
+        "callFiles": {
+          "cli&packages/cli/src/utils.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              275,
+              282,
+              289
+            ]
+          }
+        }
+      },
+      "chalk.cyan.dim": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "cli&packages/cli/src/care.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              143
+            ]
+          }
+        }
+      },
+      "chalk.cyan": {
+        "callNum": 2,
+        "callOrigin": null,
+        "callFiles": {
+          "cli&packages/cli/src/care.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              149
+            ]
+          },
+          "cli&packages/cli/src/commands/deps-analysis.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              71
+            ]
+          }
+        }
+      },
+      "chalk.underline": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "cli&packages/cli/src/commands/deps-analysis.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              71
+            ]
+          }
+        }
+      }
+    },
+    "ora": {
+      "ora": {
+        "callNum": 3,
+        "callOrigin": null,
+        "callFiles": {
+          "cli&packages/cli/src/utils.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              247
+            ]
+          },
+          "cli&packages/cli/src/commands/deps-analysis.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              18,
+              88
+            ]
+          }
+        }
+      }
+    },
+    "boxen": {
+      "boxen": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "cli&packages/cli/src/utils.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              293
+            ]
+          }
+        }
+      }
+    },
+    "url": {
+      "fileURLToPath": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "cli&packages/cli/src/care.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              19
+            ]
+          }
+        }
+      }
+    },
+    "fs": {
+      "fs.readFileSync": {
+        "callNum": 3,
+        "callOrigin": null,
+        "callFiles": {
+          "cli&packages/cli/src/care.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              22
+            ]
+          },
+          "utils&packages/utils/src/parse.ts": {
+            "projectName": "utils",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              118
+            ]
+          },
+          "utils&packages/utils/src/file.ts": {
+            "projectName": "utils",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              80
+            ]
+          }
+        }
+      },
+      "fs.existsSync": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "cli&packages/cli/src/commands/deps-analysis.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              50
+            ]
+          }
+        }
+      },
+      "fs.mkdirSync": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "cli&packages/cli/src/commands/deps-analysis.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              51
+            ]
+          }
+        }
+      },
+      "fs.writeFileSync": {
+        "callNum": 2,
+        "callOrigin": null,
+        "callFiles": {
+          "cli&packages/cli/src/commands/deps-analysis.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              69
+            ]
+          },
+          "utils&packages/utils/src/file.ts": {
+            "projectName": "utils",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              89
+            ]
+          }
+        }
+      }
+    },
+    "figlet": {
+      "figlet.textSync": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "cli&packages/cli/src/care.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              134
+            ]
+          }
+        }
+      }
+    },
+    "typescript": {
+      "ts.createCompilerHost": {
+        "callNum": 1,
+        "callOrigin": "*",
+        "callFiles": {
+          "deps-analysis&packages/deps-analysis/src/moduleResolver.ts": {
+            "projectName": "deps-analysis",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              25
+            ]
+          }
+        }
+      },
+      "ts.resolveModuleName": {
+        "callNum": 1,
+        "callOrigin": "*",
+        "callFiles": {
+          "deps-analysis&packages/deps-analysis/src/moduleResolver.ts": {
+            "projectName": "deps-analysis",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              51
+            ]
+          }
+        }
+      },
+      "ts.isPropertyAccessExpression": {
+        "callNum": 2,
+        "callOrigin": "*",
+        "callFiles": {
+          "deps-analysis&packages/deps-analysis/src/analysis.ts": {
+            "projectName": "deps-analysis",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              413,
+              424
+            ]
+          }
+        }
+      },
+      "ts.isIdentifier": {
+        "callNum": 3,
+        "callOrigin": "*",
+        "callFiles": {
+          "deps-analysis&packages/deps-analysis/src/analysis.ts": {
+            "projectName": "deps-analysis",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              418,
+              455,
+              505
+            ]
+          }
+        }
+      },
+      "ts.forEachChild": {
+        "callNum": 2,
+        "callOrigin": "*",
+        "callFiles": {
+          "deps-analysis&packages/deps-analysis/src/analysis.ts": {
+            "projectName": "deps-analysis",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              451,
+              624
+            ]
+          }
+        }
+      },
+      "ts.isImportDeclaration": {
+        "callNum": 1,
+        "callOrigin": "*",
+        "callFiles": {
+          "deps-analysis&packages/deps-analysis/src/analysis.ts": {
+            "projectName": "deps-analysis",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              628
+            ]
+          }
+        }
+      },
+      "ts.isStringLiteral": {
+        "callNum": 1,
+        "callOrigin": "*",
+        "callFiles": {
+          "deps-analysis&packages/deps-analysis/src/analysis.ts": {
+            "projectName": "deps-analysis",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              636
+            ]
+          }
+        }
+      },
+      "ts.isNamedImports": {
+        "callNum": 1,
+        "callOrigin": "*",
+        "callFiles": {
+          "deps-analysis&packages/deps-analysis/src/analysis.ts": {
+            "projectName": "deps-analysis",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              671
+            ]
+          }
+        }
+      },
+      "ts.isImportSpecifier": {
+        "callNum": 1,
+        "callOrigin": "*",
+        "callFiles": {
+          "deps-analysis&packages/deps-analysis/src/analysis.ts": {
+            "projectName": "deps-analysis",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              676
+            ]
+          }
+        }
+      },
+      "ts.isNamespaceImport": {
+        "callNum": 1,
+        "callOrigin": "*",
+        "callFiles": {
+          "deps-analysis&packages/deps-analysis/src/analysis.ts": {
+            "projectName": "deps-analysis",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              696
+            ]
+          }
+        }
+      },
+      "ts.isTypeReferenceNode": {
+        "callNum": 1,
+        "callOrigin": "*",
+        "callFiles": {
+          "deps-analysis&packages/deps-analysis/src/plugins/typePlugin.ts": {
+            "projectName": "deps-analysis",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              25
+            ]
+          }
+        }
+      },
+      "ts.isCallExpression": {
+        "callNum": 1,
+        "callOrigin": "*",
+        "callFiles": {
+          "deps-analysis&packages/deps-analysis/src/plugins/methodPlugin.ts": {
+            "projectName": "deps-analysis",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              23
+            ]
+          }
+        }
+      },
+      "ts.createProgram": {
+        "callNum": 2,
+        "callOrigin": "*",
+        "callFiles": {
+          "utils&packages/utils/src/parse.ts": {
+            "projectName": "utils",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              15,
+              85
+            ]
+          }
+        }
+      },
+      "ts.createSourceFile": {
+        "callNum": 2,
+        "callOrigin": "*",
+        "callFiles": {
+          "utils&packages/utils/src/parse.ts": {
+            "projectName": "utils",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              57,
+              73
+            ]
+          }
+        }
+      },
+      "ts.sys.readFile": {
+        "callNum": 1,
+        "callOrigin": "*",
+        "callFiles": {
+          "utils&packages/utils/src/parse.ts": {
+            "projectName": "utils",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              72
+            ]
+          }
+        }
+      },
+      "ts.getDefaultLibFilePath": {
+        "callNum": 1,
+        "callOrigin": "*",
+        "callFiles": {
+          "utils&packages/utils/src/parse.ts": {
+            "projectName": "utils",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              75
+            ]
+          }
+        }
+      },
+      "ts.readConfigFile": {
+        "callNum": 1,
+        "callOrigin": "*",
+        "callFiles": {
+          "utils&packages/utils/src/parse.ts": {
+            "projectName": "utils",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              102
+            ]
+          }
+        }
+      },
+      "ts.parseJsonConfigFileContent": {
+        "callNum": 1,
+        "callOrigin": "*",
+        "callFiles": {
+          "utils&packages/utils/src/parse.ts": {
+            "projectName": "utils",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              108
+            ]
+          }
+        }
+      }
+    },
+    "module": {
+      "builtinModules.includes": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "deps-analysis&packages/deps-analysis/src/analysis.ts": {
+            "projectName": "deps-analysis",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              616
+            ]
+          }
+        }
+      }
+    },
+    "tailwind-merge": {
+      "twMerge": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "deps-display&packages/deps-display/src/utils/cn.ts": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              8
+            ]
+          }
+        }
+      }
+    },
+    "clsx": {
+      "clsx": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "deps-display&packages/deps-display/src/utils/cn.ts": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              8
+            ]
+          }
+        }
+      }
+    },
+    "i18next": {
+      "i18n.use": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "deps-display&packages/deps-display/src/i18n/index.ts": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              19
+            ]
+          }
+        }
+      },
+      "i18n.on": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "deps-display&packages/deps-display/src/i18n/index.ts": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              41
+            ]
+          }
+        }
+      }
+    },
+    "react-dom/client": {
+      "createRoot": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "deps-display&packages/deps-display/src/main.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              8
+            ]
+          }
+        }
+      }
+    },
+    "react-i18next": {
+      "useTranslation": {
+        "callNum": 5,
+        "callOrigin": null,
+        "callFiles": {
+          "deps-display&packages/deps-display/src/App.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              12
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/NodeApiAnalyzer.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              25
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/ImportDependencyGraph.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              32
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/GhostDependenciesWarning.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              9
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/BrowserApiAnalyzer.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              21
+            ]
+          }
+        }
+      }
+    },
+    "react-router-dom": {
+      "useNavigate": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "deps-display&packages/deps-display/src/App.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              13
+            ]
+          }
+        }
+      },
+      "useLocation": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "deps-display&packages/deps-display/src/App.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              14
+            ]
+          }
+        }
+      }
+    },
+    "react": {
+      "useState": {
+        "callNum": 18,
+        "callOrigin": null,
+        "callFiles": {
+          "deps-display&packages/deps-display/src/App.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              15,
+              16,
+              17,
+              18
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/NodeApiAnalyzer.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              26,
+              27,
+              28,
+              29
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/ImportDependencyGraph.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              33,
+              34,
+              35,
+              36,
+              37,
+              38
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/BrowserApiAnalyzer.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              22,
+              23,
+              24,
+              25
+            ]
+          }
+        }
+      },
+      "useEffect": {
+        "callNum": 9,
+        "callOrigin": null,
+        "callFiles": {
+          "deps-display&packages/deps-display/src/App.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              21,
+              43
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/NodeApiAnalyzer.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              32,
+              98
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/ImportDependencyGraph.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              40,
+              53,
+              80
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/BrowserApiAnalyzer.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              28,
+              71
+            ]
+          }
+        }
+      }
+    },
+    "@mastra/core/logger": {
+      "createLogger": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "mastra&packages/mastra/src/mastra/index.ts": {
+            "projectName": "mastra",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              11
+            ]
+          }
+        }
+      }
+    },
+    "@mastra/core/tools": {
+      "createTool": {
+        "callNum": 3,
+        "callOrigin": null,
+        "callFiles": {
+          "mastra&packages/mastra/src/mastra/tools/codeReview.ts": {
+            "projectName": "mastra",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              5,
+              33,
+              64
+            ]
+          }
+        }
+      }
+    },
+    "zod": {
+      "z.object": {
+        "callNum": 3,
+        "callOrigin": null,
+        "callFiles": {
+          "mastra&packages/mastra/src/mastra/tools/codeReview.ts": {
+            "projectName": "mastra",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              8,
+              36,
+              67
+            ]
+          }
+        }
+      },
+      "z.string": {
+        "callNum": 4,
+        "callOrigin": null,
+        "callFiles": {
+          "mastra&packages/mastra/src/mastra/tools/codeReview.ts": {
+            "projectName": "mastra",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              9,
+              11,
+              37,
+              68
+            ]
+          }
+        }
+      },
+      "z.enum": {
+        "callNum": 3,
+        "callOrigin": null,
+        "callFiles": {
+          "mastra&packages/mastra/src/mastra/tools/codeReview.ts": {
+            "projectName": "mastra",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              10,
+              12,
+              69
+            ]
+          }
+        }
+      }
+    },
+    "@ai-sdk/openai": {
+      "openai": {
+        "callNum": 2,
+        "callOrigin": null,
+        "callFiles": {
+          "mastra&packages/mastra/src/mastra/agents/codeReviewAgent.ts": {
+            "projectName": "mastra",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              60,
+              84
+            ]
+          }
+        }
+      }
+    },
+    "crypto": {
+      "createHash": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "utils&packages/utils/src/parse.ts": {
+            "projectName": "utils",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              9
+            ]
+          }
+        }
+      }
+    },
+    "@vue/compiler-dom": {
+      "parse": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "utils&packages/utils/src/parse.ts": {
+            "projectName": "utils",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              29
+            ]
+          }
+        }
+      }
+    },
+    "simple-git": {
+      "simpleGit": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "utils&packages/utils/src/git.ts": {
+            "projectName": "utils",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              22
+            ]
+          }
+        }
+      }
+    },
+    "fs-extra": {
+      "fs.pathExists": {
+        "callNum": 2,
+        "callOrigin": null,
+        "callFiles": {
+          "utils&packages/utils/src/git.ts": {
+            "projectName": "utils",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              112,
+              178
+            ]
+          }
+        }
+      },
+      "fs.readFile": {
+        "callNum": 3,
+        "callOrigin": null,
+        "callFiles": {
+          "utils&packages/utils/src/git.ts": {
+            "projectName": "utils",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              118,
+              187,
+              210
+            ]
+          }
+        }
+      }
+    },
+    "glob": {
+      "glob": {
+        "callNum": 2,
+        "callOrigin": null,
+        "callFiles": {
+          "utils&packages/utils/src/file.ts": {
+            "projectName": "utils",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              48,
+              75
+            ]
+          }
+        }
+      }
+    }
+  },
+  "typeMap": {
+    "clsx": {
+      "ClassValue": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "deps-display&packages/deps-display/src/utils/cn.ts": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              7
+            ]
+          }
+        }
+      }
+    },
+    "@mastra/core": {
+      "Mastra": {
+        "callNum": 2,
+        "callOrigin": null,
+        "callFiles": {
+          "mastra&packages/mastra/src/mastra/index.ts": {
+            "projectName": "mastra",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              8,
+              18
+            ]
+          }
+        }
+      }
+    },
+    "simple-git": {
+      "GitType": {
+        "callNum": 1,
+        "callOrigin": "SimpleGit",
+        "callFiles": {
+          "utils&packages/utils/src/git.ts": {
+            "projectName": "utils",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              11
+            ]
+          }
+        }
+      }
+    }
+  },
+  "browserMap": {
+    "browser": {
+      "process.cwd": {
+        "callNum": 12,
+        "callOrigin": null,
+        "callFiles": {
+          "cli&packages/cli/src/utils.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              46,
+              47
+            ]
+          },
+          "cli&packages/cli/src/commands/inspect.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              73
+            ]
+          },
+          "cli&packages/cli/src/commands/deps-analysis.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              49
+            ]
+          },
+          "cli&packages/cli/src/commands/config.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              26
+            ]
+          },
+          "deps-analysis&packages/deps-analysis/src/analysis.ts": {
+            "projectName": "deps-analysis",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              190,
+              252
+            ]
+          },
+          "utils&packages/utils/src/parse.ts": {
+            "projectName": "utils",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              118
+            ]
+          },
+          "utils&packages/utils/src/git.ts": {
+            "projectName": "utils",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              20
+            ]
+          },
+          "utils&packages/utils/src/file.ts": {
+            "projectName": "utils",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              12,
+              24,
+              89
+            ]
+          }
+        }
+      },
+      "Promise": {
+        "callNum": 22,
+        "callOrigin": null,
+        "callFiles": {
+          "cli&packages/cli/src/utils.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              57,
+              91,
+              119
+            ]
+          },
+          "cli&packages/cli/src/commands/inspect.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              25,
+              39
+            ]
+          },
+          "cli&packages/cli/src/commands/deps-analysis.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              44,
+              84
+            ]
+          },
+          "cli&packages/cli/src/commands/config.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              16
+            ]
+          },
+          "deps-analysis&packages/deps-analysis/src/analysis.ts": {
+            "projectName": "deps-analysis",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              179,
+              248
+            ]
+          },
+          "utils&packages/utils/src/git.ts": {
+            "projectName": "utils",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              30,
+              70,
+              83,
+              101,
+              145,
+              170,
+              207,
+              280,
+              295
+            ]
+          },
+          "utils&packages/utils/src/file.ts": {
+            "projectName": "utils",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              11,
+              23,
+              44
+            ]
+          }
+        }
+      },
+      "Error": {
+        "callNum": 26,
+        "callOrigin": null,
+        "callFiles": {
+          "cli&packages/cli/src/utils.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              63,
+              68,
+              78,
+              79,
+              83,
+              144,
+              197
+            ]
+          },
+          "cli&packages/cli/src/commands/inspect.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              120
+            ]
+          },
+          "cli&packages/cli/src/commands/deps-analysis.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              74,
+              102
+            ]
+          },
+          "cli&packages/cli/src/commands/config.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              51
+            ]
+          },
+          "deps-analysis&packages/deps-analysis/src/analysis.ts": {
+            "projectName": "deps-analysis",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              146,
+              231
+            ]
+          },
+          "deps-analysis&packages/deps-analysis/src/plugins/typePlugin.ts": {
+            "projectName": "deps-analysis",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              39
+            ]
+          },
+          "deps-analysis&packages/deps-analysis/src/plugins/methodPlugin.ts": {
+            "projectName": "deps-analysis",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              41
+            ]
+          },
+          "deps-analysis&packages/deps-analysis/src/plugins/defaultPlugin.ts": {
+            "projectName": "deps-analysis",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              36
+            ]
+          },
+          "deps-analysis&packages/deps-analysis/src/plugins/browserPlugin.ts": {
+            "projectName": "deps-analysis",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              36
+            ]
+          },
+          "deps-display&packages/deps-display/src/App.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              64,
+              70
+            ]
+          },
+          "utils&packages/utils/src/parse.ts": {
+            "projectName": "utils",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              104,
+              111
+            ]
+          },
+          "utils&packages/utils/src/git.ts": {
+            "projectName": "utils",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              321,
+              338,
+              355,
+              373
+            ]
+          }
+        }
+      },
+      "String": {
+        "callNum": 12,
+        "callOrigin": null,
+        "callFiles": {
+          "cli&packages/cli/src/utils.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              79,
+              83,
+              144,
+              197
+            ]
+          },
+          "cli&packages/cli/src/commands/inspect.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              120,
+              121
+            ]
+          },
+          "cli&packages/cli/src/commands/deps-analysis.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              74,
+              102
+            ]
+          },
+          "cli&packages/cli/src/commands/config.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              51,
+              52
+            ]
+          },
+          "deps-analysis&packages/deps-analysis/src/analysis.ts": {
+            "projectName": "deps-analysis",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              146,
+              231
+            ]
+          }
+        }
+      },
+      "process.env.OPENAI_API_KEY": {
+        "callNum": 4,
+        "callOrigin": null,
+        "callFiles": {
+          "cli&packages/cli/src/utils.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              95,
+              96
+            ]
+          },
+          "cli&packages/cli/src/commands/inspect.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              64,
+              65
+            ]
+          }
+        }
+      },
+      "console.log": {
+        "callNum": 13,
+        "callOrigin": null,
+        "callFiles": {
+          "cli&packages/cli/src/utils.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              107,
+              219,
+              228
+            ]
+          },
+          "cli&packages/cli/src/care.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              149,
+              150
+            ]
+          },
+          "cli&packages/cli/src/commands/inspect.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              107,
+              110
+            ]
+          },
+          "cli&packages/cli/src/commands/deps-analysis.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              16,
+              71
+            ]
+          },
+          "cli&packages/cli/src/commands/config.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              34
+            ]
+          },
+          "deps-analysis&packages/deps-analysis/src/analysis.ts": {
+            "projectName": "deps-analysis",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              233
+            ]
+          },
+          "deps-display&packages/deps-display/src/i18n/index.ts": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              42
+            ]
+          },
+          "deps-display&packages/deps-display/src/App.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              58
+            ]
+          }
+        }
+      },
+      "URL": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "cli&packages/cli/src/utils.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              127
+            ]
+          }
+        }
+      },
+      "console.error": {
+        "callNum": 18,
+        "callOrigin": null,
+        "callFiles": {
+          "cli&packages/cli/src/utils.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              210
+            ]
+          },
+          "cli&packages/cli/src/commands/deps-analysis.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              74,
+              102
+            ]
+          },
+          "deps-display&packages/deps-display/src/App.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              72
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/NodeApiAnalyzer.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              92,
+              135
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/ImportDependencyGraph.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              211
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/BrowserApiAnalyzer.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              65,
+              105
+            ]
+          },
+          "utils&packages/utils/src/git.ts": {
+            "projectName": "utils",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              34,
+              54,
+              74,
+              134,
+              159,
+              195,
+              270,
+              284,
+              303
+            ]
+          }
+        }
+      },
+      "console.warn": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "cli&packages/cli/src/utils.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              238
+            ]
+          }
+        }
+      },
+      "ReturnType": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "cli&packages/cli/src/utils.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              246
+            ]
+          }
+        }
+      },
+      "JSON.stringify": {
+        "callNum": 2,
+        "callOrigin": null,
+        "callFiles": {
+          "cli&packages/cli/src/utils.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              307
+            ]
+          },
+          "cli&packages/cli/src/commands/deps-analysis.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              55
+            ]
+          }
+        }
+      },
+      "JSON.parse": {
+        "callNum": 3,
+        "callOrigin": null,
+        "callFiles": {
+          "cli&packages/cli/src/care.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              22
+            ]
+          },
+          "mastra&packages/mastra/src/mastra/tools/codeReview.ts": {
+            "projectName": "mastra",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              43
+            ]
+          },
+          "utils&packages/utils/src/parse.ts": {
+            "projectName": "utils",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              118
+            ]
+          }
+        }
+      },
+      "Math.max": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "cli&packages/cli/src/care.ts": {
+            "projectName": "cli",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              142
+            ]
+          }
+        }
+      },
+      "Record": {
+        "callNum": 27,
+        "callOrigin": null,
+        "callFiles": {
+          "deps-analysis&packages/deps-analysis/src/types.ts": {
+            "projectName": "deps-analysis",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              55
+            ]
+          },
+          "deps-analysis&packages/deps-analysis/src/analysis.ts": {
+            "projectName": "deps-analysis",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              48,
+              82,
+              84,
+              93,
+              95,
+              98,
+              99,
+              100,
+              101,
+              347,
+              439,
+              546,
+              547
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/NodeApiAnalyzer.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              19
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/ImportDependencyGraph.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              16,
+              23,
+              148
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/GhostDependenciesWarning.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              5
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/BrowserApiAnalyzer.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              16,
+              33,
+              40
+            ]
+          }
+        }
+      },
+      "Object.keys": {
+        "callNum": 17,
+        "callOrigin": null,
+        "callFiles": {
+          "deps-analysis&packages/deps-analysis/src/analysis.ts": {
+            "projectName": "deps-analysis",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              136,
+              159,
+              160,
+              209,
+              217,
+              458
+            ]
+          },
+          "deps-display&packages/deps-display/src/App.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              82
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/NodeApiAnalyzer.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              279
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/ImportDependencyGraph.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              102,
+              355,
+              486
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/GhostDependenciesWarning.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              11
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/BrowserApiAnalyzer.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              146,
+              240
+            ]
+          },
+          "mastra&packages/mastra/src/mastra/tools/codeReview.ts": {
+            "projectName": "mastra",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              50
+            ]
+          }
+        }
+      },
+      "process.stderr.write": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "deps-analysis&packages/deps-analysis/src/analysis.ts": {
+            "projectName": "deps-analysis",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              146
+            ]
+          }
+        }
+      },
+      "process.stdout.write": {
+        "callNum": 2,
+        "callOrigin": null,
+        "callFiles": {
+          "deps-analysis&packages/deps-analysis/src/analysis.ts": {
+            "projectName": "deps-analysis",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              237,
+              241
+            ]
+          }
+        }
+      },
+      "process.env.NODE_ENV": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "deps-display&packages/deps-display/src/i18n/index.ts": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              28
+            ]
+          }
+        }
+      },
+      "document.getElementById": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "deps-display&packages/deps-display/src/main.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              8
+            ]
+          }
+        }
+      },
+      "fetch": {
+        "callNum": 2,
+        "callOrigin": null,
+        "callFiles": {
+          "deps-display&packages/deps-display/src/App.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              51,
+              62
+            ]
+          }
+        }
+      },
+      "Object.values": {
+        "callNum": 3,
+        "callOrigin": null,
+        "callFiles": {
+          "deps-display&packages/deps-display/src/App.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              86,
+              87,
+              142
+            ]
+          }
+        }
+      },
+      "div": {
+        "callNum": 204,
+        "callOrigin": null,
+        "callFiles": {
+          "deps-display&packages/deps-display/src/App.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              91,
+              93,
+              95,
+              108,
+              109,
+              113,
+              115,
+              119,
+              160,
+              165,
+              166,
+              167,
+              171,
+              173,
+              177,
+              197,
+              199
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/NodeApiAnalyzer.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              166,
+              170,
+              172,
+              181,
+              184,
+              185,
+              193,
+              194,
+              199,
+              205,
+              210,
+              215,
+              220,
+              222,
+              223,
+              228,
+              230,
+              232,
+              237,
+              238,
+              241,
+              245,
+              246,
+              248,
+              249,
+              252,
+              255,
+              261,
+              268,
+              270,
+              271,
+              272,
+              277,
+              281,
+              284,
+              287,
+              290,
+              292,
+              296,
+              298,
+              310,
+              312,
+              314,
+              317,
+              319,
+              322,
+              329,
+              331,
+              334,
+              335,
+              336,
+              338,
+              340,
+              343,
+              345,
+              346,
+              348
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/ImportDependencyGraph.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              266,
+              270,
+              272,
+              276,
+              318,
+              320,
+              321,
+              329,
+              330,
+              332,
+              334,
+              336,
+              338,
+              344,
+              345,
+              350,
+              352,
+              356,
+              358,
+              361,
+              363,
+              368,
+              371,
+              375,
+              385,
+              386,
+              388,
+              389,
+              392,
+              399,
+              428,
+              432,
+              434,
+              442,
+              448,
+              450,
+              452,
+              455,
+              457,
+              459,
+              461,
+              462,
+              465,
+              467,
+              469,
+              471,
+              473,
+              476,
+              479,
+              488,
+              495,
+              499,
+              501,
+              513,
+              515,
+              517,
+              520,
+              522,
+              525,
+              532,
+              534,
+              537,
+              539,
+              541,
+              542,
+              543
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/GhostDependenciesWarning.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              16,
+              17,
+              19,
+              20,
+              21,
+              23,
+              26,
+              28,
+              30,
+              31,
+              32
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/BrowserApiAnalyzer.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              136,
+              140,
+              142,
+              151,
+              154,
+              162,
+              167,
+              173,
+              178,
+              183,
+              188,
+              190,
+              191,
+              196,
+              198,
+              200,
+              206,
+              207,
+              213,
+              217,
+              219,
+              222,
+              224,
+              226,
+              227,
+              230,
+              233,
+              242,
+              249,
+              253,
+              255,
+              267,
+              269,
+              271,
+              274,
+              276,
+              279,
+              286,
+              288,
+              291,
+              293,
+              296,
+              298,
+              299,
+              301
+            ]
+          }
+        }
+      },
+      "header": {
+        "callNum": 2,
+        "callOrigin": null,
+        "callFiles": {
+          "deps-display&packages/deps-display/src/App.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              92,
+              162
+            ]
+          }
+        }
+      },
+      "h1": {
+        "callNum": 2,
+        "callOrigin": null,
+        "callFiles": {
+          "deps-display&packages/deps-display/src/App.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              94
+            ]
+          }
+        }
+      },
+      "button": {
+        "callNum": 18,
+        "callOrigin": null,
+        "callFiles": {
+          "deps-display&packages/deps-display/src/App.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              96,
+              101,
+              102,
+              107,
+              120,
+              129,
+              130,
+              147,
+              148,
+              159
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/ImportDependencyGraph.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              400,
+              406,
+              407,
+              413,
+              414,
+              420,
+              421,
+              427
+            ]
+          }
+        }
+      },
+      "span": {
+        "callNum": 64,
+        "callOrigin": null,
+        "callFiles": {
+          "deps-display&packages/deps-display/src/App.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              128,
+              140,
+              143,
+              145,
+              158
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/NodeApiAnalyzer.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              240,
+              242,
+              244,
+              257,
+              258,
+              260,
+              273,
+              278,
+              280,
+              323,
+              325,
+              327
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/ImportDependencyGraph.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              346,
+              351,
+              359,
+              360,
+              376,
+              378,
+              379,
+              381,
+              382,
+              384,
+              444,
+              481,
+              485,
+              487,
+              526,
+              528,
+              530
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/GhostDependenciesWarning.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              24,
+              25
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/BrowserApiAnalyzer.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              209,
+              214,
+              216,
+              235,
+              239,
+              241,
+              280,
+              282,
+              284
+            ]
+          }
+        }
+      },
+      "FC": {
+        "callNum": 4,
+        "callOrigin": null,
+        "callFiles": {
+          "deps-display&packages/deps-display/src/components/NodeApiAnalyzer.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              24
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/ImportDependencyGraph.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              31
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/GhostDependenciesWarning.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              8
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/BrowserApiAnalyzer.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              20
+            ]
+          }
+        }
+      },
+      "Object.entries": {
+        "callNum": 14,
+        "callOrigin": null,
+        "callFiles": {
+          "deps-display&packages/deps-display/src/components/NodeApiAnalyzer.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              41,
+              50,
+              60,
+              70,
+              293
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/ImportDependencyGraph.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              92,
+              103,
+              117,
+              131,
+              357,
+              496
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/GhostDependenciesWarning.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              22
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/BrowserApiAnalyzer.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              45,
+              250
+            ]
+          }
+        }
+      },
+      "ChangeEvent": {
+        "callNum": 3,
+        "callOrigin": null,
+        "callFiles": {
+          "deps-display&packages/deps-display/src/components/NodeApiAnalyzer.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              118
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/ImportDependencyGraph.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              289
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/BrowserApiAnalyzer.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              88
+            ]
+          }
+        }
+      },
+      "HTMLInputElement": {
+        "callNum": 3,
+        "callOrigin": null,
+        "callFiles": {
+          "deps-display&packages/deps-display/src/components/NodeApiAnalyzer.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              118
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/ImportDependencyGraph.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              289
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/BrowserApiAnalyzer.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              88
+            ]
+          }
+        }
+      },
+      "input": {
+        "callNum": 3,
+        "callOrigin": null,
+        "callFiles": {
+          "deps-display&packages/deps-display/src/components/NodeApiAnalyzer.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              186
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/ImportDependencyGraph.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              322
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/BrowserApiAnalyzer.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              155
+            ]
+          }
+        }
+      },
+      "h2": {
+        "callNum": 22,
+        "callOrigin": null,
+        "callFiles": {
+          "deps-display&packages/deps-display/src/components/NodeApiAnalyzer.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              201,
+              211,
+              224,
+              253,
+              265
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/ImportDependencyGraph.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              335,
+              393,
+              396,
+              477,
+              492
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/BrowserApiAnalyzer.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              169,
+              179,
+              192,
+              231,
+              246
+            ]
+          }
+        }
+      },
+      "p": {
+        "callNum": 18,
+        "callOrigin": null,
+        "callFiles": {
+          "deps-display&packages/deps-display/src/components/NodeApiAnalyzer.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              202,
+              204,
+              212,
+              214,
+              225,
+              227,
+              342
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/GhostDependenciesWarning.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              29
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/BrowserApiAnalyzer.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              170,
+              172,
+              180,
+              182,
+              193,
+              195,
+              295
+            ]
+          }
+        }
+      },
+      "h3": {
+        "callNum": 2,
+        "callOrigin": null,
+        "callFiles": {
+          "deps-display&packages/deps-display/src/components/NodeApiAnalyzer.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              291
+            ]
+          }
+        }
+      },
+      "a": {
+        "callNum": 6,
+        "callOrigin": null,
+        "callFiles": {
+          "deps-display&packages/deps-display/src/components/NodeApiAnalyzer.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              299,
+              309
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/ImportDependencyGraph.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              502,
+              512
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/BrowserApiAnalyzer.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              256,
+              266
+            ]
+          }
+        }
+      },
+      "svg": {
+        "callNum": 6,
+        "callOrigin": null,
+        "callFiles": {
+          "deps-display&packages/deps-display/src/components/NodeApiAnalyzer.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              306,
+              308
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/ImportDependencyGraph.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              509,
+              511
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/BrowserApiAnalyzer.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              263,
+              265
+            ]
+          }
+        }
+      },
+      "path": {
+        "callNum": 3,
+        "callOrigin": null,
+        "callFiles": {
+          "deps-display&packages/deps-display/src/components/NodeApiAnalyzer.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              307
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/ImportDependencyGraph.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              510
+            ]
+          },
+          "deps-display&packages/deps-display/src/components/BrowserApiAnalyzer.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              264
+            ]
+          }
+        }
+      },
+      "React": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "deps-display&packages/deps-display/src/components/GhostDependenciesWarning.tsx": {
+            "projectName": "deps-display",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              8
+            ]
+          }
+        }
+      },
+      "Date": {
+        "callNum": 4,
+        "callOrigin": null,
+        "callFiles": {
+          "mastra&packages/mastra/src/mastra/tools/codeReview.ts": {
+            "projectName": "mastra",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              27,
+              52,
+              57,
+              84
+            ]
+          }
+        }
+      },
+      "Set": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "utils&packages/utils/src/git.ts": {
+            "projectName": "utils",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              94
+            ]
+          }
+        }
+      },
+      "Math.min": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "utils&packages/utils/src/git.ts": {
+            "projectName": "utils",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              213
+            ]
+          }
+        }
+      },
+      "Promise.all": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "utils&packages/utils/src/file.ts": {
+            "projectName": "utils",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              29
+            ]
+          }
+        }
+      },
+      "RegExp": {
+        "callNum": 1,
+        "callOrigin": null,
+        "callFiles": {
+          "utils&packages/utils/src/file.ts": {
+            "projectName": "utils",
+            "httpRepo": "https://github.com/qiushui7/t-care",
+            "lines": [
+              60
+            ]
+          }
+        }
+      }
+    }
+  }
+}

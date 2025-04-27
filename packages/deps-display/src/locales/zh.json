@@ -77,5 +77,8 @@
   "selectBrowserApiToViewDetails": "选择一个浏览器API以查看调用详情",
   "selectNodeApiToViewDetails": "选择一个Node.js API以查看调用详情",
   "selectBrowserApiFromList": "请从左侧列表中选择一个浏览器API以查看其调用详情",
-  "selectNodeApiFromList": "请从左侧列表中选择一个Node.js API以查看其调用详情"
+  "selectNodeApiFromList": "请从左侧列表中选择一个Node.js API以查看其调用详情",
+  "ghostDependenciesWarning": "检测到可能的幽灵依赖",
+  "ghostDependenciesDescription": "以上依赖项已被使用但未在 package.json 中声明。幽灵依赖可能导致构建不稳定或在不同环境中出现异常。建议将这些依赖添加到您的 package.json 文件中。",
+  "tryAdjustingSearch": "请尝试调整搜索词以找到结果"
 }

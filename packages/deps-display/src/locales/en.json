@@ -77,5 +77,8 @@
   "selectBrowserApiToViewDetails": "Select a browser API to view call details",
   "selectNodeApiToViewDetails": "Select a Node.js API to view call details",
   "selectBrowserApiFromList": "Please select a browser API from the list on the left to view its call details",
-  "selectNodeApiFromList": "Please select a Node.js API from the list on the left to view its call details"
+  "selectNodeApiFromList": "Please select a Node.js API from the list on the left to view its call details",
+  "ghostDependenciesWarning": "Potential Ghost Dependencies Detected",
+  "ghostDependenciesDescription": "The dependencies listed above are being used but not declared in package.json. Ghost dependencies can lead to unstable builds or unexpected behavior in different environments. It's recommended to add these dependencies to your package.json file.",
+  "tryAdjustingSearch": "Try adjusting your search term to find results"
 }

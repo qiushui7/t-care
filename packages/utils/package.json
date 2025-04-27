@@ -1,6 +1,6 @@
 {
   "name": "@t-care/utils",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "description": "工具函数库，提供获取本地代码等功能",
   "type": "module",
   "main": "dist/index.js",
@@ -27,6 +27,9 @@
     "glob": "^11.0.1",
     "simple-git": "^3.23.0",
     "typescript": "^5.8.3"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.1"
   },
   "files": [
     "dist",

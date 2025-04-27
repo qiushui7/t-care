@@ -1,5 +1,15 @@
 # @care/cli
 
+## 1.3.6
+
+### Patch Changes
+
+- Updated dependencies
+  - @t-care/deps-analysis@1.2.0
+  - @t-care/deps-display@1.2.0
+  - @t-care/utils@1.2.5
+  - @t-care/core@1.3.5
+
 ## 1.3.5
 
 ### Patch Changes

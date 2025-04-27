@@ -13,6 +13,7 @@ export interface DependencyJsonData {
   methodMap?: Record<string, Record<string, MethodMapEntry>>;
   versionMap: Record<string, Record<string, string>>; // 包版本信息映射 project -> package -> version
   browserMap?: Record<string, BrowserApiEntry>; // 浏览器API使用情况映射
+  ghostDependenciesWarn?: Record<string, string[]>; // 可能存在幽灵依赖的警告
 }
 
 export interface ScanSource {

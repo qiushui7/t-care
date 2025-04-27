@@ -172,43 +172,61 @@ const NodeApiAnalyzer: React.FC<NodeApiAnalyzerProps> = ({ data, loading, error 
     </div>;
   }
 
-  if (!data || !data.importItemMap || filteredApis.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center p-12 bg-gray-50 rounded-lg">
-        <Server size={64} className="text-gray-300 mb-4" />
-        <h2 className="text-xl font-semibold text-gray-700 mb-2">{t('noNodeApiData') || 'No Node API data available'}</h2>
-        <p className="text-gray-500 text-center max-w-md">
-          {t('noNodeApiExplanation') || 'No Node.js API usage was detected in the analyzed code.'}
-        </p>
-      </div>
-    );
-  }
+  // 判断初始状态：无数据或数据中没有 Node API
+  const hasNoInitialNodeApis = !data || !data.importItemMap || nodeApis.length === 0;
+  // 判断搜索结果为空的状态
+  const hasEmptySearchResults = nodeApis.length > 0 && filteredApis.length === 0;
 
   return (
     <div className="flex flex-col space-y-4">
-      <div className="w-full p-4 bg-gray-50 rounded-md">
-        <div className="flex flex-col md:flex-row justify-between gap-2">
-          <input
-            type="text"
-            placeholder={t('searchNodeApi') || 'Search Node.js APIs...'}
-            className="w-full p-2 border border-gray-300 rounded-md"
-            value={searchTerm}
-            onChange={handleSearchChange}
-          />
-        </div>
-      </div>
-
-      <div className="flex flex-col md:flex-row gap-4">
-        {/* Node API列表 */}
-        <div className="w-full md:w-1/3 bg-gray-50 p-4 rounded-md shadow-sm max-h-[800px] overflow-y-auto">
-          <div className="p-3 bg-blue-50 rounded-md mb-4">
-            <h2 className="text-lg font-semibold text-blue-800 mb-2">{t('nodeApiView') || 'Node.js API Usage'} ({filteredApis.length})</h2>
-            <p className="text-sm text-blue-700">
-              {t('nodeApiDescription') || 'List of Node.js APIs used in the project.'}
-            </p>
+      {/* 搜索栏始终显示，只要数据已加载 */}
+      {(!hasNoInitialNodeApis || searchTerm) && (
+        <div className="w-full p-4 bg-gray-50 rounded-md">
+          <div className="flex flex-col md:flex-row justify-between gap-2">
+            <input
+              type="text"
+              placeholder={t('searchNodeApi') || 'Search Node.js APIs...'}
+              className="w-full p-2 border border-gray-300 rounded-md"
+              value={searchTerm}
+              onChange={handleSearchChange}
+            />
           </div>
+        </div>
+      )}
 
-          {filteredApis.length > 0 ? (
+      {/* 无初始数据时显示空状态 */}
+      {hasNoInitialNodeApis && (
+        <div className="flex flex-col items-center justify-center p-12 bg-gray-50 rounded-lg">
+          <Server size={64} className="text-gray-300 mb-4" />
+          <h2 className="text-xl font-semibold text-gray-700 mb-2">{t('noNodeApiData') || 'No Node API data available'}</h2>
+          <p className="text-gray-500 text-center max-w-md">
+            {t('noNodeApiExplanation') || 'No Node.js API usage was detected in the analyzed code.'}
+          </p>
+        </div>
+      )}
+
+      {/* 搜索结果为空时显示提示 */}
+      {hasEmptySearchResults && (
+        <div className="flex flex-col items-center justify-center p-8 bg-gray-50 rounded-lg">
+          <h2 className="text-lg font-semibold text-gray-700 mb-2">{t('noMatchingApis') || 'No matching APIs found'}</h2>
+          <p className="text-gray-500 text-center">
+            {t('tryAdjustingSearch') || 'Try adjusting your search term to find results.'}
+          </p>
+        </div>
+      )}
+
+      {/* 有搜索结果时显示内容区域 */}
+      {filteredApis.length > 0 && (
+        <div className="flex flex-col md:flex-row gap-4">
+          {/* Node API列表 */}
+          <div className="w-full md:w-1/3 bg-gray-50 p-4 rounded-md shadow-sm max-h-[800px] overflow-y-auto">
+            <div className="p-3 bg-blue-50 rounded-md mb-4">
+              <h2 className="text-lg font-semibold text-blue-800 mb-2">{t('nodeApiView') || 'Node.js API Usage'} ({filteredApis.length})</h2>
+              <p className="text-sm text-blue-700">
+                {t('nodeApiDescription') || 'List of Node.js APIs used in the project.'}
+              </p>
+            </div>
+
             <div className="space-y-2">
               {filteredApis.map((api, index) => (
                 <div
@@ -228,109 +246,105 @@ const NodeApiAnalyzer: React.FC<NodeApiAnalyzerProps> = ({ data, loading, error 
                 </div>
               ))}
             </div>
-          ) : (
-            <div className="text-center p-4 text-gray-500">
-              {t('noMatchingApis') || 'No matching APIs found.'}
-            </div>
-          )}
-        </div>
+          </div>
 
-        {/* 调用文件详情 */}
-        <div className="w-full md:w-2/3 bg-gray-50 p-4 rounded-md shadow-sm max-h-[800px] overflow-y-auto">
-          <h2 className="text-xl font-bold mb-4">
+          {/* 调用文件详情 */}
+          <div className="w-full md:w-2/3 bg-gray-50 p-4 rounded-md shadow-sm max-h-[800px] overflow-y-auto">
+            <h2 className="text-xl font-bold mb-4">
+              {selectedApi ? (
+                <div className="flex items-center gap-2">
+                  <Server size={18} className="text-blue-500" />
+                  <span>{selectedApi.moduleName} {t('callDetails') || 'Call Details'}</span>
+                  <span className="text-sm font-normal text-gray-600">
+                    ({selectedApi.allUsedApiItems.length} {t('items') || 'items'})
+                  </span>
+                </div>
+              ) : (
+                t('selectNodeApiToViewDetails') || 'Select a Node.js API to view details'
+              )}
+            </h2>
+
             {selectedApi ? (
-              <div className="flex items-center gap-2">
-                <Server size={18} className="text-blue-500" />
-                <span>{selectedApi.moduleName} {t('callDetails') || 'Call Details'}</span>
-                <span className="text-sm font-normal text-gray-600">
-                  ({selectedApi.allUsedApiItems.length} {t('items') || 'items'})
-                </span>
+              <div className="space-y-4">
+                {selectedApi.allUsedApiItems.map((apiItem, itemIndex) => (
+                  <div key={itemIndex} className="border border-gray-200 rounded-md p-3">
+                    <div className="flex justify-between items-center mb-2">
+                      <div className="font-medium font-mono flex items-center">
+                        <span>{apiItem.name}</span>
+                        {apiItem.isBlack && (
+                          <AlertTriangle size={16} className="text-red-500 ml-1" />
+                        )}
+                      </div>
+                      <span className="text-sm bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">
+                        {apiItem.callNum || Object.keys(apiItem.callFiles || {}).length} {t('calls') || 'calls'}
+                      </span>
+                    </div>
+
+                    {apiItem.isBlack && (
+                      <div className="mt-1 mb-2 text-xs text-red-600 border border-red-300 bg-red-50 p-1 rounded flex items-center">
+                        <AlertTriangle size={14} className="mr-1" />
+                        {t('blacklistedApiWarning') || 'This API is blacklisted.'}
+                      </div>
+                    )}
+
+                    <div className="mt-2">
+                      <h3 className="text-sm font-semibold mb-1">{t('callFiles') || 'Call Files'}:</h3>
+                      <div className="space-y-2 pl-2">
+                        {Object.entries(apiItem.callFiles || {}).map(([filePath], fileIndex) => {
+                          const { url: repoLink, lineNumbers } = getRepoLink(apiItem, filePath);
+                          return (
+                            <div key={fileIndex} className="text-sm hover:bg-gray-100 p-1 rounded">
+                              {repoLink ? (
+                                <div>
+                                  <a
+                                    href={lineNumbers.length > 0 ? `${repoLink}#L${lineNumbers[0]}` : repoLink}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="font-mono text-blue-600 hover:underline flex items-center"
+                                  >
+                                    {filePath}
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                    </svg>
+                                  </a>
+                                </div>
+                              ) : (
+                                <div className="font-mono text-blue-600">
+                                  {filePath}
+                                </div>
+                              )}
+
+                              <div className="mt-1 text-xs text-gray-500">
+                                {t('project') || 'Project'}: {filePath.split('&')[0]}
+                              </div>
+
+                              {lineNumbers.length > 0 && (
+                                <div className="mt-1 text-xs">
+                                  <span className="font-semibold">{t('lineNumbers') || 'Line Numbers'}: </span>
+                                  {lineNumbers.map((line, i) => (
+                                    <span key={i} className="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded mr-1">
+                                      {line}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             ) : (
-              t('selectNodeApiToViewDetails') || 'Select a Node.js API to view details'
+              <div className="text-gray-500 text-center p-8">
+                <Server size={48} className="text-blue-200 mx-auto mb-4" />
+                <p>{t('selectNodeApiFromList') || 'Select a Node.js API from the list to view details.'}</p>
+              </div>
             )}
-          </h2>
-
-          {selectedApi ? (
-            <div className="space-y-4">
-              {selectedApi.allUsedApiItems.map((apiItem, itemIndex) => (
-                <div key={itemIndex} className="border border-gray-200 rounded-md p-3">
-                  <div className="flex justify-between items-center mb-2">
-                    <div className="font-medium font-mono flex items-center">
-                      <span>{apiItem.name}</span>
-                      {apiItem.isBlack && (
-                        <AlertTriangle size={16} className="text-red-500 ml-1" />
-                      )}
-                    </div>
-                    <span className="text-sm bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">
-                      {apiItem.callNum || Object.keys(apiItem.callFiles || {}).length} {t('calls') || 'calls'}
-                    </span>
-                  </div>
-
-                  {apiItem.isBlack && (
-                    <div className="mt-1 mb-2 text-xs text-red-600 border border-red-300 bg-red-50 p-1 rounded flex items-center">
-                      <AlertTriangle size={14} className="mr-1" />
-                      {t('blacklistedApiWarning') || 'This API is blacklisted.'}
-                    </div>
-                  )}
-
-                  <div className="mt-2">
-                    <h3 className="text-sm font-semibold mb-1">{t('callFiles') || 'Call Files'}:</h3>
-                    <div className="space-y-2 pl-2">
-                      {Object.entries(apiItem.callFiles || {}).map(([filePath], fileIndex) => {
-                        const { url: repoLink, lineNumbers } = getRepoLink(apiItem, filePath);
-                        return (
-                          <div key={fileIndex} className="text-sm hover:bg-gray-100 p-1 rounded">
-                            {repoLink ? (
-                              <div>
-                                <a
-                                  href={lineNumbers.length > 0 ? `${repoLink}#L${lineNumbers[0]}` : repoLink}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="font-mono text-blue-600 hover:underline flex items-center"
-                                >
-                                  {filePath}
-                                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                  </svg>
-                                </a>
-                              </div>
-                            ) : (
-                              <div className="font-mono text-blue-600">
-                                {filePath}
-                              </div>
-                            )}
-
-                            <div className="mt-1 text-xs text-gray-500">
-                              {t('project') || 'Project'}: {filePath.split('&')[0]}
-                            </div>
-
-                            {lineNumbers.length > 0 && (
-                              <div className="mt-1 text-xs">
-                                <span className="font-semibold">{t('lineNumbers') || 'Line Numbers'}: </span>
-                                {lineNumbers.map((line, i) => (
-                                  <span key={i} className="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded mr-1">
-                                    {line}
-                                  </span>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-gray-500 text-center p-8">
-              <Server size={48} className="text-blue-200 mx-auto mb-4" />
-              <p>{t('selectNodeApiFromList') || 'Select a Node.js API from the list to view details.'}</p>
-            </div>
-          )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

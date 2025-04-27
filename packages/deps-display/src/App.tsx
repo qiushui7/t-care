@@ -5,6 +5,7 @@ import { DependencyJsonData } from './types/dependencyTypes';
 import ImportDependencyGraph from './components/ImportDependencyGraph';
 import BrowserApiAnalyzer from './components/BrowserApiAnalyzer';
 import NodeApiAnalyzer from './components/NodeApiAnalyzer';
+import GhostDependenciesWarning from './components/GhostDependenciesWarning';
 import { Package, Globe, Server } from 'lucide-react';
 
 function App() {
@@ -89,7 +90,7 @@ function App() {
   return (
     <div className="container mx-auto px-4 py-8">
       <header className="mb-8">
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex justify-between items-center mb-3">
           <h1 className="text-2xl font-bold text-center">{t('appTitle')}</h1>
           <div className="flex items-center">
             <button
@@ -106,6 +107,13 @@ function App() {
             </button>
           </div>
         </div>
+
+        {/* 添加幽灵依赖警告 */}
+        {data && data.ghostDependenciesWarn && (
+          <div className="mb-4">
+            <GhostDependenciesWarning ghostDependencies={data.ghostDependenciesWarn} />
+          </div>
+        )}
 
         {data && !loading && (
           <div className="flex justify-center gap-3">
