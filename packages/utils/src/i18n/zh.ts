@@ -77,6 +77,8 @@ export const zh = {
     languageOption: '输出语言，支持中文(zh)或英文(en)，也可在配置文件中设置',
     initOption: '初始化配置文件 (local|global) - 仅支持JavaScript格式',
     showOption: '显示当前配置',
+    incrementalOption: '增量分析',
+    vueOption: '扫描Vue文件',
   },
 
   // 依赖分析相关

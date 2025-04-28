@@ -153,7 +153,7 @@ export class DepsAnalysis {
     const cache = this._cacheManager.loadCache();
     if (cache) {
       // 记录已更改的文件
-      await this._identifyChangedFiles(cache.fileHashes || []);
+      await this._identifyChangedFiles();
 
       if (cache.fileCache) {
         this.fileCache = cache.fileCache;
@@ -193,12 +193,18 @@ export class DepsAnalysis {
   }
   // 保存分析缓存
   async _saveAnalysisCache() {
-    const fileHashes: FileHash[] = [];
-    for (const item of this.scanEntrys) {
-      for (const file of item.parse) {
-        const hash = this._cacheManager.calculateFileHash(file);
-        fileHashes.push(hash);
+    let fileHashes;
+    if (!this._cacheManager.cache) {
+      fileHashes = [];
+      for (const item of this.scanEntrys) {
+        for (const file of item.parse) {
+          if (this._cacheManager.hasFileChanged(file)) {
+            fileHashes.push(this._cacheManager.calculateFileHash(file));
+          }
+        }
       }
+    } else {
+      fileHashes = this._cacheManager.cache.fileHashes;
     }
 
     const cache: AnalysisCache = {
@@ -211,12 +217,12 @@ export class DepsAnalysis {
     this._cacheManager.saveCache(cache);
   }
   // 记录已更改的文件
-  async _identifyChangedFiles(cachedHashes: FileHash[]) {
+  async _identifyChangedFiles() {
     this._changedFiles.clear();
 
     for (const item of this.scanEntrys) {
       for (const file of item.parse) {
-        if (this._cacheManager.hasFileChanged(file, cachedHashes)) {
+        if (this._cacheManager.hasFileChanged(file)) {
           this._changedFiles.add(file);
         }
       }
@@ -295,7 +301,7 @@ export class DepsAnalysis {
           if (this.incremental && this._cacheManager.hasCache && !this._changedFiles.has(element)) {
             continue;
           }
-          if (this.incremental && !this.fileCache[element]) {
+          if (this.incremental) {
             this.fileCache[element] = {
               importItemMap: {},
               apiMap: {},

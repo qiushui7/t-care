@@ -15,10 +15,12 @@
 
 ## Installation
 
+Please install the latest version
+
 ```bash
-npm i @t-care/cli -g # global installation
-# or
-npm i @t-care/cli # local installation for npm usage
+npm i @t-care/cli@latest -g //global installation
+//or
+npm i @t-care/cli@latest //local installation for npm usage
 ```
 
 ## Usage
@@ -53,6 +55,10 @@ Options:
 care deps-analysis
 ```
 
+Options:
+- `-i --incremental` - Incremental analysis
+- `--vue` - Scan Vue files
+
 ### Manage Configuration
 
 Create config file:
@@ -77,11 +83,11 @@ care config --show
 
 ![Dependency Analysis](image/example/dependencyView.png)
 
-![Browser API Analysis](image/example/browserApiView.png)
+![Global API Analysis](image/example/globalApiView.png)
 
 ![Nodejs API Analysis](image/example/nodejsApiView.png)
 
-![Ghost Dependencies Warn](image/example/ghostDependencies.png)
+![Ghost Dependencies Warning](image/example/ghostDependencies.png)
 
 ## Configuration
 
@@ -112,7 +118,7 @@ Configuration files use JavaScript format and are supported in the following loc
 ```javascript
 export default {
   openaiKey: 'your_api_key_here',
-  model: 'gpt-4o-mini',
+  model: 'gpt-4o-mini', //Currently only supports OpenAI models
   detailed: false,
   focus: 'all',
   excludeExtensions: ['.json', '.md'],
@@ -144,6 +150,12 @@ Environment variable setting (optional, takes precedence over config file):
 ```bash
 export OPENAI_API_KEY=your_api_key
 ```
+
+## Known Issues
+
+Cannot parse components from external dependencies used in Vue projects.
+
+Global API detection is not perfectly accurate and may incorrectly identify APIs that are used in a project without being imported as global APIs.
 
 ## Development
 

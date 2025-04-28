@@ -7,12 +7,22 @@ import chalk from 'chalk';
 import ora from 'ora';
 import { getLocalization, Language } from '@t-care/utils';
 
-export async function depsAnalysisCommand() {
+interface DepsAnalysisOptions {
+  incremental?: boolean;
+  vue?: boolean;
+}
+
+export async function depsAnalysisCommand(options: DepsAnalysisOptions) {
   // 读取配置文件获取语言设置
   const config = await readConfig();
   const language = config.language as Language;
   const texts = getLocalization(language).depsAnalysis;
-
+  if (options.incremental) {
+    config.depsAnalysis.incremental = options.incremental;
+  }
+  if (options.vue) {
+    config.depsAnalysis.isScanVue = options.vue;
+  }
   console.log(chalk.bold.blue(`\n${texts.title}\n`));
 
   const spinner = ora(texts.loadingConfig).start();

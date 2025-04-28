@@ -1,5 +1,17 @@
 # @care/utils
 
+## 1.2.7
+
+### Patch Changes
+
+- fix cache error
+
+## 1.2.7-beta.0
+
+### Patch Changes
+
+- fix cache error
+
 ## 1.2.6
 
 ### Patch Changes

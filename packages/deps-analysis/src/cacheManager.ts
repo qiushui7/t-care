@@ -27,6 +27,8 @@ export interface AnalysisCache {
 export class CacheManager {
   private cachePath: string;
   public hasCache: boolean = false;
+  public cache: AnalysisCache | null = null;
+  public changedFiles: Set<string> = new Set(); // 变更的文件
 
   constructor(cacheDir: string) {
     this.cachePath = path.join(cacheDir, 'deps-analysis-cache.json');
@@ -46,12 +48,18 @@ export class CacheManager {
   }
 
   // 判断文件是否已更改
-  public hasFileChanged(filePath: string, cachedHashes: FileHash[]): boolean {
-    const cachedFile = cachedHashes.find((f) => f.path === filePath);
+  public hasFileChanged(filePath: string): boolean {
+    if (!this.cache) return true;
+    let cachedFile = this.cache.fileHashes.find((f) => f.path === filePath);
     if (!cachedFile) return true;
 
     const currentHash = this.calculateFileHash(filePath);
-    return currentHash.hash !== cachedFile.hash;
+    if (currentHash.hash !== cachedFile.hash) {
+      this.cache.fileHashes = this.cache.fileHashes.filter((f) => f.path !== filePath);
+      this.cache.fileHashes.push(currentHash);
+      return true;
+    }
+    return false;
   }
 
   // 加载缓存
@@ -65,7 +73,9 @@ export class CacheManager {
       this.hasCache = true;
 
       const cacheContent = fs.readFileSync(this.cachePath, 'utf-8');
-      return JSON.parse(cacheContent);
+      this.cache = JSON.parse(cacheContent);
+
+      return this.cache;
     } catch (error) {
       console.error('Failed to load analysis cache:', error);
       return null;

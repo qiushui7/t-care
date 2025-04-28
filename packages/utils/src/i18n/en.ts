@@ -77,6 +77,8 @@ export const en = {
     languageOption: 'Output language, supports Chinese(zh) or English(en), can also be set in config file',
     initOption: 'Initialize config file (local|global) - JavaScript format only',
     showOption: 'Show current configuration',
+    incrementalOption: 'Incremental analysis',
+    vueOption: 'Scan Vue files',
   },
 
   // Dependency analysis related

@@ -17,6 +17,8 @@
     "commit": "cz",
     "changeset": "changeset",
     "version": "changeset version",
+    "beta:enter": "changeset pre enter beta",
+    "beta:exit": "changeset pre exit",
     "build": "rollup -c",
     "build:deps-display": "pnpm --filter '@t-care/deps-display' build",
     "publish": "pnpm run build:deps-display && pnpm run build && changeset publish --registry=https://registry.npmjs.com/",

@@ -1,5 +1,25 @@
 # @care/cli
 
+## 1.3.8
+
+### Patch Changes
+
+- fix cache error
+- Updated dependencies
+  - @t-care/deps-analysis@1.3.1
+  - @t-care/utils@1.2.7
+  - @t-care/core@1.3.7
+
+## 1.3.8-beta.0
+
+### Patch Changes
+
+- fix cache error
+- Updated dependencies
+  - @t-care/deps-analysis@1.3.1-beta.0
+  - @t-care/utils@1.2.7-beta.0
+  - @t-care/core@1.3.7-beta.0
+
 ## 1.3.7
 
 ### Patch Changes

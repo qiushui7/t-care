@@ -15,10 +15,12 @@
 
 ## 安装
 
+请安装最新版本
+
 ```bash
-npm i @t-care/cli -g //全局安装
+npm i @t-care/cli@latest -g //全局安装
 //或
-npm i @t-care/cli //局部安装通过npm调用
+npm i @t-care/cli@latest //局部安装通过npm调用
 ```
 
 ## 使用方法
@@ -53,6 +55,10 @@ care inspect path/to/file1.js path/to/file2.js
 care deps-analysis
 ```
 
+选项：
+- `-i --incremental` - 是否增量分析
+- `--vue` - 是否扫描vue文件
+
 ### 管理配置
 
 创建配置文件：
@@ -77,7 +83,7 @@ care config --show
 
 ![依赖分析](image/example/dependencyView.png)
 
-![浏览器api分析](image/example/browserApiView.png)
+![全局api分析](image/example/globalApiView.png)
 
 ![nodejsApi分析](image/example/nodejsApiView.png)
 
@@ -112,7 +118,7 @@ care config --show
 ```javascript
 export default {
   openaiKey: 'your_api_key_here',
-  model: 'gpt-4o-mini',
+  model: 'gpt-4o-mini', //目前仅支持openai模型
   detailed: false,
   focus: 'all',
   excludeExtensions: ['.json', '.md'],
@@ -143,6 +149,12 @@ export default {
 ```bash
 export OPENAI_API_KEY=your_api_key
 ```
+
+## 已知问题
+
+无法解析vue项目中的从外部依赖的组件使用
+
+全局api判断不够准确 也有可能将项目中未导入但使用的api解析为全局api
 
 ## 开发
 

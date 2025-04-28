@@ -1,6 +1,6 @@
 {
   "name": "@t-care/utils",
-  "version": "1.2.6",
+  "version": "1.2.7",
   "description": "工具函数库，提供获取本地代码等功能",
   "type": "module",
   "main": "dist/index.js",

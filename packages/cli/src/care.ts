@@ -126,8 +126,10 @@ program
 program
   .command('deps-analysis')
   .description(texts.depsAnalysisCommand)
-  .action(async () => {
-    await depsAnalysisCommand();
+  .option('-i, --incremental', texts.incrementalOption, true)
+  .option('--vue', texts.vueOption, false)
+  .action(async (options) => {
+    await depsAnalysisCommand(options);
   });
 
 // 解析命令行参数前打印标语
