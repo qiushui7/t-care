@@ -1,5 +1,17 @@
 # @care/cli
 
+## 1.3.7
+
+### Patch Changes
+
+- Support incremental parsing
+  Rename browser API to global API
+- Updated dependencies
+  - @t-care/deps-analysis@1.3.0
+  - @t-care/deps-display@1.3.0
+  - @t-care/utils@1.2.6
+  - @t-care/core@1.3.6
+
 ## 1.3.6
 
 ### Patch Changes

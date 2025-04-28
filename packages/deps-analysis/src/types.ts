@@ -43,7 +43,8 @@ export interface MethodCheckFunction {
     filePath: string,
     projectName: string,
     httpRepo: string,
-    line: number
+    line: number,
+    absolutePath: string
   ): boolean;
 }
 
@@ -71,9 +72,11 @@ export interface DepsAnalysisOptions {
   scanSource: ScanSource[];
   analysisTarget: string[];
   blackList?: string[];
-  browserApis?: string[];
+  globalApis?: string[];
   isScanVue?: boolean;
   analysisPlugins?: AnalysisPluginCreator[];
+  cacheDir?: string;
+  incremental?: boolean;
 }
 
 export interface DiagnosisInfo {

@@ -44,10 +44,12 @@ export default {
     // Blacklist (packages or modules to warn)
     blackList: ['@types/*'],
     
-    // Browser APIs (browser APIs to monitor)
-    browserApis: ['localStorage', 'sessionStorage', 'navigator', 'document'],
+    // Global APIs (global APIs to monitor)
+    globalApis: ['localStorage', 'sessionStorage', 'navigator', 'document'],
     
     // Whether to scan Vue files
     isScanVue: false,
+    // incremental analysis
+    incremental: true,
   },
 }; 

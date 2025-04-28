@@ -1,5 +1,12 @@
 # @care/utils
 
+## 1.2.6
+
+### Patch Changes
+
+- Support incremental parsing
+  Rename browser API to global API
+
 ## 1.2.5
 
 ### Patch Changes

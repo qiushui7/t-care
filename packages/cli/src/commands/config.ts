@@ -15,11 +15,8 @@ import os from 'os';
  */
 export async function configCommand(options: CommandOptions): Promise<CommandResult> {
   try {
-    // 读取配置文件获取语言设置
-    const config = await readConfig();
-    const language = options.language || config.language;
+    const language = options.language || 'en';
     const texts = getLocalizedText(language as Language);
-
     if (options.init) {
       // 只支持 JavaScript 格式
       const isGlobal = options.init === 'global';
@@ -29,6 +26,8 @@ export async function configCommand(options: CommandOptions): Promise<CommandRes
       await createDefaultConfig(configPath);
       return { success: true, message: texts.configCreated(configPath) };
     }
+    // 读取配置文件获取语言设置
+    const config = await readConfig();
 
     if (options.show) {
       console.log(toJson(config));

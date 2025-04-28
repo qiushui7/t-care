@@ -98,5 +98,6 @@ export const en = {
     versionError: (error: string) => `Error processing dependency versions: ${error}`,
     portInfo: (port: number) => `Service will start on port ${port}`,
     accessUrl: (port: number) => `You can access http://localhost:${port} to view the dependency graph`,
+    cacheLoaded: (number: number) => `Loaded ${number} files from cache`,
   },
 };

@@ -11,8 +11,7 @@ interface ImportDependencyGraphProps {
 
 interface ImportItem {
   name: string;
-  callOrigin: string | null;
-  callCount: number;
+  callNum: number;
   callFiles: Record<string, CallFileInfo>;
   isBlack: boolean;
   type: 'method' | 'type' | 'other'; // 导入项类型
@@ -86,7 +85,7 @@ const ImportDependencyGraph: React.FC<ImportDependencyGraphProps> = ({ data, loa
     const { importItemMap, versionMap, methodMap, typeMap, apiMap } = data;
     const result: PackageDependency[] = [];
     // 获取项目名称列表
-    const projectNames = data._scanSource ? data._scanSource.map(src => src.name) : [];
+    const projectNames = data.scanSource ? data.scanSource.map(src => src.name) : [];
 
     // 处理importItemMap
     Object.entries(importItemMap).forEach(([packageName, importEntries]) => {
@@ -99,44 +98,28 @@ const ImportDependencyGraph: React.FC<ImportDependencyGraphProps> = ({ data, loa
       let methodItems: ImportItem[] = [];
       let typeItems: ImportItem[] = [];
       let otherItems: ImportItem[] = [];
-      const allImportKeys: string[] = Object.keys(importEntries);
       methodItems = Object.entries(methodMap?.[packageName] || {}).map(([itemName, item]) => {
-        const tempName = itemName.split('.')[0];
-        if (allImportKeys.includes(tempName)) {
-          allImportKeys.splice(allImportKeys.findIndex(item => item === tempName), 1);
-        }
         return {
           name: itemName,
-          callOrigin: item.callOrigin,
-          callCount: item.callNum,
+          callNum: item.callNum,
           callFiles: item.callFiles,
           isBlack: item.isBlack || false,
           type: 'method'
         }
       }) || [];
       typeItems = Object.entries(typeMap?.[packageName] || {}).map(([itemName, item]) => {
-        const tempName = itemName.split('.')[0];
-        if (allImportKeys.includes(tempName)) {
-          allImportKeys.splice(allImportKeys.findIndex(item => item === tempName), 1);
-        }
         return {
           name: itemName,
-          callOrigin: item.callOrigin,
-          callCount: item.callNum,
+          callNum: item.callNum,
           callFiles: item.callFiles,
           isBlack: item.isBlack || false,
           type: 'type'
         }
       }) || [];
       otherItems = Object.entries(apiMap?.[packageName] || {}).map(([itemName, item]) => {
-        const tempName = itemName.split('.')[0];
-        if (allImportKeys.includes(tempName)) {
-          allImportKeys.splice(allImportKeys.findIndex(item => item === tempName), 1);
-        }
         return {
           name: itemName,
-          callOrigin: item.callOrigin,
-          callCount: item.callNum,
+          callNum: item.callNum,
           callFiles: item.callFiles,
           isBlack: item.isBlack || false,
           type: 'other'
@@ -181,50 +164,20 @@ const ImportDependencyGraph: React.FC<ImportDependencyGraphProps> = ({ data, loa
   };
 
   // 从文件路径中提取仓库链接，包含行号引用
-  const getRepoLink = (filePath: string): { url: string | null; lineNumbers: number[] } => {
-    // 即使没有 scanSource 或 httpRepo，我们也要尝试获取行号信息
-    let lineNumbers: number[] = [];
-
-    // 从不同的 Map 中查找行号信息
-    if (selectedImport && data) {
-      const { name: importName, type } = selectedImport;
-      const packageName = selectedPackage || '';
-
-      try {
-        if (type === 'other' && data.apiMap && data.apiMap[packageName] && data.apiMap[packageName][importName]) {
-          const fileInfo = data.apiMap[packageName][importName].callFiles[filePath];
-          if (fileInfo && fileInfo.lines) {
-            lineNumbers = fileInfo.lines;
-          }
-        } else if (type === 'method' && data.methodMap && data.methodMap[packageName] && data.methodMap[packageName][importName]) {
-          const fileInfo = data.methodMap[packageName][importName].callFiles[filePath];
-          if (fileInfo && fileInfo.lines) {
-            lineNumbers = fileInfo.lines;
-          }
-        } else if (type === 'type' && data.typeMap && data.typeMap[packageName] && data.typeMap[packageName][importName]) {
-          const fileInfo = data.typeMap[packageName][importName].callFiles[filePath];
-          if (fileInfo && fileInfo.lines) {
-            lineNumbers = fileInfo.lines;
-          }
-        }
-      } catch (err) {
-        console.error('获取行号信息时出错:', err);
-      }
-    }
-
+  const getRepoLink = (filePath: string): { url: string | null; } => {
     // 只在有 scanSource 和 httpRepo 时构建 URL
-    if (!data || !data._scanSource || data._scanSource.length === 0) {
-      return { url: null, lineNumbers };
+    if (!data || !data.scanSource || data.scanSource.length === 0) {
+      return { url: null };
     }
 
     const parts = filePath.split('&');
-    if (parts.length < 2) return { url: null, lineNumbers };
+    if (parts.length < 2) return { url: null };
 
     const projectName = parts[0];
     const relativePath = parts[1];
 
-    const sourceInfo = data._scanSource.find(src => src.name === projectName);
-    if (!sourceInfo || !sourceInfo.httpRepo) return { url: null, lineNumbers };
+    const sourceInfo = data.scanSource.find(src => src.name === projectName);
+    if (!sourceInfo || !sourceInfo.httpRepo) return { url: null };
 
     // 对路径进行URL转义，确保特殊字符正确处理
     const encodedPath = relativePath
@@ -234,7 +187,6 @@ const ImportDependencyGraph: React.FC<ImportDependencyGraphProps> = ({ data, loa
 
     return {
       url: `${sourceInfo.httpRepo}/${encodedPath}`,
-      lineNumbers
     };
   };
 
@@ -314,6 +266,14 @@ const ImportDependencyGraph: React.FC<ImportDependencyGraphProps> = ({ data, loa
 
   const categoryCount = getCategoryCount(selectedPackageData);
 
+  const formatLines = (lines: number[], maxShow = 10): (number | string)[] => {
+    if (lines.length <= maxShow) return lines;
+    return [
+      ...lines.slice(0, 10),
+      '...',
+    ];
+  };
+
   return (
     <div className="grid grid-cols-1 gap-6">
       {/* 搜索框 */}
@@ -329,7 +289,7 @@ const ImportDependencyGraph: React.FC<ImportDependencyGraphProps> = ({ data, loa
         </div>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-4">
+      <div className="flex flex-col md:flex-row gap-4 min-h-[600px]">
         {/* 包列表 */}
         <div className="w-full md:w-1/4 bg-gray-50 p-4 rounded-md shadow-sm max-h-[800px] overflow-y-auto">
           <h2 className="text-xl font-bold mb-4">{t('packageList')} ({filteredDependencies.length})</h2>
@@ -446,18 +406,13 @@ const ImportDependencyGraph: React.FC<ImportDependencyGraphProps> = ({ data, loa
                       <AlertTriangle size={16} className="text-red-500 ml-1" />
                     )}
                   </div>
-                  {item.callOrigin && (
-                    <div className="text-gray-500 text-sm mt-1">
-                      {t('from')}: {item.callOrigin}
-                    </div>
-                  )}
                   {item.isBlack && (
                     <div className="text-red-600 text-sm font-semibold mt-1 border border-red-300 bg-red-50 p-1 rounded">
                       ⚠️ {t('blacklistedApiWarning')}
                     </div>
                   )}
                   <div className="text-sm text-gray-600 mt-1">
-                    {t('calls')}: {item.callCount}
+                    {t('calls')}: {item.callNum}
                   </div>
                 </div>
               ))}
@@ -493,14 +448,14 @@ const ImportDependencyGraph: React.FC<ImportDependencyGraphProps> = ({ data, loa
 
           {selectedImport ? (
             <div className="space-y-4">
-              {Object.entries(selectedImport.callFiles).map(([filePath], index) => {
-                const { url: repoLink, lineNumbers } = getRepoLink(filePath);
+              {Object.entries(selectedImport.callFiles).map(([filePath, detail], index) => {
+                const { url: repoLink } = getRepoLink(filePath);
                 return (
                   <div key={index} className="border border-gray-200 rounded-md p-3 hover:bg-gray-100">
                     {repoLink ? (
                       <div>
                         <a
-                          href={lineNumbers.length > 0 ? `${repoLink}#L${lineNumbers[0]}` : repoLink}
+                          href={detail.lines.length > 0 ? `${repoLink}#L${detail.lines[0]}` : repoLink}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="font-mono text-blue-600 hover:underline flex items-center"
@@ -517,18 +472,26 @@ const ImportDependencyGraph: React.FC<ImportDependencyGraphProps> = ({ data, loa
                       </div>
                     )}
 
-                    <div className="mt-1 text-xs text-gray-500">
-                      {t('project')}: {filePath.split('&')[0]}
+                    <div className="mt-1 text-xs text-gray-500 flex items-center gap-4">
+                      <span>{t('project')}: {detail.projectName}</span>
+                      <span>{t('calls')}: {detail.lines.length}</span>
+                      {detail.callOrigin && (
+                        <span>{t('from')}: {detail.callOrigin}</span>
+                      )}
                     </div>
 
-                    {lineNumbers.length > 0 && (
+                    {detail.lines.length > 0 && (
                       <div className="mt-2 text-xs">
                         <span className="font-semibold">{t('lineNumbers')}: </span>
-                        {lineNumbers.map((line, i) => (
-                          <span key={i} className="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded mr-1">
-                            {line}
-                          </span>
-                        ))}
+                        {formatLines(detail.lines).map((line, i) =>
+                          line === '...' ? (
+                            <span key={i} className="mx-1 text-gray-400">...</span>
+                          ) : (
+                            <span key={i} className="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded mr-1">
+                              {line}
+                            </span>
+                          )
+                        )}
                       </div>
                     )}
                   </div>

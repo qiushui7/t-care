@@ -23,11 +23,13 @@ export const DEFAULT_CONFIG = {
   excludeExtensions: ['.json'], // 默认排除JSON文件
   language: 'zh', // 输出语言，支持zh(中文)或en(英文)
   depsAnalysis: {
+    cacheDir: '.care/cache',
     scanSource: [],
     analysisTarget: [],
     blackList: [],
-    browserApis: [],
+    globalApis: [],
     isScanVue: false,
+    incremental: false,
   },
 };
 /**
@@ -177,10 +179,12 @@ export default {
     analysisTarget: [],
     // Blacklist
     blackList: [],
-    // Browser APIs
-    browserApis: [],
+    // Global APIs
+    globalApis: [],
     // Whether to scan Vue files
     isScanVue: false,
+    // incremental analysis
+    incremental: true,
   },
 };
 `;

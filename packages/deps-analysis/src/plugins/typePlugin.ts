@@ -1,6 +1,6 @@
 import * as ts from 'typescript';
 import { AnalysisPlugin, AnalysisPluginCreator } from '../types';
-import { updateCallRecord, createDiagnosisInfo } from './utils';
+import { updateCallRecord, createDiagnosisInfo } from '../utils';
 
 export const typePlugin: AnalysisPluginCreator = function (context: any): AnalysisPlugin {
   const mapName = 'typeMap';
@@ -18,12 +18,24 @@ export const typePlugin: AnalysisPluginCreator = function (context: any): Analys
     filePath: string,
     projectName: string,
     httpRepo: string,
-    line: number
+    line: number,
+    absolutePath: string
   ): boolean {
     try {
       // 只有在节点为类型引用时才匹配
       if (node.parent && ts.isTypeReferenceNode(node.parent)) {
-        updateCallRecord(context, mapName, depName, apiName, matchImportItem, filePath, projectName, httpRepo, line);
+        updateCallRecord(
+          context,
+          mapName,
+          depName,
+          apiName,
+          matchImportItem,
+          filePath,
+          projectName,
+          httpRepo,
+          line,
+          absolutePath
+        );
         return true; // 命中规则，终止执行后序插件
       }
       return false; // 未命中检测逻辑，继续执行后序插件

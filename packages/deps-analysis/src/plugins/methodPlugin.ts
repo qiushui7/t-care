@@ -1,6 +1,6 @@
 import * as ts from 'typescript';
 import { AnalysisPlugin, AnalysisPluginCreator } from '../types';
-import { updateCallRecord, createDiagnosisInfo } from './utils';
+import { updateCallRecord, createDiagnosisInfo } from '../utils';
 
 export const methodPlugin: AnalysisPluginCreator = function (context: any): AnalysisPlugin {
   const mapName = 'methodMap';
@@ -17,14 +17,26 @@ export const methodPlugin: AnalysisPluginCreator = function (context: any): Anal
     filePath: string,
     projectName: string,
     httpRepo: string,
-    line: number
+    line: number,
+    absolutePath: string
   ): boolean {
     try {
       if (node.parent && ts.isCallExpression(node.parent)) {
         // 存在于函数调用表达式中
         if (node.parent.expression.pos === node.pos && node.parent.expression.end === node.end) {
           // 命中函数名method检测
-          updateCallRecord(context, mapName, depName, apiName, matchImportItem, filePath, projectName, httpRepo, line);
+          updateCallRecord(
+            context,
+            mapName,
+            depName,
+            apiName,
+            matchImportItem,
+            filePath,
+            projectName,
+            httpRepo,
+            line,
+            absolutePath
+          );
           return true; // true: 命中规则, 终止执行后序插件
         }
       }

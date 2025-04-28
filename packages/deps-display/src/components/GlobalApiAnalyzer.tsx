@@ -3,13 +3,13 @@ import { useTranslation } from 'react-i18next';
 import { CallFileInfo, DependencyJsonData } from '../types/dependencyTypes';
 import { Globe, AlertTriangle } from 'lucide-react';
 
-interface BrowserApiAnalyzerProps {
+interface GlobalApiAnalyzerProps {
   data: DependencyJsonData;
   loading: boolean;
   error: string | null;
 }
 
-interface BrowserApiItem {
+interface GlobalApiItem {
   name: string;
   callOrigin: string | null;
   callCount: number;
@@ -17,41 +17,41 @@ interface BrowserApiItem {
   isBlack: boolean;
 }
 
-const BrowserApiAnalyzer: React.FC<BrowserApiAnalyzerProps> = ({ data, loading, error }) => {
+const GlobalApiAnalyzer: React.FC<GlobalApiAnalyzerProps> = ({ data, loading, error }) => {
   const { t } = useTranslation();
-  const [browserApis, setBrowserApis] = useState<BrowserApiItem[]>([]);
-  const [selectedApi, setSelectedApi] = useState<BrowserApiItem | null>(null);
+  const [globalApis, setGlobalApis] = useState<GlobalApiItem[]>([]);
+  const [selectedApi, setSelectedApi] = useState<GlobalApiItem | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const [filteredApis, setFilteredApis] = useState<BrowserApiItem[]>([]);
+  const [filteredApis, setFilteredApis] = useState<GlobalApiItem[]>([]);
 
   // 在组件挂载时解析浏览器API数据
   useEffect(() => {
-    if (data?.browserMap) {
+    if (data?.globalMap) {
       try {
         // 解析浏览器API数据
-        const browserEntries = 'browser' in data.browserMap
-          ? (data.browserMap as unknown as { browser: Record<string, unknown> }).browser
-          : data.browserMap;
+        const globalEntries = 'global' in data.globalMap
+          ? (data.globalMap as unknown as { global: Record<string, unknown> }).global
+          : data.globalMap;
 
         // 定义API条目类型
-        interface BrowserApiEntryItem {
+        interface GlobalApiEntryItem {
           callOrigin: string | null;
           callNum: number;
           callFiles: Record<string, CallFileInfo>;
           isBlack?: boolean;
         }
 
-        // 将条目转换为我们定义的BrowserApiItem类型
-        const browserApiItems = Object.entries(browserEntries).map(([apiName, item]) => ({
+        // 将条目转换为我们定义的GlobalApiItem类型
+        const globalApiItems = Object.entries(globalEntries).map(([apiName, item]) => ({
           name: apiName,
-          callOrigin: (item as unknown as BrowserApiEntryItem).callOrigin,
-          callCount: (item as unknown as BrowserApiEntryItem).callNum,
-          callFiles: (item as unknown as BrowserApiEntryItem).callFiles,
-          isBlack: (item as unknown as BrowserApiEntryItem).isBlack || false,
+          callOrigin: (item as unknown as GlobalApiEntryItem).callOrigin,
+          callCount: (item as unknown as GlobalApiEntryItem).callNum,
+          callFiles: (item as unknown as GlobalApiEntryItem).callFiles,
+          isBlack: (item as unknown as GlobalApiEntryItem).isBlack || false,
         }));
 
         // 按调用次数排序
-        const sortedApis = browserApiItems.sort((a, b) => {
+        const sortedApis = globalApiItems.sort((a, b) => {
           // 黑名单API优先
           if (a.isBlack && !b.isBlack) return -1;
           if (!a.isBlack && b.isBlack) return 1;
@@ -59,10 +59,10 @@ const BrowserApiAnalyzer: React.FC<BrowserApiAnalyzerProps> = ({ data, loading, 
           return b.callCount - a.callCount;
         });
 
-        setBrowserApis(sortedApis);
+        setGlobalApis(sortedApis);
         setFilteredApis(sortedApis);
       } catch (err) {
-        console.error(t('errorParsingBrowserApiData'), err);
+        console.error(t('errorParsingGlobalApiData'), err);
       }
     }
   }, [data, t]);
@@ -70,17 +70,17 @@ const BrowserApiAnalyzer: React.FC<BrowserApiAnalyzerProps> = ({ data, loading, 
   // 搜索过滤浏览器API
   useEffect(() => {
     if (searchTerm.trim()) {
-      const filtered = browserApis.filter(api =>
+      const filtered = globalApis.filter(api =>
         api.name.toLowerCase().includes(searchTerm.toLowerCase())
       );
       setFilteredApis(filtered);
     } else {
-      setFilteredApis(browserApis);
+      setFilteredApis(globalApis);
     }
-  }, [searchTerm, browserApis]);
+  }, [searchTerm, globalApis]);
 
   // 处理API选择
-  const handleApiSelect = (api: BrowserApiItem) => {
+  const handleApiSelect = (api: GlobalApiItem) => {
     setSelectedApi(api);
   };
 
@@ -90,35 +90,21 @@ const BrowserApiAnalyzer: React.FC<BrowserApiAnalyzerProps> = ({ data, loading, 
   };
 
   // 从文件路径中提取仓库链接，包含行号引用
-  const getRepoLink = (apiData: BrowserApiItem, filePath: string): { url: string | null; lineNumbers: number[] } => {
-    // 即使没有 scanSource 或 httpRepo，我们也要尝试获取行号信息
-    let lineNumbers: number[] = [];
-
-    // 从apiData中查找行号信息
-    if (apiData && apiData.callFiles && filePath in apiData.callFiles) {
-      try {
-        const fileInfo = apiData.callFiles[filePath];
-        if (fileInfo && fileInfo.lines) {
-          lineNumbers = fileInfo.lines;
-        }
-      } catch (err) {
-        console.error(t('errorGettingLineInfo'), err);
-      }
-    }
+  const getRepoLink = (filePath: string): { url: string | null } => {
 
     // 只在有 scanSource 和 httpRepo 时构建 URL
-    if (!data || !data._scanSource || data._scanSource.length === 0) {
-      return { url: null, lineNumbers };
+    if (!data || !data.scanSource || data.scanSource.length === 0) {
+      return { url: null };
     }
 
     const parts = filePath.split('&');
-    if (parts.length < 2) return { url: null, lineNumbers };
+    if (parts.length < 2) return { url: null };
 
     const projectName = parts[0];
     const relativePath = parts[1];
 
-    const sourceInfo = data._scanSource.find(src => src.name === projectName);
-    if (!sourceInfo || !sourceInfo.httpRepo) return { url: null, lineNumbers };
+    const sourceInfo = data.scanSource.find(src => src.name === projectName);
+    if (!sourceInfo || !sourceInfo.httpRepo) return { url: null };
 
     // 对路径进行URL转义，确保特殊字符正确处理
     const encodedPath = relativePath
@@ -128,7 +114,6 @@ const BrowserApiAnalyzer: React.FC<BrowserApiAnalyzerProps> = ({ data, loading, 
 
     return {
       url: `${sourceInfo.httpRepo}/${encodedPath}`,
-      lineNumbers
     };
   };
 
@@ -143,18 +128,27 @@ const BrowserApiAnalyzer: React.FC<BrowserApiAnalyzerProps> = ({ data, loading, 
   }
 
   // 判断初始状态：无数据或数据中没有浏览器API
-  const hasNoBrowserApis = !data || !data.browserMap || Object.keys(data.browserMap).length === 0;
+  const hasNoGlobalApis = !data || !data.globalMap || Object.keys(data.globalMap).length === 0;
   // 判断搜索结果为空的状态
-  const hasEmptySearchResults = browserApis.length > 0 && filteredApis.length === 0;
+  const hasEmptySearchResults = globalApis.length > 0 && filteredApis.length === 0;
+
+  // 格式化行号
+  const formatLines = (lines: number[], maxShow = 15): (number | string)[] => {
+    if (lines.length <= maxShow) return lines;
+    return [
+      ...lines.slice(0, 15),
+      '...',
+    ];
+  };
 
   return (
     <div className="flex flex-col space-y-4">
       {/* 搜索栏始终显示，只要有数据 */}
-      {(!hasNoBrowserApis || searchTerm) && (
+      {(!hasNoGlobalApis || searchTerm) && (
         <div className="w-full p-4 bg-gray-50 rounded-md">
           <input
             type="text"
-            placeholder={t('searchBrowserApi')}
+            placeholder={t('searchGlobalApi')}
             className="w-full p-2 border border-gray-300 rounded-md"
             value={searchTerm}
             onChange={handleSearchChange}
@@ -163,12 +157,12 @@ const BrowserApiAnalyzer: React.FC<BrowserApiAnalyzerProps> = ({ data, loading, 
       )}
 
       {/* 无初始数据时显示空状态 */}
-      {hasNoBrowserApis && (
+      {hasNoGlobalApis && (
         <div className="flex flex-col items-center justify-center p-12 bg-gray-50 rounded-lg">
           <Globe size={64} className="text-gray-300 mb-4" />
-          <h2 className="text-xl font-semibold text-gray-700 mb-2">{t('noBrowserApiData')}</h2>
+          <h2 className="text-xl font-semibold text-gray-700 mb-2">{t('noGlobalApiData')}</h2>
           <p className="text-gray-500 text-center max-w-md">
-            {t('noBrowserApiExplanation')}
+            {t('noGlobalApiExplanation')}
           </p>
         </div>
       )}
@@ -185,13 +179,13 @@ const BrowserApiAnalyzer: React.FC<BrowserApiAnalyzerProps> = ({ data, loading, 
 
       {/* 有搜索结果时显示内容区域 */}
       {filteredApis.length > 0 && (
-        <div className="flex flex-col md:flex-row gap-4">
+        <div className="flex flex-col md:flex-row gap-4 min-h-[600px]">
           {/* 浏览器API列表 */}
           <div className="w-full md:w-1/3 bg-gray-50 p-4 rounded-md shadow-sm max-h-[800px] overflow-y-auto">
             <div className="p-3 bg-purple-50 rounded-md mb-4">
-              <h2 className="text-lg font-semibold text-purple-800 mb-2">{t('browserApiView')} ({filteredApis.length})</h2>
+              <h2 className="text-lg font-semibold text-purple-800 mb-2">{t('globalApiView')} ({filteredApis.length})</h2>
               <p className="text-sm text-purple-700">
-                {t('browserApiDescription')}
+                {t('globalApiDescription')}
               </p>
             </div>
 
@@ -241,20 +235,20 @@ const BrowserApiAnalyzer: React.FC<BrowserApiAnalyzerProps> = ({ data, loading, 
                   </span>
                 </div>
               ) : (
-                t('selectBrowserApiToViewDetails')
+                t('selectGlobalApiToViewDetails')
               )}
             </h2>
 
             {selectedApi ? (
               <div className="space-y-4">
-                {Object.entries(selectedApi.callFiles).map(([filePath], index) => {
-                  const { url: repoLink, lineNumbers } = getRepoLink(selectedApi, filePath);
+                {Object.entries(selectedApi.callFiles).map(([filePath, callFileInfo], index) => {
+                  const { url: repoLink } = getRepoLink(filePath);
                   return (
-                    <div key={index} className="border border-gray-200 rounded-md p-3 hover:bg-gray-100">
+                    <div key={index} className="border border-gray-200 rounded-md p-3 overflow-hidden hover:bg-gray-100">
                       {repoLink ? (
                         <div>
                           <a
-                            href={lineNumbers.length > 0 ? `${repoLink}#L${lineNumbers[0]}` : repoLink}
+                            href={callFileInfo.lines.length > 0 ? `${repoLink}#L${callFileInfo.lines[0]}` : repoLink}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="font-mono text-blue-600 hover:underline flex items-center"
@@ -271,18 +265,26 @@ const BrowserApiAnalyzer: React.FC<BrowserApiAnalyzerProps> = ({ data, loading, 
                         </div>
                       )}
 
-                      <div className="mt-1 text-xs text-gray-500">
-                        {t('project')}: {filePath.split('&')[0]}
+                      <div className="mt-1 text-xs text-gray-500 flex items-center gap-4">
+                        <span>{t('project')}: {callFileInfo.projectName}</span>
+                        <span>{t('calls')}: {callFileInfo.lines.length}</span>
+                        {callFileInfo.callOrigin && (
+                          <span>{t('from')}: {callFileInfo.callOrigin}</span>
+                        )}
                       </div>
 
-                      {lineNumbers.length > 0 && (
+                      {callFileInfo.lines.length > 0 && (
                         <div className="mt-2 text-xs">
                           <span className="font-semibold">{t('lineNumbers')}: </span>
-                          {lineNumbers.map((line, i) => (
-                            <span key={i} className="bg-purple-100 text-purple-800 px-1.5 py-0.5 rounded mr-1">
-                              {line}
-                            </span>
-                          ))}
+                          {formatLines(callFileInfo.lines).map((line, i) =>
+                            line === '...' ? (
+                              <span key={i} className="mx-1 text-gray-400">...</span>
+                            ) : (
+                              <span key={i} className="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded mr-1">
+                                {line}
+                              </span>
+                            )
+                          )}
                         </div>
                       )}
                     </div>
@@ -292,7 +294,7 @@ const BrowserApiAnalyzer: React.FC<BrowserApiAnalyzerProps> = ({ data, loading, 
             ) : (
               <div className="text-gray-500 text-center p-8">
                 <Globe size={48} className="text-purple-200 mx-auto mb-4" />
-                <p>{t('selectBrowserApiFromList')}</p>
+                <p>{t('selectGlobalApiFromList')}</p>
               </div>
             )}
           </div>
@@ -302,4 +304,4 @@ const BrowserApiAnalyzer: React.FC<BrowserApiAnalyzerProps> = ({ data, loading, 
   );
 };
 
-export default BrowserApiAnalyzer; 
+export default GlobalApiAnalyzer; 

@@ -15,10 +15,12 @@ import { ScanSource, AnalysisPlugin, AnalysisPluginCreator, DepsAnalysisOptions,
 import { methodPlugin } from './plugins/methodPlugin';
 import { typePlugin } from './plugins/typePlugin';
 import { defaultPlugin } from './plugins/defaultPlugin';
-import { browserPlugin } from './plugins/browserPlugin';
+import { globalPlugin } from './plugins/GlobalPlugin';
 import path from 'path';
 import { builtinModules } from 'module';
-
+import { AnalysisCache, CacheManager, FileHash } from './cacheManager';
+import { deepMerge } from './utils';
+import fs from 'fs';
 // EntryObject接口定义
 interface EntryObject {
   name: string;
@@ -26,6 +28,7 @@ interface EntryObject {
   parse: string[];
   show: string[];
   tsConfigPath: string;
+  type: string;
 }
 
 type ModuleTypeValue = (typeof ModuleType)[keyof typeof ModuleType];
@@ -68,17 +71,21 @@ export class DepsAnalysis {
   [key: string]: any;
 
   // 私有属性
-  private _scanSource: ScanSource[]; // 扫描源配置信息
   private _analysisTarget: string[]; // 要分析的目标依赖配置
   private _blackList: string[]; // 需要标记的黑名单API配置
-  private _browserApis: string[]; // 需要分析的BrowserApi配置
+  private _globalApis: string[]; // 需要分析的GlobalApi配置
   private _isScanVue: boolean; // 是否扫描Vue配置
   private _analysisPlugins: AnalysisPluginCreator[]; // 代码分析插件配置
   private _language: Language; // 语言设置
+  private _cacheManager: CacheManager; // 缓存管理器
+  private _cacheDir: string; // 缓存路径
+  private _changedFiles: Set<string> = new Set(); // 变更的文件
 
   // 公共属性
+  public incremental: boolean; // 是否增量分析
+  private scanSource: ScanSource[]; // 扫描源配置信息
   public pluginsQueue: AnalysisPlugin[] = []; // Target分析插件队列
-  public browserQueue: AnalysisPlugin[] = []; // Browser分析插件队列
+  public globalQueue: AnalysisPlugin[] = []; // Global分析插件队列
   public importItemMap: Record<
     string,
     Record<
@@ -93,39 +100,129 @@ export class DepsAnalysis {
   public ghostDependenciesWarn: Record<string, any> = {}; // 可能的幽灵依赖依赖
   public diagnosisInfo: DiagnosisInfo[] = [];
   public versionMap: Record<string, Record<string, any>> = {};
+  public fileCache: Record<string, any> = {}; // 文件缓存
+  public scanEntrys: EntryObject[] = [];
 
   // 插件动态创建的属性
   public apiMap: Record<string, Record<string, any>> = {}; // API分析统计结果
   public methodMap: Record<string, Record<string, any>> = {}; // 方法调用统计结果
   public typeMap: Record<string, Record<string, any>> = {}; // 类型使用统计结果
-  public browserMap?: Record<string, Record<string, any>>; // 浏览器API使用统计结果
+  public globalMap: Record<string, Record<string, any>> = {}; // 全局API使用统计结果
 
   constructor(options: DepsAnalysisOptions, language: Language) {
     // 私有属性
-    this._scanSource = options.scanSource;
     this._analysisTarget = options.analysisTarget;
     this._blackList = options.blackList || [];
-    this._browserApis = options.browserApis || [];
+    this._globalApis = options.globalApis || [];
     this._isScanVue = options.isScanVue || false;
     this._analysisPlugins = options.analysisPlugins || [];
+    this._cacheDir = options.cacheDir || '';
+    this._cacheManager = new CacheManager(this._cacheDir);
     this._language = language;
     // 公共属性
+    this.scanSource = options.scanSource;
+    this.incremental = options.incremental || false;
     this.pluginsQueue = [];
-    this.browserQueue = [];
+    this.globalQueue = [];
     this.importItemMap = {};
     this.ghostDependenciesWarn = {};
   }
   async analysis() {
     this._installPlugins(this._analysisPlugins);
-    this._targetVersionCollect(this._scanSource);
+    this._targetVersionCollect(this.scanSource);
+
+    this.scanEntrys = await this._scanFiles(this.scanSource, CODEFILETYPE.TS);
     if (this._isScanVue) {
-      await this._scanCode(this._scanSource, CODEFILETYPE.VUE);
+      this.scanEntrys.push(...(await this._scanFiles(this.scanSource, CODEFILETYPE.VUE)));
     }
-    await this._scanCode(this._scanSource, CODEFILETYPE.TS);
+    if (this.incremental) {
+      await this._loadAnalysisCache();
+    }
+    await this._scanCode();
     this._blackTag(this.pluginsQueue);
-    this._blackTag(this.browserQueue);
+    this._blackTag(this.globalQueue);
+
+    if (this.incremental) {
+      await this._saveAnalysisCache();
+    }
     return this;
   }
+  // 加载分析缓存
+  async _loadAnalysisCache() {
+    const texts = getLocalization(this._language).depsAnalysis;
+    const cache = this._cacheManager.loadCache();
+    if (cache) {
+      // 记录已更改的文件
+      await this._identifyChangedFiles(cache.fileHashes || []);
+
+      if (cache.fileCache) {
+        this.fileCache = cache.fileCache;
+        // 创建一个新的空对象，用于存储未更改文件的缓存数据
+        let mergedImportItemMap = {};
+        let mergedApiMap = {};
+        let mergedMethodMap = {};
+        let mergedTypeMap = {};
+        let mergedGlobalMap = {};
+        let mergedGhostDependenciesWarn = {};
+        let eIndex = 0;
+        // 只合并未更改文件的缓存数据
+        Object.entries(cache.fileCache).forEach(([filePath, fileCache]) => {
+          if (this._changedFiles.has(filePath)) {
+            return;
+          }
+          // 使用深度合并方法合并各种映射
+          mergedImportItemMap = deepMerge(mergedImportItemMap, fileCache.importItemMap || {});
+          mergedApiMap = deepMerge(mergedApiMap, fileCache.apiMap || {});
+          mergedMethodMap = deepMerge(mergedMethodMap, fileCache.methodMap || {});
+          mergedTypeMap = deepMerge(mergedTypeMap, fileCache.typeMap || {});
+          mergedGlobalMap = deepMerge(mergedGlobalMap, fileCache.globalMap || {});
+          mergedGhostDependenciesWarn = deepMerge(mergedGhostDependenciesWarn, fileCache.ghostDependenciesWarn || {});
+          eIndex++;
+        });
+
+        // 设置合并后的结果
+        this.importItemMap = mergedImportItemMap;
+        this.apiMap = mergedApiMap;
+        this.methodMap = mergedMethodMap;
+        this.typeMap = mergedTypeMap;
+        this.globalMap = mergedGlobalMap;
+        this.ghostDependenciesWarn = mergedGhostDependenciesWarn;
+        console.log('\r', texts.cacheLoaded(eIndex));
+      }
+    }
+  }
+  // 保存分析缓存
+  async _saveAnalysisCache() {
+    const fileHashes: FileHash[] = [];
+    for (const item of this.scanEntrys) {
+      for (const file of item.parse) {
+        const hash = this._cacheManager.calculateFileHash(file);
+        fileHashes.push(hash);
+      }
+    }
+
+    const cache: AnalysisCache = {
+      version: '1.0.0',
+      timestamp: Date.now(),
+      fileHashes,
+      fileCache: this.fileCache,
+    };
+
+    this._cacheManager.saveCache(cache);
+  }
+  // 记录已更改的文件
+  async _identifyChangedFiles(cachedHashes: FileHash[]) {
+    this._changedFiles.clear();
+
+    for (const item of this.scanEntrys) {
+      for (const file of item.parse) {
+        if (this._cacheManager.hasFileChanged(file, cachedHashes)) {
+          this._changedFiles.add(file);
+        }
+      }
+    }
+  }
+
   // 目标依赖安装版本收集
   _targetVersionCollect(scanSource: ScanSource[]) {
     const texts = getLocalization(this._language).depsAnalysis;
@@ -177,10 +274,9 @@ export class DepsAnalysis {
     }
   }
   // 扫描代码
-  async _scanCode(scanSource: ScanSource[], type: string): Promise<void> {
+  async _scanCode(): Promise<void> {
     const texts = getLocalization(this._language).depsAnalysis;
-    const entrys = await this._scanFiles(scanSource, type);
-    for (const item of entrys) {
+    for (const item of this.scanEntrys) {
       const tsConfig = parseTsConfig(item.tsConfigPath);
       if (tsConfig?.options?.baseUrl) {
         // 获取tsconfig.json所在的目录
@@ -191,10 +287,24 @@ export class DepsAnalysis {
         tsConfig.options.baseUrl = path.relative(process.cwd(), absoluteBaseUrl);
       }
       const parseFiles = item.parse;
+      const type = item.type;
       if (parseFiles.length > 0) {
         for (let eIndex = 0; eIndex < parseFiles.length; eIndex++) {
           const element = parseFiles[eIndex];
           const showPath = item.name + '&' + item.show[eIndex];
+          if (this.incremental && this._cacheManager.hasCache && !this._changedFiles.has(element)) {
+            continue;
+          }
+          if (this.incremental && !this.fileCache[element]) {
+            this.fileCache[element] = {
+              importItemMap: {},
+              apiMap: {},
+              methodMap: {},
+              typeMap: {},
+              globalMap: {},
+              ghostDependenciesWarn: {},
+            };
+          }
           try {
             if (type === CODEFILETYPE.VUE) {
               const { ast, checker, baseLine } = parseVue(element, tsConfig?.options); // 解析vue文件中的ts script片段,将其转化为AST
@@ -207,16 +317,16 @@ export class DepsAnalysis {
                   item.name,
                   baseLine
                 ); // 从import语句中获取导入的需要分析的目标API
-                if (Object.keys(importItems).length > 0 || this._browserApis.length > 0) {
-                  this._dealAST(importItems, ast, checker, showPath, item.name, item.httpRepo, baseLine); // 递归分析AST，统计相关信息
+                if (Object.keys(importItems).length > 0 || this._globalApis.length > 0) {
+                  this._dealAST(importItems, ast, checker, showPath, element, item.name, item.httpRepo, baseLine); // 递归分析AST，统计相关信息
                 }
               }
             } else if (type === CODEFILETYPE.TS) {
               const { ast, checker } = parseTs(element, tsConfig?.options); // 解析ts文件代码,将其转化为AST
               if (ast && checker) {
                 const importItems = this._findImportItems(ast, showPath, tsConfig?.options, element, item.name); // 从import语句中获取导入的需要分析的目标API
-                if (Object.keys(importItems).length > 0 || this._browserApis.length > 0) {
-                  this._dealAST(importItems, ast, checker, showPath, item.name, item.httpRepo); // 递归分析AST，统计相关信息
+                if (Object.keys(importItems).length > 0 || this._globalApis.length > 0) {
+                  this._dealAST(importItems, ast, checker, showPath, element, item.name, item.httpRepo); // 递归分析AST，统计相关信息
                 }
               }
             }
@@ -257,6 +367,7 @@ export class DepsAnalysis {
         parse: [],
         show: [],
         tsConfigPath,
+        type: type,
       };
 
       const includePaths = item.include;
@@ -302,7 +413,7 @@ export class DepsAnalysis {
     this.pluginsQueue.push(methodPlugin(this));
     this.pluginsQueue.push(typePlugin(this));
     this.pluginsQueue.push(defaultPlugin(this));
-    this.browserQueue.push(browserPlugin(this));
+    this.globalQueue.push(globalPlugin(this));
   }
   // 执行Target分析插件队列中的checkFun函数
   _runAnalysisPlugins(
@@ -316,6 +427,7 @@ export class DepsAnalysis {
       [key: string]: any;
     },
     filePath: string,
+    absolutePath: string,
     projectName: string,
     httpRepo?: string,
     line: number = 0
@@ -335,7 +447,8 @@ export class DepsAnalysis {
             filePath,
             projectName,
             httpRepo || '',
-            line
+            line,
+            absolutePath
           )
         ) {
           break;
@@ -372,33 +485,35 @@ export class DepsAnalysis {
       }
     }
   }
-  // 执行Browser分析插件队列中的检测函数
-  _runBrowserPlugins(
+  // 执行Global分析插件队列中的检测函数
+  _runGlobalPlugins(
     tsCompiler: typeof ts,
     baseNode: ts.Node,
     depth: number,
     apiName: string,
     filePath: string,
+    absolutePath: string,
     projectName: string,
     httpRepo?: string,
     line: number = 0
   ): void {
-    if (this.browserQueue.length > 0) {
-      for (let i = 0; i < this.browserQueue.length; i++) {
-        const checkFn = this.browserQueue[i].checkFn;
+    if (this.globalQueue.length > 0) {
+      for (let i = 0; i < this.globalQueue.length; i++) {
+        const checkFn = this.globalQueue[i].checkFn;
         if (
           checkFn(
             this,
             tsCompiler,
             baseNode,
             depth,
-            'browser',
+            'global',
             apiName,
             { origin: null },
             filePath,
             projectName,
             httpRepo || '',
-            line
+            line,
+            absolutePath
           )
         ) {
           break;
@@ -441,6 +556,7 @@ export class DepsAnalysis {
     ast: ts.SourceFile,
     checker: ts.TypeChecker,
     filePath: string,
+    absolutePath: string,
     projectName: string,
     httpRepo?: string,
     baseLine: number = 0
@@ -482,6 +598,7 @@ export class DepsAnalysis {
                     apiName,
                     matchImportItem,
                     filePath,
+                    absolutePath,
                     projectName,
                     httpRepo,
                     line
@@ -496,15 +613,15 @@ export class DepsAnalysis {
           }
         }
       }
-      // browser analysis
-      function checkBrowserApi(text: string) {
-        if (that._browserApis.length > 0) {
-          return that._browserApis.includes(text);
+      // global analysis
+      function checkGlobalApi(text: string) {
+        if (that._globalApis.length > 0) {
+          return that._globalApis.includes(text);
         }
         return true;
       }
-      if (ts.isIdentifier(node) && node.text && checkBrowserApi(node.text)) {
-        // 命中Browser Api Item Name
+      if (ts.isIdentifier(node) && node.text && checkGlobalApi(node.text)) {
+        // 命中Global Api Item Name
         const symbol = checker.getSymbolAtLocation(node);
         if (symbol && symbol.declarations) {
           if (
@@ -523,7 +640,7 @@ export class DepsAnalysis {
                 propertyAccess.name.end === node.end
               )
             ) {
-              that._runBrowserPlugins(ts, baseNode, depth, apiName, filePath, projectName, httpRepo, line);
+              that._runGlobalPlugins(ts, baseNode, depth, apiName, filePath, absolutePath, projectName, httpRepo, line);
             }
           }
         }
@@ -541,7 +658,7 @@ export class DepsAnalysis {
     ast: ts.SourceFile,
     filePath: string,
     tsCompilerOptions: ts.CompilerOptions,
-    element: string,
+    absolutePath: string,
     projectName: string,
     baseLine: number = 0
   ): Record<string, ImportItemsMap> {
@@ -573,15 +690,15 @@ export class DepsAnalysis {
     }
 
     // 将依赖添加到幽灵依赖警告列表中
-    function dealGhostDependencies(projectName: string, depName: string) {
+    function dealGhostDependencies(projectName: string, depName: string, warnObject: Record<string, any>) {
       // 确保项目在幽灵依赖警告映射中有一个数组
-      if (!that.ghostDependenciesWarn[projectName]) {
-        that.ghostDependenciesWarn[projectName] = [];
+      if (!warnObject[projectName]) {
+        warnObject[projectName] = [];
       }
 
       // 避免重复添加同一个依赖
-      if (!that.ghostDependenciesWarn[projectName].includes(depName)) {
-        that.ghostDependenciesWarn[projectName].push(depName);
+      if (!warnObject[projectName].includes(depName)) {
+        warnObject[projectName].push(depName);
       }
     }
 
@@ -589,23 +706,29 @@ export class DepsAnalysis {
     function checkGhostDependencies(
       projectName: string,
       depName: string,
-      absolutePath: string | null,
+      actualPath: string | null,
       moduleType: ModuleTypeValue
     ) {
       if (moduleType === ModuleType.NODE_MODULE) return;
       // 对未知模块类型直接添加警告
       if (moduleType === ModuleType.UNKNOWN) {
-        dealGhostDependencies(projectName, depName);
+        dealGhostDependencies(projectName, depName, that.ghostDependenciesWarn);
+        if (that.incremental) {
+          dealGhostDependencies(projectName, depName, that.fileCache[absolutePath].ghostDependenciesWarn);
+        }
         return;
       }
 
       // 解析实际的依赖包名
-      const resolvedDepName = resolveDepName(absolutePath);
+      const resolvedDepName = resolveDepName(actualPath);
 
       // 检查项目的package.json中是否包含该依赖
       const hasDependency = that.versionMap[projectName] && that.versionMap[projectName][resolvedDepName];
       if (!hasDependency) {
-        dealGhostDependencies(projectName, resolvedDepName);
+        dealGhostDependencies(projectName, resolvedDepName, that.ghostDependenciesWarn);
+        if (that.incremental) {
+          dealGhostDependencies(projectName, resolvedDepName, that.fileCache[absolutePath].ghostDependenciesWarn);
+        }
       }
 
       // 对@types包特殊处理
@@ -613,7 +736,10 @@ export class DepsAnalysis {
         const actualPackageName = resolvedDepName.split('/')[1];
         const hasTypeDependency = that.versionMap[projectName] && that.versionMap[projectName][actualPackageName];
         if (!hasTypeDependency) {
-          dealGhostDependencies(projectName, actualPackageName);
+          dealGhostDependencies(projectName, actualPackageName, that.ghostDependenciesWarn);
+          if (that.incremental) {
+            dealGhostDependencies(projectName, actualPackageName, that.fileCache[absolutePath].ghostDependenciesWarn);
+          }
         }
       }
     }
@@ -644,7 +770,7 @@ export class DepsAnalysis {
         if (node.moduleSpecifier && ts.isStringLiteral(node.moduleSpecifier)) {
           // 获取并解析模块路径
           const rawModulePath = node.moduleSpecifier.text;
-          const resolvedModulePath = resolveModulePath(rawModulePath, element, tsCompilerOptions);
+          const resolvedModulePath = resolveModulePath(rawModulePath, absolutePath, tsCompilerOptions);
 
           // 判断模块类型，过滤本地文件导入
           const moduleType = determineModuleType(resolvedModulePath, rawModulePath);
@@ -670,7 +796,10 @@ export class DepsAnalysis {
                   projectName: projectName,
                   moduleType: moduleType,
                 };
-                dealImports(temp);
+                dealImports(temp, that.importItemMap);
+                if (that.incremental) {
+                  dealImports(temp, that.fileCache[absolutePath].importItemMap);
+                }
               }
 
               // 处理命名导入和命名空间导入
@@ -694,7 +823,10 @@ export class DepsAnalysis {
                           projectName: projectName,
                           moduleType: moduleType,
                         };
-                        dealImports(temp);
+                        dealImports(temp, that.importItemMap);
+                        if (that.incremental) {
+                          dealImports(temp, that.fileCache[absolutePath].importItemMap);
+                        }
                       }
                     }
                   }
@@ -714,7 +846,10 @@ export class DepsAnalysis {
                     projectName: projectName,
                     moduleType: moduleType,
                   };
-                  dealImports(temp);
+                  dealImports(temp, that.importItemMap);
+                  if (that.incremental) {
+                    dealImports(temp, that.fileCache[absolutePath].importItemMap);
+                  }
                 }
               }
             }
@@ -724,15 +859,14 @@ export class DepsAnalysis {
     }
 
     // 处理imports相关map
-    function dealImports(temp: ImportItem): void {
+    function dealImports(temp: ImportItem, importItemMap: Record<string, any>): void {
       // 确保依赖名称的对象已经初始化
       if (!importItems[temp.depName]) {
         importItems[temp.depName] = {};
       }
-
       // 确保importItemMap中的依赖名称已初始化
-      if (!that.importItemMap[temp.depName]) {
-        that.importItemMap[temp.depName] = {};
+      if (!importItemMap[temp.depName]) {
+        importItemMap[temp.depName] = {};
       }
 
       importItems[temp.depName][temp.name] = {
@@ -743,20 +877,20 @@ export class DepsAnalysis {
         identifierEnd: temp.identifierEnd,
       };
 
-      if (!that.importItemMap[temp.depName][temp.projectName]) {
-        that.importItemMap[temp.depName][temp.projectName] = temp.moduleType;
+      if (!importItemMap[temp.depName][temp.projectName]) {
+        importItemMap[temp.depName][temp.projectName] = temp.moduleType;
       }
 
-      if (!that.importItemMap[temp.depName][temp.name]) {
-        that.importItemMap[temp.depName][temp.name] = {
+      if (!importItemMap[temp.depName][temp.name]) {
+        importItemMap[temp.depName][temp.name] = {
           callOrigin: temp.origin,
           callFiles: [filePath],
         };
       } else {
         // 避免重复添加相同的文件路径
         // 检查是否为ModuleTypeValue类型
-        if (typeof that.importItemMap[temp.depName][temp.name] === 'object') {
-          const item = that.importItemMap[temp.depName][temp.name] as {
+        if (typeof importItemMap[temp.depName][temp.name] === 'object') {
+          const item = importItemMap[temp.depName][temp.name] as {
             callOrigin?: string | null;
             callFiles: string[];
           };

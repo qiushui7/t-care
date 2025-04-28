@@ -1,5 +1,17 @@
 # @t-care/deps-analysis
 
+## 1.3.0
+
+### Minor Changes
+
+- Support incremental parsing
+  Rename browser API to global API
+
+### Patch Changes
+
+- Updated dependencies
+  - @t-care/utils@1.2.6
+
 ## 1.2.0
 
 ### Minor Changes

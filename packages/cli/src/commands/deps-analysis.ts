@@ -21,7 +21,10 @@ export async function depsAnalysisCommand() {
   spinner.text = texts.analyzing;
   spinner.start();
 
+  config.depsAnalysis.cacheDir = path.resolve(process.cwd(), '.care', 'cache');
+
   const depsAnalysis = new DepsAnalysisService(config.depsAnalysis, language);
+
   const result = await depsAnalysis.run();
   spinner.succeed(chalk.green(texts.analyzeComplete));
 
@@ -58,6 +61,9 @@ async function exportResultToJson(result: any, language: Language): Promise<stri
         // 处理函数和循环引用
         if (typeof value === 'function') {
           return 'Function';
+        }
+        if (key.startsWith('_') || key === 'fileCache') {
+          return undefined;
         }
         return value;
       },

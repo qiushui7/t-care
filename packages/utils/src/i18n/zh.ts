@@ -98,5 +98,6 @@ export const zh = {
     versionError: (error: string) => `处理依赖版本时出错: ${error}`,
     portInfo: (port: number) => `服务将在端口 ${port} 上启动`,
     accessUrl: (port: number) => `您可以访问 http://localhost:${port} 查看依赖关系图`,
+    cacheLoaded: (number: number) => `已从缓存中恢复 ${number} 个文件`,
   },
 };

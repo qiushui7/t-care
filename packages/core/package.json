@@ -1,6 +1,6 @@
 {
   "name": "@t-care/core",
-  "version": "1.3.5",
+  "version": "1.3.6",
   "description": "代码检查的核心功能模块",
   "type": "module",
   "main": "dist/index.js",

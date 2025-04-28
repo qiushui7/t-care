@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { DependencyJsonData } from './types/dependencyTypes';
 import ImportDependencyGraph from './components/ImportDependencyGraph';
-import BrowserApiAnalyzer from './components/BrowserApiAnalyzer';
+import GlobalApiAnalyzer from './components/GlobalApiAnalyzer';
 import NodeApiAnalyzer from './components/NodeApiAnalyzer';
 import GhostDependenciesWarning from './components/GhostDependenciesWarning';
 import { Package, Globe, Server } from 'lucide-react';
@@ -15,7 +15,7 @@ function App() {
   const [data, setData] = useState<DependencyJsonData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<'list' | 'browserApi' | 'nodeApi'>('list');
+  const [viewMode, setViewMode] = useState<'list' | 'globalApi' | 'nodeApi'>('list');
 
   // 在组件挂载时根据路径设置语言
   useEffect(() => {
@@ -79,7 +79,7 @@ function App() {
   }, [t]);
 
   // 检查当前数据是否包含浏览器API数据
-  const hasBrowserApiData = data?.browserMap && Object.keys(data.browserMap).length > 0;
+  const hasGlobalApiData = data?.globalMap && Object.keys(data.globalMap).length > 0;
 
   // 检查数据是否包含Node API数据
   const hasNodeApiData = data?.importItemMap &&
@@ -128,18 +128,18 @@ function App() {
               <span>{t('dependencyView')}</span>
             </button>
             <button
-              className={`px-4 py-2 rounded-md flex items-center gap-2 ${viewMode === 'browserApi'
+              className={`px-4 py-2 rounded-md flex items-center gap-2 ${viewMode === 'globalApi'
                 ? 'bg-purple-500 text-white shadow-md'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                } ${!hasBrowserApiData ? 'opacity-50 cursor-not-allowed' : ''}`}
-              onClick={() => hasBrowserApiData && setViewMode('browserApi')}
-              disabled={!hasBrowserApiData}
-              title={!hasBrowserApiData ? t('noBrowserApiData') : t('browserApiView')}
+                } ${!hasGlobalApiData ? 'opacity-50 cursor-not-allowed' : ''}`}
+              onClick={() => hasGlobalApiData && setViewMode('globalApi')}
+              disabled={!hasGlobalApiData}
+              title={!hasGlobalApiData ? t('noGlobalApiData') : t('globalApiView')}
             >
               <Globe size={18} />
-              <span>{t('browserApiView')}</span>
-              {hasBrowserApiData && data?.browserMap &&
-                Object.values(data.browserMap).some(api => api.isBlack) && (
+              <span>{t('globalApiView')}</span>
+              {hasGlobalApiData && data?.globalMap &&
+                Object.values(data.globalMap).some(api => api.isBlack) && (
                   <span className="bg-red-100 text-red-600 text-xs px-1.5 rounded-full ml-1">
                     {t('hasRisk')}
                   </span>
@@ -181,8 +181,8 @@ function App() {
               loading={false}
               error={null}
             />
-          ) : viewMode === 'browserApi' ? (
-            <BrowserApiAnalyzer
+          ) : viewMode === 'globalApi' ? (
+            <GlobalApiAnalyzer
               data={data}
               loading={false}
               error={null}

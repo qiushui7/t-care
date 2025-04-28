@@ -1,18 +1,18 @@
 export interface DependencyJsonData {
-  _scanSource: ScanSource[];
+  scanSource: ScanSource[];
   _analysisTarget: string[];
   _blackList: string[];
-  _browserApis: string[];
+  _globalApis: string[];
   _isScanVue: boolean;
   _analysisPlugins: string[];
   pluginsQueue: PluginQueue[];
-  browserQueue: unknown[];
+  globalQueue: unknown[];
   importItemMap: Record<string, ImportItemMapEntry>;
   typeMap?: Record<string, Record<string, TypeMapEntry>>;
   apiMap?: Record<string, Record<string, ApiMapEntry>>;
   methodMap?: Record<string, Record<string, MethodMapEntry>>;
   versionMap: Record<string, Record<string, string>>; // 包版本信息映射 project -> package -> version
-  browserMap?: Record<string, BrowserApiEntry>; // 浏览器API使用情况映射
+  globalMap?: Record<string, GlobalApiEntry>; // 全局API使用情况映射
   ghostDependenciesWarn?: Record<string, string[]>; // 可能存在幽灵依赖的警告
 }
 
@@ -50,6 +50,7 @@ export interface TypeMapEntry {
 export interface CallFileInfo {
   projectName: string;
   httpRepo: string;
+  callOrigin: string | null;
   lines: number[];
 }
 
@@ -67,7 +68,7 @@ export interface MethodMapEntry {
   isBlack?: boolean;
 }
 
-export interface BrowserApiEntry {
+export interface GlobalApiEntry {
   callNum: number;
   callOrigin: string | null;
   callFiles: Record<string, CallFileInfo>;
