@@ -187,4 +187,4 @@ pnpm dev
 
 ## 许可证
 
-ISC
+MIT

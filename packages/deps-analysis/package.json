@@ -1,11 +1,15 @@
 {
   "name": "@t-care/deps-analysis",
-  "version": "1.3.1",
+  "version": "1.3.2",
   "description": "Dependencies analysis module for Care tool",
   "type": "module",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/esm/index.d.ts",
+      "require": "./dist/cjs/index.js",
+      "default": "./dist/esm/index.js"
+    }
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/qiushui7/t-care.git",
@@ -15,8 +19,8 @@
     "access": "public"
   },
   "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch",
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
     "test": "jest"
   },
   "keywords": [
@@ -26,12 +30,17 @@
     "code-review"
   ],
   "author": "qiushui7",
-  "license": "ISC",
+  "license": "MIT",
+  "packageManager": "pnpm@10.10.0",
   "dependencies": {
     "@t-care/utils": "workspace:*",
     "typescript": "^5.8.3"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "tsup": "^8.4.0",
+    "@t-care/tsconfig": "workspace:*",
+    "@t-care/rollup": "workspace:*"
+  },
   "files": [
     "dist",
     "README.md",

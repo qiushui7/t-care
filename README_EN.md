@@ -188,4 +188,4 @@ pnpm dev
 
 ## License
 
-ISC
+MIT

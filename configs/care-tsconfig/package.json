@@ -1,0 +1,13 @@
+{
+  "name": "@t-care/tsconfig",
+  "version": "0.0.1",
+  "description": "",
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "private": true,
+  "publishConfig": {
+    "access": "public"
+  },
+  "packageManager": "pnpm@10.10.0"
+}

@@ -1,10 +1,15 @@
 {
   "name": "@t-care/cli",
-  "version": "1.3.8",
+  "version": "1.3.9",
   "description": "代码审查CLI工具",
-  "main": "dist/care.js",
-  "types": "dist/care.d.ts",
   "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/esm/index.d.ts",
+      "require": "./dist/cjs/index.js",
+      "default": "./dist/esm/index.js"
+    }
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/qiushui7/t-care.git",
@@ -17,7 +22,8 @@
     "care": "dist/care.js"
   },
   "scripts": {
-    "build": "rollup -c ../../rollup.config.js && node scripts/create-cli.js",
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
     "test": "jest"
   },
   "keywords": [
@@ -26,8 +32,8 @@
     "static-analysis"
   ],
   "author": "",
-  "license": "ISC",
-  "packageManager": "pnpm@10.7.0",
+  "license": "MIT",
+  "packageManager": "pnpm@10.10.0",
   "dependencies": {
     "@t-care/core": "workspace:*",
     "@t-care/deps-analysis": "workspace:*",
@@ -43,6 +49,8 @@
   "devDependencies": {
     "@types/figlet": "^1.7.0",
     "@types/node": "^20.11.30",
+    "@t-care/tsconfig": "workspace:*",
+    "@t-care/rollup": "workspace:*",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   },

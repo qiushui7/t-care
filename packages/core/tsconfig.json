@@ -1,10 +1,5 @@
 {
-  "extends": "../../tsconfig.base.json",
-  "compilerOptions": {
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "composite": true
-  },
+  "extends": "@t-care/tsconfig/base.json",
   "include": [
     "src/**/*"
   ],

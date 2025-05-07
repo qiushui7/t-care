@@ -14,4 +14,4 @@ packages/*/.mastra
 
 .env.development
 
-.carerc.js
+.turbo

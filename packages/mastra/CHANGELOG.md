@@ -1,5 +1,18 @@
 # @care/mastra
 
+## 1.1.4
+
+### Patch Changes
+
+- change complie product
+- change compile product
+
+## 1.1.4-beta.0
+
+### Patch Changes
+
+- change complie product
+
 ## 1.1.3
 
 ### Patch Changes

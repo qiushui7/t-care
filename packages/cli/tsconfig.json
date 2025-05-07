@@ -1,16 +1,16 @@
 {
-  "extends": "../../tsconfig.base.json",
-  "compilerOptions": {
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "composite": true
-  },
+  "extends": "@t-care/tsconfig/base.json",
   "include": [
     "src/**/*"
   ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "templates"
+  ],
   "references": [
     {
-      "path": "../core"
+      "path": "../deps-analysis"
     }
   ]
 }

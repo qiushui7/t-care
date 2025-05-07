@@ -1,5 +1,18 @@
 # @care/utils
 
+## 1.2.8
+
+### Patch Changes
+
+- change complie product
+- change compile product
+
+## 1.2.8-beta.0
+
+### Patch Changes
+
+- change complie product
+
 ## 1.2.7
 
 ### Patch Changes

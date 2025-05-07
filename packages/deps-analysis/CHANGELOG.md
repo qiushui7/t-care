@@ -1,5 +1,23 @@
 # @t-care/deps-analysis
 
+## 1.3.2
+
+### Patch Changes
+
+- change complie product
+- change compile product
+- Updated dependencies
+- Updated dependencies
+  - @t-care/utils@1.2.8
+
+## 1.3.2-beta.0
+
+### Patch Changes
+
+- change complie product
+- Updated dependencies
+  - @t-care/utils@1.2.8-beta.0
+
 ## 1.3.1
 
 ### Patch Changes
